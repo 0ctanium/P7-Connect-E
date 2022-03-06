@@ -1,7 +1,23 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import {gql, useQuery} from "@apollo/client";
+
+const ViewerQuery = gql`
+  query ViewerQuery {
+    viewer {
+      id
+      name
+      status
+    }
+  }
+`
+
 
 const Home: NextPage = () => {
+  const {
+    data: { viewer } = {},
+  } = useQuery(ViewerQuery)
+
   return (
     <div>
       <Head>
@@ -12,7 +28,7 @@ const Home: NextPage = () => {
 
       <main>
         <h1>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome {viewer?.name} to <a href="https://nextjs.org">Next.js!</a>
         </h1>
       </main>
     </div>

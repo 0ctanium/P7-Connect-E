@@ -1,7 +1,10 @@
 import { ApolloServer } from 'apollo-server-micro'
-import { schema } from 'schema'
-import {NextApiRequest, NextApiResponse} from "next";
-import {ApolloServerPluginLandingPageGraphQLPlayground} from "apollo-server-core";
+import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import { NextApiHandler } from 'next'
+import { RequestHandler } from "micro";
+import cors from 'micro-cors'
+
+import { schema } from "schema";
 
 export const config = {
   api: {
@@ -12,13 +15,31 @@ export const config = {
 const apolloServer = new ApolloServer({
   schema,
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
-});
+})
 
-const startServer = apolloServer.start();
+let apolloServerHandler: NextApiHandler
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await startServer;
-  await apolloServer.createHandler({
-    path: "/api/graphql",
-  })(req, res);
+async function getApolloServerHandler() {
+  if (!apolloServerHandler) {
+    await apolloServer.start()
+
+    apolloServerHandler = apolloServer.createHandler({
+      path: '/api/graphql',
+    })
+  }
+
+  return apolloServerHandler
 }
+
+const handler: NextApiHandler = async (req, res) => {
+  const apolloServerHandler = await getApolloServerHandler()
+
+  if (req.method === 'OPTIONS') {
+    res.end()
+    return
+  }
+
+  return apolloServerHandler(req, res)
+}
+
+export default cors()(handler as RequestHandler)

@@ -1,22 +1,25 @@
-import { gql } from '@apollo/client'
-import {makeExecutableSchema} from "@graphql-tools/schema";
-import {resolvers} from "../resolvers";
-import {SchemaLink} from "@apollo/client/link/schema";
+import { SchemaLink } from "@apollo/client/link/schema";
+import { asNexusMethod, makeSchema } from "nexus";
+import { DateTimeResolver } from "graphql-scalars";
+import path from "path";
 
-export const typeDefs = gql`
-  type User {
-    id: ID!
-    name: String!
-    status: String!
-  }
-  type Query {
-    viewer: User
-  }
-`
+import { Query } from 'schema/query';
+import { Mutation } from 'schema/mutation';
+import { User } from 'schema/user';
 
-export const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
+export const GQLDate = asNexusMethod(DateTimeResolver, 'date')
+
+export const schema = makeSchema({
+  types: [
+      Query,
+      Mutation,
+      User,
+      GQLDate
+  ],
+  outputs: {
+    typegen: path.join(process.cwd(), 'generated/nexus-typegen.ts'),
+    schema: path.join(process.cwd(), 'generated/schema.graphql'),
+  },
 })
 
 const link = new SchemaLink({ schema })

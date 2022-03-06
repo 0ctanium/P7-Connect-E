@@ -22,6 +22,21 @@ export default NextAuth({
     colorScheme: "light"
   },
 
+  callbacks: {
+    jwt({ token, user}) {
+      console.log(token, user)
+      if (user?.role) {
+        token.role = user.role
+      }
+
+      return token
+    },
+    session({ session, user}) {
+      session.user.role = user.role
+      return session
+    }
+  },
+
   providers: [
     // AppleProvider({
     //   clientId: process.env.APPLE_ID,

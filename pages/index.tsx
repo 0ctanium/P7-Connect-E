@@ -5,8 +5,8 @@ import {signIn, signOut, useSession} from "next-auth/react";
 
 export const exampleQuery = gql`
   query example {
-    users {
-      name
+    example {
+        message
     }
   }
 `
@@ -42,7 +42,7 @@ const Home: NextPage = () => {
             )}
             <div className="text-lg mb-2">Hello, {session?.user?.email ?? session?.user?.name}</div>
             <div className="mb-2">
-              gql test query: {queryLoading ? 'fetching...' : data?.users?.map((u: any) => u.name).join(', ')}
+              gql test query: {queryLoading ? 'fetching...' : data.example.message}
               <button className="btn-blue ml-2" onClick={() => refetch()}>
                 Refetch!
               </button>

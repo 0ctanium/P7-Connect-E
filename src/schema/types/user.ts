@@ -1,4 +1,10 @@
-import { objectType, extendType, stringArg, nonNull } from 'nexus'
+import {objectType, extendType, stringArg, nonNull, enumType} from 'nexus'
+import { Roles } from "constants/roles";
+
+export const Role = enumType({
+  name: 'Role',
+  members: Object.keys(Roles)
+})
 
 export const User = objectType({
   name: 'User',
@@ -7,6 +13,7 @@ export const User = objectType({
     t.string('name')
     t.string('email')
     t.string('image')
+    t.field('role', { type: Role })
     t.date('createdAt')
     t.date('updatedAt')
   },

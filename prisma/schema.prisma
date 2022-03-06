@@ -47,6 +47,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  role          Role      @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
 }
@@ -59,4 +60,10 @@ model VerificationToken {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now())
   @@unique([identifier, token])
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
 }

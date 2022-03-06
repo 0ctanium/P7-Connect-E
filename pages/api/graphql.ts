@@ -4,6 +4,7 @@ import { NextApiHandler } from 'next'
 import { RequestHandler } from "micro";
 import cors from 'micro-cors'
 
+import { createContext } from 'schema/context'
 import { schema } from "schema";
 
 export const config = {
@@ -14,6 +15,7 @@ export const config = {
 
 const apolloServer = new ApolloServer({
   schema,
+  context: createContext,
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 })
 

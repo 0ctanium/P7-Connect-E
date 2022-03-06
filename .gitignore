@@ -110,6 +110,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 
+prisma/.env
 prisma/*.db
 prisma/*.db-journal
 generated

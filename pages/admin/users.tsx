@@ -31,8 +31,6 @@ export const UserDashboard: NextPage = () => {
         ({ pageIndex, pageSize: offset }) => {
             const fetchId = ++fetchIdRef.current;
 
-            console.log(fetchId, pageIndex, offset)
-
             if (fetchId === fetchIdRef.current) {
                 refetch({
                     skip: pageIndex * offset,

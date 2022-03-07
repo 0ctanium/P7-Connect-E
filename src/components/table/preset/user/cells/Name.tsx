@@ -2,8 +2,9 @@ import React, {FC} from 'react'
 import {UserTableData} from "../UsersTable";
 import {Tooltip} from "../../../../Tooltip";
 import {GoVerified} from "react-icons/go";
+import {CellComponent} from "types";
 
-export const NameCell: FC<{ row: UserTableData, editing: boolean }> = ({ row }) => (
+export const NameCell: CellComponent<UserTableData> = ({ row }) => (
     <div className="flex items-center">
         <div className="flex-shrink-0 w-10 h-10">
             {/* eslint-disable-next-line @next/next/no-img-element */}

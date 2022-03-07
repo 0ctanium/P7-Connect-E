@@ -1,5 +1,4 @@
-import React, { HTMLAttributes } from 'react';
-import { TableInstance } from 'react-table';
+import React, {FC, HTMLAttributes} from 'react';
 import {
     HiChevronDoubleLeft,
     HiChevronDoubleRight,
@@ -7,31 +6,23 @@ import {
     HiChevronRight,
 } from 'react-icons/hi';
 import clsx from 'clsx';
+import {useReactTable} from "../../../hooks/useTable";
 
-export interface DesktopTablePaginationProps<
-    D extends Record<string, any> = Record<string, unknown>
-    > {
-    instance: TableInstance<D>;
-}
 
-export type DesktopTablePaginationComponent = <
-    D extends Record<string, any> = Record<string, unknown>
-    >(
-    props: DesktopTablePaginationProps<D>
-) => JSX.Element;
+export const DesktopTablePagination: FC = () => {
+    const {
+        instance: {
+            canNextPage,
+            canPreviousPage,
+            gotoPage,
+            previousPage,
+            nextPage,
+            pageCount,
+            setPageSize,
+            state: { pageIndex, pageSize },
+        }
+    } = useReactTable()
 
-export const DesktopTablePagination: DesktopTablePaginationComponent = ({
-                                                              instance: {
-                                                                  canNextPage,
-                                                                  canPreviousPage,
-                                                                  gotoPage,
-                                                                  previousPage,
-                                                                  nextPage,
-                                                                  pageCount,
-                                                                  setPageSize,
-                                                                  state: { pageIndex, pageSize },
-                                                              },
-                                                          }) => {
     return (
         <div className="flex items-center">
             <nav

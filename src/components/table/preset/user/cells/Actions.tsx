@@ -1,24 +1,22 @@
-import React, {FC, useCallback} from 'react'
+import React from 'react'
 import {UserTableData} from "../UsersTable";
+import {CellComponent} from "types";
+import {useTableCell} from "hooks/useTable";
 
-export const Actions: FC<{ row: UserTableData, editing: boolean, onEdit(userId: string): void, onCancel(): void, onSubmit(): void }> = ({ row, editing, onEdit, onCancel, onSubmit }) => {
-    const handleEdit: React.MouseEventHandler<HTMLButtonElement> = useCallback((event) => {
-        const id = event.currentTarget.getAttribute('data-id');
+export const Actions: CellComponent<UserTableData, { onSubmit(): void, onDelete(): void }> = ({ row, onDelete, onSubmit }) => {
+    const {
+        isEditing,
+        setCurrentEditing,
+        cancelEditing,
+    } = useTableCell(row)
 
-        if(id) onEdit(id)
-    }, [onEdit])
-
-    const handleDelete = useCallback(() => {
-
-    }, [])
-
-    if(editing) {
+    if(isEditing) {
         return (
             <div>
                 <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={onSubmit}>
                     Confirmer
                 </button>
-                <button className="text-gray-600 hover:text-gray-900" onClick={onCancel}>
+                <button className="text-gray-600 hover:text-gray-900" onClick={cancelEditing}>
                     Annuler
                 </button>
             </div>
@@ -26,10 +24,10 @@ export const Actions: FC<{ row: UserTableData, editing: boolean, onEdit(userId: 
     } else {
         return (
             <div>
-                <button data-id={row.id} className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={handleEdit}>
-                    Editer
+                <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={setCurrentEditing}>
+                    Éditer
                 </button>
-                <button data-id={row.id} className="text-red-600 hover:text-red-900" onClick={handleDelete}>
+                <button className="text-red-600 hover:text-red-900" onClick={onDelete}>
                     Supprimer
                 </button>
             </div>

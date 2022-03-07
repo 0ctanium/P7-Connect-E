@@ -1,76 +1,77 @@
-import { Row, TableInstance } from 'react-table';
-import React from 'react';
+import { TableInstance } from 'react-table';
+import React, {PropsWithChildren, useState} from 'react';
 
 export interface TableProps<
-    D extends Record<string, any> = Record<string, unknown>
+    D extends Record<string, any> = Record<string, unknown>,
+    Key = any,
+    Edit = D
     > {
-  instance: TableInstance<D>;
-  footer?: JSX.Element;
+    instance: TableInstance<D>;
+    loading: boolean;
+    count: number;
+    error?: any;
+    resolveKey(row: D): Key
+
+    onEdit(v: Edit): void
 }
 
-export const Table = <D extends object = {}>({
-  instance: {
-    getTableProps,
-    headerGroups,
-    getTableBodyProps,
-    prepareRow,
-    page,
-    rows,
-  },
-  footer,
-}: TableProps<D>): JSX.Element => (
-  <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
-    <thead className="bg-gray-50">
-      {headerGroups.map((headerGroup, i) => (
-        <tr {...headerGroup.getHeaderGroupProps()} key={i}>
-          {headerGroup.headers.map((column, j) => (
-            <th
-              {...column.getHeaderProps([
-                {
-                  className: column.headerClasses
-                    ? column.headerClasses({
-                        classes:
-                          'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                      })
-                    : 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                },
-              ])} key={j}>
-              {column.render('Header')}
-            </th>
-          ))}
-        </tr>
-      ))}
-    </thead>
-    <tbody
-      {...getTableBodyProps([
-        {
-          className: 'bg-white divide-y divide-gray-200',
-        },
-      ])}>
-      {(rows || page).map((row: Row<D>, i) => {
-        prepareRow(row);
-        return (
-          <tr {...row.getRowProps()} key={i}>
-            {row.cells.map((cell, j) => {
-              return (
-                <td
-                  {...cell.getCellProps([
-                    {
-                      className: cell.column.cellClasses
-                        ? cell.column.cellClasses({
-                            classes: 'px-6 py-4 whitespace-nowrap',
-                          })
-                        : 'px-6 py-4 whitespace-nowrap',
-                    },
-                  ])} key={j}>
-                  {cell.render('Cell')}
-                </td>
-              );
-            })}
-          </tr>
-        );
-      })}
-      {footer}
-    </tbody>
-  </table>
-);
+export interface TableContextProps<
+    D extends Record<string, any> = Record<string, unknown>,
+    Key = any,
+    Edit = D
+    > {
+    instance: TableInstance<D>;
+    loading: boolean;
+    count: number;
+    error?: any;
+    resolveKey(row: D): Key
+
+    // Edited row
+    editing: Key | null
+    // Current edit value
+    editValues: Edit | null
+    // Change edited row
+    setEditing(key: Key | null): void
+    // Change edited row values
+    edit(v: Edit): void
+
+    // Called when an edition is confirmed
+    onEdit(v: Edit): void
+}
+
+export const TableContext = React.createContext<any>({});
+
+export const Table = <
+    D extends Record<string, any> = Record<string, unknown>,
+    Key = any,
+    Edit = D
+    >({
+                               children,
+
+                               instance,
+                               loading,
+                               count,
+                               error,
+                               resolveKey,
+
+                               onEdit,
+                           }: PropsWithChildren<TableProps<D, Key, Edit>>): JSX.Element => {
+    const [editing, setEditing] = useState<Key | null>(null)
+
+    return (
+        <TableContext.Provider value={{
+            instance,
+            loading,
+            count,
+            error,
+
+            editing,
+            setEditing,
+
+            onEdit,
+            resolveKey
+        }}>
+            {children}
+        </TableContext.Provider>
+    );
+}

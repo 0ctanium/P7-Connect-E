@@ -1,14 +1,15 @@
-import React, {FC} from 'react'
+import React from 'react'
 import {UserTableData} from "../UsersTable";
 import moment from "moment";
 import {Tooltip} from "../../../../Tooltip";
+import {CellComponent} from "../../../../../types";
 
-export const AccountCell: FC<{ row: UserTableData, editing: boolean }> = ({ row }) => (
+export const AccountCell: CellComponent<UserTableData> = ({ row }) => (
     <div className="flex items-center">
         <div className="ml-4">
-            {row.accounts.map(account => (
+            {row.accounts.map((account, i) => (
                 <Tooltip
-                    key={account.id}
+                    key={i}
                     render={
                         <p className="text-sm font-bold text-white">
                             Depuis {moment(account.createdAt).calendar().toLocaleLowerCase()}

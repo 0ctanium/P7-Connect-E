@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Column,
     usePagination,
@@ -9,15 +9,19 @@ import {
 import { Table } from 'components/table/Table';
 
 import {NexusGenFieldTypes} from "../../../../../generated/nexus-typegen";
+
 import {ApolloError} from "@apollo/client";
 import {AccountCell, Actions, NameCell, RoleCell} from "./cells";
-import {Pagination} from "../../pagination";
 import {useIndeterminateCheckbox} from "../../Checkbox";
-import {TableStateFooter} from "../../StateFooter";
+import {TableRow} from "../../TableRow";
+import {TablePagination} from "../../pagination";
 
 export type UserTableData = NonNullable<
     NexusGenFieldTypes["User"]
     >;
+export type UserTableKey = string
+export type UserTableEdit = Pick<UserTableData, "role"> & Pick<UserTableData, "name">
+
 export interface UserTableProps<D extends Record<string, any>> {
     data: D[];
     fetchData: (options: { pageIndex: number; pageSize: number }) => void;
@@ -26,7 +30,6 @@ export interface UserTableProps<D extends Record<string, any>> {
     error?: ApolloError;
 }
 
-
 export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                                                                        data,
                                                                        fetchData,
@@ -34,40 +37,32 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                                                                        count,
                                                                        error,
                                                                    }) => {
-    const [editState, setEditState] = useState<Pick<UserTableData, "role"> | null>(null)
-    const [userEdit, setUseEdition] = useState<string | null>(null)
-
-    const editUser = useCallback((userId: string) => {
-        console.log(userId)
-        setUseEdition(userId)
-    }, [])
-    const cancelEdition = useCallback(() => { setUseEdition(null) }, [])
-
     const columns = React.useMemo<Column<UserTableData>[]>(
         () => [
             {
                 Header: 'Nom',
-                accessor: (row) => <NameCell row={row} editing={row.id === userEdit}  />,
+                accessor: (row) => <NameCell row={row}  />,
             },
             {
                 Header: 'Comptes',
-                accessor: (row) => <AccountCell row={row} editing={row.id === userEdit} />,
+                accessor: (row) => <AccountCell row={row} />,
             },
             {
                 Header: 'Rôle',
                 cellClasses: ({ classes }) => classes + ' text-sm text-gray-500',
-                accessor: (row ) => <RoleCell row={row} editing={row.id === userEdit} onEdit={() => {}} />
+                accessor: (row ) => <RoleCell row={row} />
             },
             {
                 id: 'actions',
                 Header: () => <span className="sr-only">Edit</span>,
-                accessor: (row) => <Actions row={row} editing={row.id === userEdit} onEdit={editUser} onCancel={cancelEdition} onSubmit={() => {}} />,
+                accessor: (row) => <Actions row={row} onSubmit={() => console.log("submitting")} onDelete={() => console.log("deleting")} />,
                 headerClasses: () => 'relative px-6 py-3',
                 cellClasses: ({ classes }) => classes + ' text-right text-sm font-medium',
             },
         ],
-        [userEdit, editUser, cancelEdition]
+        []
     );
+
     const [controlledPageCount, setControlledPageCount] = useState(0);
     const tableInstance = useTable<UserTableData>(
         {
@@ -96,12 +91,16 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
 
     return (
         <div className="overflow-hidden sm:rounded-lg shadow">
-            <Table<UserTableData>
+            <Table<UserTableData, UserTableKey, UserTableEdit>
                 instance={tableInstance}
-                footer={<TableStateFooter loading={loading} error={error} data={data} />}
-            />
-
-            <Pagination<UserTableData> instance={tableInstance} count={count} />
+                loading={loading}
+                error={error}
+                count={count}
+                resolveKey={(row) => row.id}
+                onEdit={() => console.log('on edit')}>
+                <TableRow />
+                <TablePagination />
+            </Table>
         </div>
     );
 };

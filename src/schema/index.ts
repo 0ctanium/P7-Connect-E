@@ -1,16 +1,30 @@
 import { SchemaLink } from "@apollo/client/link/schema";
-import { asNexusMethod, makeSchema } from "nexus";
-import { DateTimeResolver } from "graphql-scalars";
+import { nexusPrisma } from "nexus-plugin-prisma";
+import { makeSchema } from "nexus";
+import { applyMiddleware } from "graphql-middleware";
 import path from "path";
 
+// Types defs
+import { typeDefs as types } from './types';
 import { permissions } from './permissions'
-import { typeDefs } from './types';
-import { applyMiddleware } from "graphql-middleware";
 
-export const GQLDate = asNexusMethod(DateTimeResolver, 'date')
+// Scalars
+import {
+  DateTimeResolver as DateTime
+} from "graphql-scalars";
+
 
 export const baseSchema = makeSchema({
-  types: [...typeDefs, GQLDate],
+  types,
+  plugins: [
+    nexusPrisma({
+      experimentalCRUD: true,
+      paginationStrategy: "prisma",
+      scalars: {
+        DateTime,
+      }
+    })
+  ],
   outputs: {
     typegen: path.join(process.cwd(), 'generated/nexus-typegen.ts'),
     schema: path.join(process.cwd(), 'generated/schema.graphql'),
@@ -29,6 +43,7 @@ export const baseSchema = makeSchema({
   },
 })
 
-export const schema = applyMiddleware(baseSchema, permissions)
+// export const schema = applyMiddleware(baseSchema, permissions)
+export const schema = baseSchema
 
-const link = new SchemaLink({ schema })
+export const link = new SchemaLink({ schema })

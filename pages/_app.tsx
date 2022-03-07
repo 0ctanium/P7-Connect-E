@@ -1,16 +1,17 @@
 import type { AppProps } from 'next/app'
 import {useApollo} from "hooks";
 import {ApolloProvider} from "@apollo/client";
-import {Head} from "next/document";
 import { SessionProvider } from 'next-auth/react'
 
 import 'styles/globals.css'
+import 'moment/locale/fr';
+import moment from "moment";
+
+moment.locale('fr')
 
 function MyApp({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState)
-
   return (
-
     <SessionProvider session={pageProps.session}>
         <ApolloProvider client={apolloClient}>
           {/*<Head>*/}

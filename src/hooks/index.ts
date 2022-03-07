@@ -1,1 +1,2 @@
-export * from "./useApollo"
+export * from './useApollo'
+export * from './useResizeObserver'

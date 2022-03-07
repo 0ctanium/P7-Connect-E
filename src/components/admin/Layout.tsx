@@ -1,7 +1,6 @@
 import {FC, Fragment, useState} from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
-  HiFolder as FolderIcon,
   HiHome as HomeIcon,
   HiFlag as FlagIcon,
   HiMenu as MenuIcon,
@@ -13,13 +12,13 @@ import Link from 'next/link';
 import {useSession} from "next-auth/react";
 
 const navigation = [
-  { name: 'Accueil', href: '/admin', icon: HomeIcon, current: true },
-  { name: 'Utilisateurs', href: '/admin/users', icon: UsersIcon, current: false },
-  { name: 'Signalements', href: '/admin/moderation', icon: FlagIcon, current: false },
+  { id: 'home', name: 'Accueil', href: '/admin', icon: HomeIcon },
+  { id: 'users', name: 'Utilisateurs', href: '/admin/users', icon: UsersIcon },
+  { id: 'moderation', name: 'Signalements', href: '/admin/moderation', icon: FlagIcon },
   // { name: 'Reports', href: '#', icon: ChartBarIcon, current: false },
 ]
 
-export const AdminLayout: FC<{ title: string }> = ({ children, title }) => {
+export const AdminLayout: FC<{ title: string, current: string }> = ({ children, title, current }) => {
   const { data } = useSession()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -84,12 +83,12 @@ export const AdminLayout: FC<{ title: string }> = ({ children, title }) => {
                         href={item.href}
                       >
                         <a className={clsx(
-                          item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                          item.id === current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                           'group flex items-center px-2 py-2 text-base font-medium rounded-md'
                         )}>
                           <item.icon
                             className={clsx(
-                              item.current ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300',
+                              item.id === current ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300',
                               'mr-4 flex-shrink-0 h-6 w-6'
                             )}
                             aria-hidden="true"
@@ -106,7 +105,7 @@ export const AdminLayout: FC<{ title: string }> = ({ children, title }) => {
                       <div>
                         <img
                           className="inline-block h-10 w-10 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          src={data?.user.image}
                           alt=""
                         />
                       </div>
@@ -142,12 +141,12 @@ export const AdminLayout: FC<{ title: string }> = ({ children, title }) => {
                     href={item.href}
                   >
                     <a className={clsx(
-                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      item.id === current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                       'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
                     )}>
                     <item.icon
                       className={clsx(
-                        item.current ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300',
+                        item.id === current ? 'text-gray-300' : 'text-gray-400 group-hover:text-gray-300',
                         'mr-3 flex-shrink-0 h-6 w-6'
                       )}
                       aria-hidden="true"
@@ -164,7 +163,7 @@ export const AdminLayout: FC<{ title: string }> = ({ children, title }) => {
                   <div>
                     <img
                       className="inline-block h-9 w-9 rounded-full"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      src={data?.user.image}
                       alt=""
                     />
                   </div>

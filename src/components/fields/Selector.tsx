@@ -2,7 +2,7 @@ import {ElementType, FC, Fragment, PropsWithChildren, useMemo, useState} from 'r
 import { Listbox, Transition } from '@headlessui/react'
 import { HiCheck as CheckIcon, HiSelector as SelectorIcon } from 'react-icons/hi'
 import clsx from "clsx";
-import {Roles} from "constants/roles";
+import {Role} from "constants/role";
 
 interface SelectionProps<T extends string | number | symbol = any> {
     selected: T,

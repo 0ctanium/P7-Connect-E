@@ -24,7 +24,6 @@ export default NextAuth({
 
   callbacks: {
     jwt({ token, user}) {
-      console.log(token, user)
       if (user?.role) {
         token.role = user.role
       }

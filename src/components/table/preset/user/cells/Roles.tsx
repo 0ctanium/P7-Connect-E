@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo} from 'react'
 import {UserTableData, UserTableEdit, UserTableKey} from "../UsersTable";
-import {roleClasses, Roles, rolesLabel} from "../../../../../constants";
+import {rolesConfig, Role} from "../../../../../constants";
 import clsx from "clsx";
 import {Selection} from "../../../../fields/Selector";
 import {CellComponent} from "../../../../../types";
@@ -13,13 +13,12 @@ export const RoleCell: CellComponent<UserTableData> = ({ row }) => {
         edit
     } = useTableCell<UserTableData, UserTableKey, UserTableEdit>(row)
 
-    const options = useMemo(() => Object.values(Roles).map(key => ({
+    const options = useMemo(() => Object.values(Role).map(key => ({
         value: key,
-        el: <div className={clsx('badge-lg', roleClasses[key].badge)}>{rolesLabel[key]}</div>
+        el: <div className={clsx('badge-lg', rolesConfig[key].classes.badge)}>{rolesConfig[key].label}</div>
     })),  [])
 
-    const handleChange = useCallback((role: Roles): void => {
-        console.log("role changed", role)
+    const handleChange = useCallback((role: Role): void => {
         return edit({
             ...(editValues || {} as UserTableEdit),
             role
@@ -28,8 +27,8 @@ export const RoleCell: CellComponent<UserTableData> = ({ row }) => {
     }, [edit, editValues])
 
     if(isEditing) {
-        return <Selection<Roles> options={options} selected={(editValues?.role || row.role) as Roles} onChange={handleChange} />
+        return <Selection<Role> options={options} selected={(editValues?.role || row.role) as Role} onChange={handleChange} />
     } else {
-        return <div className={clsx('badge-lg', roleClasses[row.role].badge)}>{rolesLabel[row.role]}</div>
+        return <div className={clsx('badge-lg', rolesConfig[row.role].classes.badge)}>{rolesConfig[row.role].label}</div>
     }
 }

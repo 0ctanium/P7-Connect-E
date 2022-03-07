@@ -1,11 +1,11 @@
 import {objectType, extendType, enumType, nonNull} from 'nexus'
-import { Roles } from "constants/roles";
+import { Role } from "constants/role";
 import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
 
-export const Role = enumType({
+export const RoleEnum = enumType({
   name: 'Role',
-  members: Object.values(Roles)
+  members: Object.values(Role)
 })
 
 export const AccountProvider = enumType({

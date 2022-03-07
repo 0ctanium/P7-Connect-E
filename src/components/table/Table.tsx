@@ -1,5 +1,6 @@
 import { TableInstance } from 'react-table';
-import React, {PropsWithChildren, useState} from 'react';
+import React, {Dispatch, PropsWithChildren, SetStateAction, useCallback, useEffect, useState} from 'react';
+import {isPromise} from "../../lib/utils";
 
 export interface TableProps<
     D extends Record<string, any> = Record<string, unknown>,
@@ -12,7 +13,8 @@ export interface TableProps<
     error?: any;
     resolveKey(row: D): Key
 
-    onEdit(v: Edit): void
+    // Called when an edition is confirmed
+    onEdit(v: Edit | null): void | Promise<void>
 }
 
 export interface TableContextProps<
@@ -26,17 +28,19 @@ export interface TableContextProps<
     error?: any;
     resolveKey(row: D): Key
 
+    rowLoading: Key[]
+    setRowLoading: Dispatch<SetStateAction<Key[]>>
+
     // Edited row
     editing: Key | null
     // Current edit value
     editValues: Edit | null
     // Change edited row
-    setEditing(key: Key | null): void
+    setEditing: Dispatch<SetStateAction<Key | null>>
     // Change edited row values
-    edit(v: Edit): void
-
-    // Called when an edition is confirmed
-    onEdit(v: Edit): void
+    edit: Dispatch<SetStateAction<Edit>>
+    // Confirm edited row
+    submit(): void
 }
 
 export const TableContext = React.createContext<any>({});
@@ -57,6 +61,39 @@ export const Table = <
                                onEdit,
                            }: PropsWithChildren<TableProps<D, Key, Edit>>): JSX.Element => {
     const [editing, setEditing] = useState<Key | null>(null)
+    const [editValues, edit] = useState<Edit | null>(null)
+    const [rowLoading, setRowLoading] = useState<Key[]>([])
+
+    // Clear editValues when edited row change
+    useEffect(() => {
+        edit(null)
+    }, [editing])
+
+    const submit = useCallback(() => {
+        const res = onEdit(editValues) as Promise<void>
+
+        if(isPromise(res)) {
+            // Set loading state
+            if(editing) {
+                setRowLoading((state) => {
+                    return Array.from(new Set([...state, editing]))
+                })
+            }
+
+            res.then(() => {
+                // Remove current row edition state
+                setEditing(null)
+            }).finally(() => {
+                // Remove loading state
+                setRowLoading((state) => {
+                    return state.filter(k => k != editing)
+                })
+            })
+        } else {
+            // Remove current row edition state
+            setEditing(null)
+        }
+    }, [editValues, editing, onEdit])
 
     return (
         <TableContext.Provider value={{
@@ -65,10 +102,16 @@ export const Table = <
             count,
             error,
 
+            editValues,
+            edit,
+
+            rowLoading,
+            setRowLoading,
+
             editing,
             setEditing,
 
-            onEdit,
+            submit,
             resolveKey
         }}>
             {children}

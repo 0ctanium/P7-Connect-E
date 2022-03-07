@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useMemo} from "react";
 import {TableContext, TableContextProps} from "../components/table/Table";
 
 export const useReactTable = <
@@ -15,7 +15,7 @@ interface TableCell <
     Edit = D
     > extends TableContextProps<D, Key, Edit> {
     isEditing: boolean
-    edit(v: Edit): void,
+    key: Key;
     setCurrentEditing(): void,
     cancelEditing(): void;
 }
@@ -33,10 +33,13 @@ export const useTableCell = <
         editing
     } = ctx
 
+    const key = useMemo(() => resolveKey(row), [resolveKey, row])
+
     return {
         ...ctx,
-        setCurrentEditing: () => setEditing(resolveKey(row)),
+        key,
+        setCurrentEditing: () => setEditing(key),
         cancelEditing: () => setEditing(null),
-        isEditing: resolveKey(row) === editing
+        isEditing: key === editing
     }
 }

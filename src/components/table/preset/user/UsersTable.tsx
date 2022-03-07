@@ -55,7 +55,7 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
             {
                 id: 'actions',
                 Header: () => <span className="sr-only">Edit</span>,
-                accessor: (row) => <Actions row={row} onSubmit={() => console.log("submitting")} onDelete={() => console.log("deleting")} />,
+                accessor: (row) => <Actions row={row} onDelete={() => console.log("deleting")} />,
                 headerClasses: () => 'relative px-6 py-3',
                 cellClasses: ({ classes }) => classes + ' text-right text-sm font-medium',
             },
@@ -97,7 +97,12 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                 error={error}
                 count={count}
                 resolveKey={(row) => row.id}
-                onEdit={() => console.log('on edit')}>
+                onEdit={(values) => {
+                    return new Promise((r) => {
+                        console.log('on edit', values)
+                        setTimeout(r, 2500)
+                    })
+                }}>
                 <TableRow />
                 <TablePagination />
             </Table>

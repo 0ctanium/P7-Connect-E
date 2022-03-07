@@ -1,19 +1,20 @@
 import React from 'react'
-import {UserTableData} from "../UsersTable";
+import {UserTableData, UserTableEdit, UserTableKey} from "../UsersTable";
 import {CellComponent} from "types";
 import {useTableCell} from "hooks/useTable";
 
-export const Actions: CellComponent<UserTableData, { onSubmit(): void, onDelete(): void }> = ({ row, onDelete, onSubmit }) => {
+export const Actions: CellComponent<UserTableData, { onDelete(): void }> = ({ row, onDelete }) => {
     const {
         isEditing,
         setCurrentEditing,
         cancelEditing,
-    } = useTableCell(row)
+        submit,
+    } = useTableCell<UserTableData, UserTableKey, UserTableEdit>(row)
 
     if(isEditing) {
         return (
             <div>
-                <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={onSubmit}>
+                <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={submit}>
                     Confirmer
                 </button>
                 <button className="text-gray-600 hover:text-gray-900" onClick={cancelEditing}>

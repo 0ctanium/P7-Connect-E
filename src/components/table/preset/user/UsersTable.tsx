@@ -55,7 +55,6 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
             },
             {
                 Header: 'Rôle',
-                // @ts-ignore
                 cellClasses: ({ classes }) => classes + ' text-sm text-gray-500',
                 accessor: (row ) => <RoleCell row={row} editing={row.id === userEdit} onEdit={() => {}} />
             },
@@ -64,7 +63,6 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                 Header: () => <span className="sr-only">Edit</span>,
                 accessor: (row) => <Actions row={row} editing={row.id === userEdit} onEdit={editUser} onCancel={cancelEdition} onSubmit={() => {}} />,
                 headerClasses: () => 'relative px-6 py-3',
-                // @ts-ignore
                 cellClasses: ({ classes }) => classes + ' text-right text-sm font-medium',
             },
         ],

@@ -1,5 +1,6 @@
 import {FC, MouseEventHandler} from 'react';
 import {
+  ColumnGroup, ColumnWithLooseAccessor, ColumnWithStrictAccessor,
   TableInstance,
   UseColumnOrderInstanceProps,
   UseColumnOrderState,
@@ -46,8 +47,8 @@ import {
 
 declare module 'react-table' {
   export interface UseFlexLayoutInstanceProps<
-    D extends Record<string, unknown>
-  > {
+      D extends Record<string, unknown>
+      > {
     totalColumnsMinWidth: number;
   }
 
@@ -56,26 +57,26 @@ declare module 'react-table' {
   }
 
   export interface TableOptions<D extends Record<string, unknown>>
-    extends UseExpandedOptions<D>,
-      UseFiltersOptions<D>,
-      UseFiltersOptions<D>,
-      UseGlobalFiltersOptions<D>,
-      UseGroupByOptions<D>,
-      UsePaginationOptions<D>,
-      UseResizeColumnsOptions<D>,
-      UseRowSelectOptions<D>,
-      UseSortByOptions<D> {}
+      extends UseExpandedOptions<D>,
+          UseFiltersOptions<D>,
+          UseFiltersOptions<D>,
+          UseGlobalFiltersOptions<D>,
+          UseGroupByOptions<D>,
+          UsePaginationOptions<D>,
+          UseResizeColumnsOptions<D>,
+          UseRowSelectOptions<D>,
+          UseSortByOptions<D> {}
 
   export interface Hooks<
-    D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseExpandedHooks<D>,
+      D extends Record<string, unknown> = Record<string, unknown>
+      > extends UseExpandedHooks<D>,
       UseGroupByHooks<D>,
       UseRowSelectHooks<D>,
       UseSortByHooks<D> {}
 
   export interface TableInstance<
-    D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseColumnOrderInstanceProps<D>,
+      D extends Record<string, unknown> = Record<string, unknown>
+      > extends UseColumnOrderInstanceProps<D>,
       UseExpandedInstanceProps<D>,
       UseFiltersInstanceProps<D>,
       UseGlobalFiltersInstanceProps<D>,
@@ -87,8 +88,8 @@ declare module 'react-table' {
       UseSortByInstanceProps<D> {}
 
   export interface TableState<
-    D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseColumnOrderState<D>,
+      D extends Record<string, unknown> = Record<string, unknown>
+      > extends UseColumnOrderState<D>,
       UseExpandedState<D>,
       UseFiltersState<D>,
       UseGlobalFiltersState<D>,
@@ -101,35 +102,38 @@ declare module 'react-table' {
   }
 
   export interface ColumnInterface<
-    D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseFiltersColumnOptions<D>,
+      D extends Record<string, unknown> = Record<string, unknown>
+      > extends UseFiltersColumnOptions<D>,
       UseGroupByColumnOptions<D>,
       UseResizeColumnsColumnOptions<D>,
-      UseSortByColumnOptions<D> {
+      UseSortByColumnOptions<D>, Classes {
     align?: string;
   }
 
+  interface Classes {
+    cellClasses?(props: { classes?: string }): string
+    headerClasses?(props: { classes?: string }): string
+  }
+
   export interface ColumnInstance<
-    D extends Record<string, unknown> = Record<string, unknown>
-  > extends UseFiltersColumnProps<D>,
+      D extends Record<string, unknown> = Record<string, unknown>
+      > extends UseFiltersColumnProps<D>,
       UseGroupByColumnProps<D>,
       UseResizeColumnsColumnProps<D>,
       UseFlexLayoutColumnProps<D>,
-      UseSortByColumnProps<D> {
-    cellClasses(props?: { classes?: string }): string
-    headerClasses(props?: { classes?: string }): string
-  }
+      UseSortByColumnProps<D>,
+      Classes {}
 
   export type Cell<
-    D extends Record<string, unknown> = Record<string, unknown>
-  > = UseGroupByCellProps<D>;
+      D extends Record<string, unknown> = Record<string, unknown>
+      > = UseGroupByCellProps<D>;
 
   export interface Row<D extends object = {}>
-    extends UseExpandedRowProps<D>,
-      UseGroupByRowProps<D>,
-      UseRowSelectRowProps<D> {}
+      extends UseExpandedRowProps<D>,
+          UseGroupByRowProps<D>,
+          UseRowSelectRowProps<D> {}
 }
 
 export type TableMouseEventHandler = (
-  instance: TableInstance<T>
+    instance: TableInstance<T>
 ) => MouseEventHandler;

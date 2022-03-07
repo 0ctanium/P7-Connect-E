@@ -3,7 +3,7 @@ import {NextPage} from "next";
 import {gql, useQuery} from "@apollo/client";
 import {useCallback, useEffect, useRef} from "react";
 import {toast} from "react-toastify";
-import {UserTable} from "../../src/components/table/UsersTable";
+import {UserTable} from "../../src/components/table/preset/user/UsersTable";
 
 export const usersQuery = gql`
     query GetUsers($skip: Int = 0, $take: Int = 20) {

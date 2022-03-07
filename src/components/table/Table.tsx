@@ -1,10 +1,14 @@
 import { Row, TableInstance } from 'react-table';
 import React from 'react';
 
-export const Table: React.FC<{
-  instance: TableInstance;
-  footer: JSX.Element;
-}> = ({
+export interface TableProps<
+    D extends Record<string, any> = Record<string, unknown>
+    > {
+  instance: TableInstance<D>;
+  footer?: JSX.Element;
+}
+
+export const Table = <D extends object = {}>({
   instance: {
     getTableProps,
     headerGroups,
@@ -14,12 +18,12 @@ export const Table: React.FC<{
     rows,
   },
   footer,
-}) => (
+}: TableProps<D>): JSX.Element => (
   <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
     <thead className="bg-gray-50">
-      {headerGroups.map((headerGroup) => (
-        <tr {...headerGroup.getHeaderGroupProps()}>
-          {headerGroup.headers.map((column) => (
+      {headerGroups.map((headerGroup, i) => (
+        <tr {...headerGroup.getHeaderGroupProps()} key={i}>
+          {headerGroup.headers.map((column, j) => (
             <th
               {...column.getHeaderProps([
                 {
@@ -30,7 +34,7 @@ export const Table: React.FC<{
                       })
                     : 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
                 },
-              ])}>
+              ])} key={j}>
               {column.render('Header')}
             </th>
           ))}
@@ -43,11 +47,11 @@ export const Table: React.FC<{
           className: 'bg-white divide-y divide-gray-200',
         },
       ])}>
-      {(rows || page).map((row: Row) => {
+      {(rows || page).map((row: Row<D>, i) => {
         prepareRow(row);
         return (
-          <tr {...row.getRowProps()}>
-            {row.cells.map((cell) => {
+          <tr {...row.getRowProps()} key={i}>
+            {row.cells.map((cell, j) => {
               return (
                 <td
                   {...cell.getCellProps([
@@ -58,7 +62,7 @@ export const Table: React.FC<{
                           })
                         : 'px-6 py-4 whitespace-nowrap',
                     },
-                  ])}>
+                  ])} key={j}>
                   {cell.render('Cell')}
                 </td>
               );

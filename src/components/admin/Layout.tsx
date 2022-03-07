@@ -70,6 +70,7 @@ export const AdminLayout: FC<{ title: string, current: string }> = ({ children, 
                 </Transition.Child>
                 <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                   <div className="flex-shrink-0 flex items-center px-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       className="h-8 w-auto"
                       src="/icons/icon-left-font-monochrome-white.svg"
@@ -103,9 +104,11 @@ export const AdminLayout: FC<{ title: string, current: string }> = ({ children, 
                   <a href="#" className="flex-shrink-0 group block">
                     <div className="flex items-center">
                       <div>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           className="inline-block h-10 w-10 rounded-full"
-                          src={data?.user.image}
+                          // TODO: add placeholder image
+                          src={data?.user.image || ''}
                           alt=""
                         />
                       </div>
@@ -128,6 +131,7 @@ export const AdminLayout: FC<{ title: string, current: string }> = ({ children, 
           <div className="flex-1 flex flex-col min-h-0 bg-gray-800">
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   className="h-8 w-auto"
                   src="/icons/icon-left-font-monochrome-white.svg"
@@ -161,9 +165,11 @@ export const AdminLayout: FC<{ title: string, current: string }> = ({ children, 
               <a href="#" className="flex-shrink-0 w-full group block">
                 <div className="flex items-center">
                   <div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       className="inline-block h-9 w-9 rounded-full"
-                      src={data?.user.image}
+                      // TODO: add placeholder image
+                      src={data?.user.image || ''}
                       alt=""
                     />
                   </div>

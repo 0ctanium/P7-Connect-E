@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Image from 'next/image'
 import {gql, useQuery} from "@apollo/client";
 import {signIn, signOut, useSession} from "next-auth/react";
 
@@ -31,6 +30,7 @@ const Home: NextPage = () => {
         <div className="flex justify-center mt-8 text-center">
           <div className="flex-auto">
             {session?.user?.image && (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                     src={session.user.image}
                     alt={session.user.email ?? session.user.name ?? "Profile picture"}

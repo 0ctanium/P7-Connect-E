@@ -1,4 +1,4 @@
-import { MouseEventHandler } from 'react';
+import {FC, MouseEventHandler} from 'react';
 import {
   TableInstance,
   UseColumnOrderInstanceProps,

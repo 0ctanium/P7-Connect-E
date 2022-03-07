@@ -1,3 +1,22 @@
 {
-  "extends": ["next/core-web-vitals", "prettier"]
+  "extends": ["next/core-web-vitals", "prettier"],
+  "settings": {
+    "tailwindcss": {
+      "callees": ["clsx"],
+      "config": "tailwind.config.js",
+      "cssFiles": ["client/main.css", "!**/node_modules"],
+      "groupByResponsive": false,
+      "prependCustom": false,
+      "removeDuplicates": true,
+      "whitelist": [
+        "form-input",
+        "badge-blue",
+        "badge-red",
+        "badge-green",
+        "badge-indigo",
+        "badge-gray",
+        "form-checkbox"
+      ]
+    }
+  }
 }

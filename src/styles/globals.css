@@ -3,11 +3,21 @@
 @tailwind utilities;
 
 @layer components {
-    .btn-blue {
-      @apply bg-blue-500 text-white font-bold py-2 px-4 rounded;
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
     }
 
-    .btn-green {
-      @apply bg-green-500 text-white font-bold py-2 px-4 rounded;
+    .badge-lg {
+        @apply badge px-3 py-0.5 text-sm;
+    }
+    .badge-dot::before {
+        content: '';
+        @apply block -ml-0.5 mr-1.5 h-2 w-2 rounded-full;
+    }
+    .badge-rounded {
+        @apply rounded;
+    }
+    .badge-lg.badge-rounded {
+        @apply rounded-md;
     }
 }

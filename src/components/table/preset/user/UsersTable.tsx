@@ -20,7 +20,7 @@ export type UserTableData = NonNullable<
     NexusGenFieldTypes["User"]
     >;
 export type UserTableKey = string
-export type UserTableEdit = Pick<UserTableData, "role"> & Pick<UserTableData, "name">
+export type UserTableEdit = Partial<Pick<UserTableData, "role"> & Pick<UserTableData, "name">>
 
 export interface UserTableProps<D extends Record<string, any>> {
     data: D[];

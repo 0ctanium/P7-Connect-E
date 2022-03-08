@@ -20,7 +20,7 @@ export const RoleCell: CellComponent<UserTableData> = ({ row }) => {
 
     const handleChange = useCallback((role: Role): void => {
         return edit({
-            ...(editValues || {} as UserTableEdit),
+            ...editValues,
             role
         });
 

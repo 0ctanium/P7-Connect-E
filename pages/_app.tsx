@@ -2,10 +2,12 @@ import type { AppProps } from 'next/app'
 import {useApollo} from "hooks";
 import {ApolloProvider} from "@apollo/client";
 import { SessionProvider } from 'next-auth/react'
+import {ToastContainer} from "react-toastify";
 
 import 'styles/globals.css'
 import 'moment/locale/fr';
 import moment from "moment";
+import 'react-toastify/dist/ReactToastify.css';
 
 moment.locale('fr')
 
@@ -20,6 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           {/*  <link rel="icon" href="/favicon.ico" />*/}
           {/*</Head>*/}
           <Component {...pageProps} />
+            <ToastContainer />
         </ApolloProvider>
     </SessionProvider>
   )

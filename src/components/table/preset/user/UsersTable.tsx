@@ -28,6 +28,7 @@ export interface UserTableProps<D extends Record<string, any>> {
     loading: boolean;
     count: number;
     error?: ApolloError;
+    onUpdate(userId: string, values: UserTableEdit | null): Promise<void> | void
 }
 
 export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
@@ -36,6 +37,7 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                                                                        loading,
                                                                        count,
                                                                        error,
+                                                                       onUpdate
                                                                    }) => {
     const columns = React.useMemo<Column<UserTableData>[]>(
         () => [
@@ -97,12 +99,7 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                 error={error}
                 count={count}
                 resolveKey={(row) => row.id}
-                onEdit={(values) => {
-                    return new Promise((r) => {
-                        console.log('on edit', values)
-                        setTimeout(r, 2500)
-                    })
-                }}>
+                onEdit={onUpdate}>
                 <TableRow />
                 <TablePagination />
             </Table>

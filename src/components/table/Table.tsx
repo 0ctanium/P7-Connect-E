@@ -1,6 +1,7 @@
 import { TableInstance } from 'react-table';
 import React, {Dispatch, PropsWithChildren, SetStateAction, useCallback, useEffect, useState} from 'react';
 import {isPromise} from "../../lib/utils";
+import { toast } from "react-toastify";
 
 export interface TableProps<
     D extends Record<string, any> = Record<string, unknown>,
@@ -14,7 +15,7 @@ export interface TableProps<
     resolveKey(row: D): Key
 
     // Called when an edition is confirmed
-    onEdit(v: Edit | null): void | Promise<void>
+    onEdit(key: Key, value: Edit | null): any | Promise<any>
 }
 
 export interface TableContextProps<
@@ -70,15 +71,18 @@ export const Table = <
     }, [editing])
 
     const submit = useCallback(() => {
-        const res = onEdit(editValues) as Promise<void>
+        if(!editing) {
+            toast.error("Aucune entée n'est en cours d'édition")
+            return
+        }
+
+        const res = onEdit(editing, editValues) as Promise<void>
 
         if(isPromise(res)) {
             // Set loading state
-            if(editing) {
-                setRowLoading((state) => {
-                    return Array.from(new Set([...state, editing]))
-                })
-            }
+            setRowLoading((state) => {
+                return Array.from(new Set([...state, editing]))
+            })
 
             res.then(() => {
                 // Remove current row edition state

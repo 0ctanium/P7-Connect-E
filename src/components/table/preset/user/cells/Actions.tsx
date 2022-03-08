@@ -2,6 +2,7 @@ import React from 'react'
 import {UserTableData, UserTableEdit, UserTableKey} from "../UsersTable";
 import {CellComponent} from "types";
 import {useTableCell} from "hooks/useTable";
+import {ConfirmButton} from "../../../../ConfirmButton";
 
 export const Actions: CellComponent<UserTableData, { onDelete(): void }> = ({ row, onDelete }) => {
     const {
@@ -28,9 +29,14 @@ export const Actions: CellComponent<UserTableData, { onDelete(): void }> = ({ ro
                 <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={setCurrentEditing}>
                     Éditer
                 </button>
-                <button className="text-red-600 hover:text-red-900" onClick={onDelete}>
+                <ConfirmButton
+                    className="text-red-600 hover:text-red-900"
+                    dialogTitle="Êtes vous sûr de vouloir faire ça ?"
+                    dialogDesc="Cette action est irreversible. L'utilisateur pourra toujours recréer un utilisateur avec les mêmes comptes"
+                    confirmLabel="Supprimer l'utilisateur"
+                    onConfirm={onDelete}>
                     Supprimer
-                </button>
+                </ConfirmButton>
             </div>
         )
     }

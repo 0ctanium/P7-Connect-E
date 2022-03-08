@@ -75,6 +75,10 @@ export const Table = <
             toast.error("Aucune entée n'est en cours d'édition")
             return
         }
+        if(!editValues) {
+            toast.error("Aucune modification n'a été effectué")
+            return
+        }
 
         const res = onEdit(editing, editValues) as Promise<void>
 

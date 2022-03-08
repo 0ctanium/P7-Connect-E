@@ -1,6 +1,7 @@
-import type { NextPage } from 'next'
 import {gql, useQuery} from "@apollo/client";
 import {signIn, signOut, useSession} from "next-auth/react";
+import {NextPage} from "next";
+import {Role} from "constants/role";
 
 export const exampleQuery = gql`
   query example {
@@ -66,5 +67,7 @@ const Home: NextPage = () => {
     )
   }
 }
+
+Home.auth = {}
 
 export default Home

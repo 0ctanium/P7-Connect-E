@@ -4,7 +4,7 @@ export enum Role {
     ADMIN = 'ADMIN',
 }
 
-interface RoleConfig {
+export interface RoleConfig {
     weight: number;
     label: string;
     classes: {

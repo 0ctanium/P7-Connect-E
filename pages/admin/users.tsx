@@ -1,9 +1,10 @@
-import {AdminLayout} from "components/admin/Layout";
+import {AdminLayout} from "components/layout/Admin";
 import {NextPage} from "next";
 import {gql, useMutation, useQuery} from "@apollo/client";
 import {useCallback, useEffect, useRef} from "react";
 import {toast} from "react-toastify";
-import {UserTable, UserTableEdit} from "../../src/components/table/preset/user/UsersTable";
+import {UserTable, UserTableEdit} from "components/table/preset/user/UsersTable";
+import {Role} from "constants/role";
 
 export const usersQuery = gql`
     query GetUsers($skip: Int = 0, $take: Int = 20) {
@@ -145,6 +146,10 @@ export const UserDashboard: NextPage = () => {
             </div>
         </AdminLayout>
     )
+}
+
+UserDashboard.auth = {
+    roles: [Role.ADMIN],
 }
 
 export default UserDashboard

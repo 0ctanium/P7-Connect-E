@@ -1,6 +1,8 @@
-import {AdminLayout} from "../../src/components/admin/Layout";
+import {AdminLayout} from "components/layout/Admin";
+import { Role } from "constants/role";
+import {NextPage} from "next";
 
-export default function Admin() {
+const Admin: NextPage = () => {
   return (
       <AdminLayout title="Accueil" current="home">
         <div className="py-4">
@@ -9,3 +11,9 @@ export default function Admin() {
       </AdminLayout>
   )
 }
+
+
+Admin.auth = {
+    roles: [Role.ADMIN, Role.MODERATOR],
+}
+export default Admin

@@ -1,8 +1,9 @@
 import React from 'react';
-import { InputBaseProps } from '/imports/types';
+import { InputBaseProps } from 'types';
 import TextareaAutosize from 'react-textarea-autosize';
 import clsx from 'clsx';
 
+// eslint-disable-next-line react/display-name
 export const InputBase = React.forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   InputBaseProps

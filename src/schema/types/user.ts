@@ -80,14 +80,13 @@ export const UserMutations = extendType({
     t.field('updateOneUser', {
       type: "User",
       args: {
-        where: 'UserWhereUniqueInput',
+        where: nonNull('UserWhereUniqueInput'),
         data: nonNull(UserUpdateInput)
       },
       resolve(root, { where, data }, ctx, info) {
         return ctx.prisma.user.update({
-          where,
-          // @ts-ignore => Role enum is wrongly interpreted by typescript
-          data
+          where: where as Prisma.UserWhereUniqueInput,
+          data: data as Prisma.UserUpdateInput
         })
       }
     })

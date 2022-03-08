@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { MicroRequest } from 'apollo-server-micro/dist/types'
 import { ServerResponse } from 'http'
 import {ContextFunction} from "apollo-server-core";
-import redis, {RedisClientType} from 'redis';
+import {RedisClientType, createClient} from 'redis';
 
 const prisma = new PrismaClient()
 
@@ -13,8 +13,12 @@ export interface Context {
   req: MicroRequest
 }
 
-export const createContext: ContextFunction<Context> = ({ res, req }) => {
-  const cache = redis.createClient();
+export const createContext: ContextFunction<Context> = async ({ res, req }) => {
+  const cache = createClient();
+
+  cache.on('error', (err) => console.log('Redis Client Error', err));
+
+  await cache.connect();
 
   return { prisma, cache, res, req }
 }

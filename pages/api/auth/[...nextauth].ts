@@ -10,6 +10,7 @@ import SlackProvider from "next-auth/providers/slack"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
 import prisma from "lib/prisma"
+import {createClient} from "redis";
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -28,10 +29,29 @@ export default NextAuth({
         token.role = user.role
       }
 
+      if(user?.id) {
+        // set session alive status
+        const cache = createClient();
+        cache.on('error', (err) => console.log('Redis Client Error', err));
+        cache.connect().then(() => {
+          cache.set(`session:${user.id}`, new Date().getTime())
+        });
+      }
+
       return token
     },
     session({ session, user}) {
       session.user.role = user.role
+
+      if(user?.id) {
+        // set session alive status
+        const cache = createClient();
+        cache.on('error', (err) => console.log('Redis Client Error', err));
+        cache.connect().then(() => {
+          cache.set(`session:${user.id}`, new Date().getTime())
+        });
+      }
+
       return session
     }
   },

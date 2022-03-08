@@ -13,6 +13,7 @@ export const AccountProvider = enumType({
   members: Object.values(Providers)
 })
 
+const aliveTimout = 5 * 60 * 1000 // 5 minutes
 export const User = objectType({
   name: 'User',
   definition(t) {
@@ -25,6 +26,15 @@ export const User = objectType({
     t.model.accounts({
       filtering: false,
       pagination: false
+    })
+    t.boolean('online', {
+      async resolve(root, args, ctx) {
+        const now = new Date()
+
+        const alive = await ctx.cache.get(`session:${root.id}`)
+        // if the last time user alive was set is prior than the aliveTimeout, display the user as offline
+        return !!(alive && now.getTime() - aliveTimout < parseInt(alive))
+      }
     })
     t.model.createdAt()
     t.model.updatedAt()

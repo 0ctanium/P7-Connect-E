@@ -3,18 +3,38 @@ import {UserTableData, UserTableEdit, UserTableKey} from "../UsersTable";
 import {CellComponent} from "types";
 import {useTableCell} from "hooks/useTable";
 import {ConfirmButton} from "../../../../ConfirmButton";
+import {isPromise} from "lib/utils";
 
-export const Actions: CellComponent<UserTableData, { onDelete(userId: string): void }> = ({ row, onDelete }) => {
+export const Actions: CellComponent<UserTableData, { onDelete(userId: string): Promise<any> | any }> = ({ row, onDelete }) => {
     const {
         isEditing,
         setCurrentEditing,
         cancelEditing,
         submit,
+        setRowLoading,
     } = useTableCell<UserTableData, UserTableKey, UserTableEdit>(row)
 
     const handleDelete = useCallback(() => {
-        onDelete(row.id)
-    }, [onDelete, row.id])
+        function done() {
+            // done...
+        }
+
+        const res = onDelete(row.id) as Promise<void>
+
+        if(isPromise(res)) {
+            // Set loading state
+            setRowLoading((state) => {
+                return Array.from(new Set([...state, row.id]))
+            })
+
+            res.then(done).finally(() => {
+                // Remove loading state
+                setRowLoading((state) => {
+                    return state.filter(k => k != row.id)
+                })
+            })
+        } else { done() }
+    }, [onDelete, row.id, setRowLoading])
 
     if(isEditing) {
         return (

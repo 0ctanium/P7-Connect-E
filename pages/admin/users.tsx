@@ -25,7 +25,7 @@ export const usersQuery = gql`
 
 export const updateUserMutation = gql`
     mutation UpdateUser($id: String!, $data: UserUpdateInput!) {
-        updateOneUser(id: $id, data: $data) {
+        updateOneUser(where: { id: $id }, data: $data) {
             id
             email
             name
@@ -33,6 +33,14 @@ export const updateUserMutation = gql`
             role
             createdAt
             updatedAt
+        }
+    }
+`;
+
+export const deleteUserMutation = gql`
+    mutation DeleteUser($id: String!) {
+        deleteOneUser(where: { id: $id }) {
+            id
         }
     }
 `;
@@ -67,6 +75,21 @@ export const UserDashboard: NextPage = () => {
             }
         }
     });
+
+     const [deleteUser] = useMutation(deleteUserMutation, {
+        onError(err) {
+            // check if user off-line
+            if(err.networkError && typeof window !== 'undefined' && !window.navigator.onLine) {
+                toast.error("Votre navigateur est hors ligne")
+            } else {
+                toast.error("Une erreur est arrivée")
+            }
+        },
+         onCompleted() {
+            refetch()
+         }
+    });
+
     const fetchIdRef = useRef(0);
 
     const fetchData = useCallback(
@@ -92,6 +115,14 @@ export const UserDashboard: NextPage = () => {
         })
     }, [updateUser])
 
+    const handleDeleteUser = useCallback(async (userId: string): Promise<any> => {
+        return deleteUser({
+            variables: {
+                id: userId,
+            },
+        })
+    }, [deleteUser])
+
     useEffect(() => {
         if (error) {
             toast.error('Erreur interne');
@@ -109,6 +140,7 @@ export const UserDashboard: NextPage = () => {
                     error={error}
                     count={data?.userCount || 0}
                     onUpdate={handleUpdateUser}
+                    onDelete={handleDeleteUser}
                 />
             </div>
         </AdminLayout>

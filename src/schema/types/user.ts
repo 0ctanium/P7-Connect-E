@@ -80,18 +80,17 @@ export const UserMutations = extendType({
     t.field('updateOneUser', {
       type: "User",
       args: {
-        id: nonNull('String'),
+        where: 'UserWhereUniqueInput',
         data: nonNull(UserUpdateInput)
       },
-      resolve(root, { id, data: { role, name } }, ctx, info) {
+      resolve(root, { where, data }, ctx, info) {
         return ctx.prisma.user.update({
-          where: { id: id },
-          data: {
-            role,
-            name
-          }
+          where,
+          // @ts-ignore => Role enum is wrongly interpreted by typescript
+          data
         })
       }
     })
+    t.crud.deleteOneUser()
   },
 })

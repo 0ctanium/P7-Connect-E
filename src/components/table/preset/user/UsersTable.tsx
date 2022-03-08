@@ -28,7 +28,8 @@ export interface UserTableProps<D extends Record<string, any>> {
     loading: boolean;
     count: number;
     error?: ApolloError;
-    onUpdate(userId: string, values: UserTableEdit | null): Promise<void> | void
+    onUpdate(userId: string, values: UserTableEdit | null): Promise<any> | any
+    onDelete(userId: string): Promise<any> | any
 }
 
 export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
@@ -37,7 +38,8 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                                                                        loading,
                                                                        count,
                                                                        error,
-                                                                       onUpdate
+                                                                       onUpdate,
+                                                                       onDelete
                                                                    }) => {
     const columns = React.useMemo<Column<UserTableData>[]>(
         () => [
@@ -57,7 +59,7 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
             {
                 id: 'actions',
                 Header: () => <span className="sr-only">Edit</span>,
-                accessor: (row) => <Actions row={row} onDelete={() => console.log("deleting")} />,
+                accessor: (row) => <Actions row={row} onDelete={onDelete} />,
                 headerClasses: () => 'relative px-6 py-3',
                 cellClasses: ({ classes }) => classes + ' text-right text-sm font-medium',
             },

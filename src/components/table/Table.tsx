@@ -80,6 +80,11 @@ export const Table = <
             return
         }
 
+        function done() {
+                // Remove current row edition state
+                setEditing(null)
+        }
+
         const res = onEdit(editing, editValues) as Promise<void>
 
         if(isPromise(res)) {
@@ -88,19 +93,13 @@ export const Table = <
                 return Array.from(new Set([...state, editing]))
             })
 
-            res.then(() => {
-                // Remove current row edition state
-                setEditing(null)
-            }).finally(() => {
+            res.then(done).finally(() => {
                 // Remove loading state
                 setRowLoading((state) => {
                     return state.filter(k => k != editing)
                 })
             })
-        } else {
-            // Remove current row edition state
-            setEditing(null)
-        }
+        } else { done() }
     }, [editValues, editing, onEdit])
 
     return (

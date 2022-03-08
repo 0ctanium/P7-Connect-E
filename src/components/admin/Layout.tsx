@@ -6,6 +6,7 @@ import {
   HiMenu as MenuIcon,
   HiUsers as UsersIcon,
   HiX as XIcon,
+  HiViewGrid as ViewGridIcon
 } from 'react-icons/hi'
 import clsx from "clsx";
 import Link from 'next/link';
@@ -13,8 +14,9 @@ import {useSession} from "next-auth/react";
 
 const navigation = [
   { id: 'home', name: 'Accueil', href: '/admin', icon: HomeIcon },
+  { id: 'groups', name: 'Groupes', href: '/admin/groups', icon: ViewGridIcon },
   { id: 'users', name: 'Utilisateurs', href: '/admin/users', icon: UsersIcon },
-  { id: 'moderation', name: 'Signalements', href: '/admin/moderation', icon: FlagIcon },
+  // { id: 'moderation', name: 'Signalements', href: '/admin/moderation', icon: FlagIcon },
   // { name: 'Reports', href: '#', icon: ChartBarIcon, current: false },
 ]
 

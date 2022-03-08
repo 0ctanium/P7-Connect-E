@@ -41,7 +41,8 @@
     "react-popper": "^2.2.5",
     "react-table": "^7.7.0",
     "react-textarea-autosize": "^8.3.3",
-    "react-toastify": "^8.2.0"
+    "react-toastify": "^8.2.0",
+    "redis": "^4.0.4"
   },
   "devDependencies": {
     "@types/graphql": "^14.5.0",
@@ -50,6 +51,7 @@
     "@types/react": "17.0.39",
     "@types/react-table": "^7.7.9",
     "@types/react-textarea-autosize": "^4.3.6",
+    "@types/redis": "^4.0.11",
     "autoprefixer": "^10.4.2",
     "eslint": "8.10.0",
     "eslint-config-next": "12.1.0",

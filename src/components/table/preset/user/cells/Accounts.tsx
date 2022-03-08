@@ -4,30 +4,7 @@ import {CellComponent} from "../../../../../types";
 import {AccountProvider} from "../../../../../constants/provider";
 import {Tooltip} from "../../../../Tooltip";
 import moment from "moment";
-
-const getTooltipIcon = (provider: AccountProvider): JSX.Element => {
-    switch (provider) {
-        case AccountProvider.Apple:
-            return <p>Apple</p>;
-
-        case AccountProvider.Google:
-            // eslint-disable-next-line @next/next/no-img-element
-            return <div className="rounded-full bg-white w-6 h-6 p-1"><img src="/icons/social/google.svg" alt="Google" /></div>
-        case AccountProvider.Slack:
-            // eslint-disable-next-line @next/next/no-img-element
-            return <div className="rounded-full bg-white w-6 h-6 p-1"><img src="/icons/social/slack.svg" alt="Slack" /></div>
-
-        case AccountProvider.Facebook:
-            // eslint-disable-next-line @next/next/no-img-element
-            return <img className="w-6 h-6" src="/icons/social/facebook.svg" alt="Facebook" />
-        case AccountProvider.Twitter:
-            // eslint-disable-next-line @next/next/no-img-element
-            return <img className="w-6 h-6" src="/icons/social/twitter.svg" alt="Twitter" />
-        case AccountProvider.LinkedIn:
-            // eslint-disable-next-line @next/next/no-img-element
-            return <img className="w-6 h-6" src="/icons/social/linkedin.svg" alt="LinkedIn" />
-    }
-}
+import {SocialIcon} from "../../../../../icons/Social";
 
 export const AccountCell: CellComponent<UserTableData> = ({ row }) => (
     <div className="flex items-center">
@@ -40,7 +17,7 @@ export const AccountCell: CellComponent<UserTableData> = ({ row }) => (
                             Depuis {moment(account.createdAt).calendar().toLocaleLowerCase()}
                         </p>
                     }>
-                    {getTooltipIcon(account.provider as AccountProvider)}
+                    <SocialIcon className="w-6 h-6" provider={account.provider as AccountProvider} circled />
                 </Tooltip>
             ))}
         </div>

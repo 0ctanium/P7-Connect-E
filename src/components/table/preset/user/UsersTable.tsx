@@ -64,7 +64,7 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                 cellClasses: ({ classes }) => classes + ' text-right text-sm font-medium',
             },
         ],
-        []
+        [onDelete]
     );
 
     const [controlledPageCount, setControlledPageCount] = useState(0);

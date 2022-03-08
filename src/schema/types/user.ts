@@ -1,4 +1,4 @@
-import {objectType, extendType, enumType, nonNull} from 'nexus'
+import {objectType, extendType, enumType, nonNull, inputObjectType} from 'nexus'
 import { Role } from "constants/role";
 import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
@@ -60,6 +60,36 @@ export const UserQueries = extendType({
       resolve(root, args, ctx, info) {
         return ctx.prisma.user.count({
           where: args.where as Prisma.UserWhereInput
+        })
+      }
+    })
+  },
+})
+
+export const UserUpdateInput = inputObjectType({
+  name: 'UserUpdateInput',
+  definition(t) {
+    t.field('role', { type: RoleEnum })
+    t.string('name')
+  }
+})
+
+export const UserMutations = extendType({
+  type: 'Mutation',
+  definition: (t) => {
+    t.field('updateOneUser', {
+      type: "User",
+      args: {
+        id: nonNull('String'),
+        data: nonNull(UserUpdateInput)
+      },
+      resolve(root, { id, data: { role, name } }, ctx, info) {
+        return ctx.prisma.user.update({
+          where: { id: id },
+          data: {
+            role,
+            name
+          }
         })
       }
     })

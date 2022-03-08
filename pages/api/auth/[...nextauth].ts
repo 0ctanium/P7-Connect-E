@@ -23,6 +23,10 @@ export default NextAuth({
     colorScheme: "light"
   },
 
+  pages: {
+    signIn: '/login'
+  },
+
   callbacks: {
     jwt({ token, user}) {
       if (user?.role) {

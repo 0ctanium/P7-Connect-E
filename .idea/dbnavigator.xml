@@ -61,12 +61,15 @@
     <last-used-operator value="EQUAL" />
     <filters />
   </component>
+  <component name="DBNavigator.Project.ParserDiagnosticsManager">
+    <diagnostics-history />
+  </component>
   <component name="DBNavigator.Project.ScriptExecutionManager" clear-outputs="true">
     <recently-used-interfaces />
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="7d6cfc4c-0289-4c25-881a-3f2efefa7257" active="true">
+      <connection id="7d6cfc4c-0289-4c25-881a-3f2efefa7257" active="true" signed="true">
         <database>
           <name value="Connection" />
           <description value="" />

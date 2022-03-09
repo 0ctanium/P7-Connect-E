@@ -101,5 +101,6 @@ export const UserMutations = extendType({
       }
     })
     t.crud.deleteOneUser()
+    t.crud.deleteManyUser()
   },
 })

@@ -111,8 +111,8 @@ declare module 'react-table' {
   }
 
   interface Classes {
-    cellClasses?(props: { classes?: string }): string
-    headerClasses?(props: { classes?: string }): string
+    cellClasses?: string | ((props: { classes?: string }) => string);
+    headerClasses?: string | ((props: { classes?: string }) => string);
   }
 
   export interface ColumnInstance<

@@ -6,6 +6,10 @@ import {toast} from "react-toastify";
 import {UserTable, UserTableEdit} from "components/table/preset/user/UsersTable";
 import {Role} from "constants/role";
 
+export async function getStaticProps() {
+    return { props: { htmlClass: 'bg-gray-100', bodyClass: '' } };
+}
+
 export const usersQuery = gql`
     query GetUsers($skip: Int = 0, $take: Int = 20) {
         users(skip: $skip, take: $take) {
@@ -40,7 +44,7 @@ export const updateUserMutation = gql`
 
 export const deleteUserMutation = gql`
     mutation DeleteUser($id: String!) {
-        deleteOneUser(where: { id: $id }) {
+        deleteManyUser(where: { id: $id }) {
             id
         }
     }
@@ -77,7 +81,7 @@ export const UserDashboard: NextPage = () => {
         }
     });
 
-     const [deleteUser] = useMutation(deleteUserMutation, {
+    const [deleteUser] = useMutation(deleteUserMutation, {
         onError(err) {
             // check if user off-line
             if(err.networkError && typeof window !== 'undefined' && !window.navigator.onLine) {
@@ -86,9 +90,9 @@ export const UserDashboard: NextPage = () => {
                 toast.error("Une erreur est arrivée")
             }
         },
-         onCompleted() {
+        onCompleted() {
             refetch()
-         }
+        }
     });
 
     const fetchIdRef = useRef(0);
@@ -116,12 +120,14 @@ export const UserDashboard: NextPage = () => {
         })
     }, [updateUser])
 
-    const handleDeleteUser = useCallback(async (userId: string): Promise<any> => {
-        return deleteUser({
-            variables: {
-                id: userId,
-            },
-        })
+    const handleDeleteUsers = useCallback(async (userIds: string[]): Promise<any> => {
+        console.log("deleting users: ", userIds)
+        return
+        // return deleteUser({
+        //     variables: {
+        //         id: userId,
+        //     },
+        // })
     }, [deleteUser])
 
     useEffect(() => {
@@ -134,15 +140,17 @@ export const UserDashboard: NextPage = () => {
     return (
         <AdminLayout title="Utilisateurs" current="users">
             <div className="py-4">
-                <UserTable
-                    data={data?.users || []}
-                    fetchData={fetchData}
-                    loading={loading}
-                    error={error}
-                    count={data?.userCount || 0}
-                    onUpdate={handleUpdateUser}
-                    onDelete={handleDeleteUser}
-                />
+                <div className="md:overflow-hidden md:rounded-lg shadow -mx-4 sm:-mx-6 md:mx-0">
+                    <UserTable
+                        data={data?.users || []}
+                        fetchData={fetchData}
+                        loading={loading}
+                        error={error}
+                        count={data?.userCount || 0}
+                        onUpdate={handleUpdateUser}
+                        onDelete={handleDeleteUsers}
+                    />
+                </div>
             </div>
         </AdminLayout>
     )

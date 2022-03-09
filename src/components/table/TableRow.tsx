@@ -55,62 +55,64 @@ export const TableRow: FC = () => {
     }, [data.length, error, loading])
 
     return (
-        <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-            {headerGroups.map((headerGroup, i) => (
-                <tr {...headerGroup.getHeaderGroupProps()} key={i}>
-                    {headerGroup.headers.map((column, j) => (
-                        <th
-                            {...column.getHeaderProps([
-                                {
-                                    className: column.headerClasses
-                                        ? column.headerClasses({
-                                            classes:
-                                                'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                                        })
-                                        : 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                                },
-                            ])} key={j}>
-                            {column.render('Header')}
-                        </th>
-                    ))}
-                </tr>
-            ))}
-            </thead>
-            <tbody {...getTableBodyProps([
-                {
-                    className: 'bg-white divide-y divide-gray-200',
-                },
-            ])}>
-            {(rows || page).map((row: Row, i) => {
-                prepareRow(row);
-                return (
-                    <tr {...row.getRowProps()} key={i}>
-                        {(rowLoading.includes(resolveKey(row.original))) ? (
-                            <td colSpan={10000} className="py-4 px-6 whitespace-nowrap">
+        <div className="min-w-full overflow-x-auto">
+            <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                {headerGroups.map((headerGroup, i) => (
+                    <tr {...headerGroup.getHeaderGroupProps()} key={i}>
+                        {headerGroup.headers.map((column, j) => (
+                            <th
+                                {...column.getHeaderProps([
+                                    {
+                                        className: column.headerClasses
+                                            ? (typeof column.headerClasses === "string" ? column.headerClasses : column.headerClasses({
+                                                classes:
+                                                    'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+                                            }))
+                                            : 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+                                    },
+                                ])} key={j}>
+                                {column.render('Header')}
+                            </th>
+                        ))}
+                    </tr>
+                ))}
+                </thead>
+                <tbody {...getTableBodyProps([
+                    {
+                        className: 'bg-white divide-y divide-gray-200',
+                    },
+                ])}>
+                {(rows || page).map((row: Row, i) => {
+                    prepareRow(row);
+                    return (
+                        <tr {...row.getRowProps()} key={i}>
+                            {(rowLoading.includes(resolveKey(row.original))) ? (
+                                <td colSpan={10000} className="py-4 px-6 whitespace-nowrap">
                                     <Spinner className="w-6 h-6 mx-auto text-gray-800 animate-spin" />
                                 </td>
-                        ) : row.cells.map((cell, j) => {
-                            return (
-                                <td
-                                    {...cell.getCellProps([
-                                        {
-                                            className: cell.column.cellClasses
-                                                ? cell.column.cellClasses({
-                                                    classes: 'px-6 py-4 whitespace-nowrap',
-                                                })
-                                                : 'px-6 py-4 whitespace-nowrap',
-                                        },
-                                    ])} key={j}>
-                                    {cell.render('Cell')}
-                                </td>
-                            );
-                        })}
-                    </tr>
-                );
-            })}
-            {state && <tr key="state">{state}</tr>}
-            </tbody>
-        </table>
+                            ) : row.cells.map((cell, j) => {
+                                return (
+                                    <td
+                                        {...cell.getCellProps([
+                                            {
+                                                className: cell.column.cellClasses
+                                                    ? (typeof cell.column.cellClasses === "string" ? cell.column.cellClasses : cell.column.cellClasses({
+                                                        classes: 'px-6 py-4 whitespace-nowrap',
+                                                    }))
+                                                    : 'px-6 py-4 whitespace-nowrap',
+                                            },
+                                        ])} key={j}>
+                                        {cell.render('Cell')}
+                                    </td>
+                                );
+                            })}
+                        </tr>
+                    );
+                })}
+                {state && <tr key="state">{state}</tr>}
+                </tbody>
+            </table>
+        </div>
     );
 }

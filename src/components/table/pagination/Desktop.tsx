@@ -123,7 +123,7 @@ export const DesktopTablePagination: FC = () => {
                 )}
             </nav>
             <select
-                className="ml-6 focus:ring-0 btn-select btn btn-white"
+                className="ml-6 select"
                 value={pageSize}
                 onChange={(e) => {
                     setPageSize(Number(e.target.value));

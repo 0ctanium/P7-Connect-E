@@ -15,6 +15,7 @@ import {AccountCell, Actions, NameCell, RoleCell} from "./cells";
 import {useIndeterminateCheckbox} from "../../Checkbox";
 import {TableRow} from "../../TableRow";
 import {TablePagination} from "../../pagination";
+import {DeleteAction} from "./actions/Delete";
 
 export type UserTableData = NonNullable<
     NexusGenFieldTypes["User"]
@@ -29,7 +30,7 @@ export interface UserTableProps<D extends Record<string, any>> {
     count: number;
     error?: ApolloError;
     onUpdate(userId: string, values: UserTableEdit | null): Promise<any> | any
-    onDelete(userId: string): Promise<any> | any
+    onDelete(userIds: string[]): Promise<any> | any
 }
 
 export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
@@ -59,12 +60,12 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
             {
                 id: 'actions',
                 Header: () => <span className="sr-only">Edit</span>,
-                accessor: (row) => <Actions row={row} onDelete={onDelete} />,
-                headerClasses: () => 'relative px-6 py-3',
+                accessor: (row) => <Actions row={row} />,
+                headerClasses: 'relative px-6 py-3',
                 cellClasses: ({ classes }) => classes + ' text-right text-sm font-medium',
             },
         ],
-        [onDelete]
+        []
     );
 
     const [controlledPageCount, setControlledPageCount] = useState(0);
@@ -75,10 +76,15 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
             initialState: { pageIndex: 0, pageSize: 5 },
             manualPagination: true,
             pageCount: controlledPageCount,
+            getRowId: (row) => row.id
         },
         usePagination,
         useRowSelect,
-        useIndeterminateCheckbox,
+        useIndeterminateCheckbox({
+            actions: [
+                <DeleteAction key="delete" onDelete={onDelete} />
+            ]
+        }),
     );
 
     const {
@@ -93,20 +99,16 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
         fetchData({ pageIndex, pageSize });
     }, [fetchData, pageIndex, pageSize]);
 
-    return (
-        <div className="overflow-hidden sm:rounded-lg shadow">
-            <Table<UserTableData, UserTableKey, UserTableEdit>
-                instance={tableInstance}
-                loading={loading}
-                error={error}
-                count={count}
-                resolveKey={(row) => row.id}
-                onEdit={onUpdate}>
-                <TableRow />
-                <TablePagination />
-            </Table>
-        </div>
-    );
+    return <Table<UserTableData, UserTableKey, UserTableEdit>
+        instance={tableInstance}
+        loading={loading}
+        error={error}
+        count={count}
+        resolveKey={(row) => row.id}
+        onEdit={onUpdate}>
+        <TableRow />
+        <TablePagination />
+    </Table>
 };
 
 

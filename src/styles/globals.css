@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-    html, body #__next {
+    html, body, #__next {
         @apply h-full
     }
 }
@@ -83,8 +83,9 @@
         @apply p-3;
     }
 
-    .btn-select {
-        @apply appearance-none form-select;
+
+    .select {
+        @apply ml-6 form-select pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md;
     }
 
 

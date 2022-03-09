@@ -1,12 +1,12 @@
 import { TableInstance } from 'react-table';
-import React, {Dispatch, PropsWithChildren, SetStateAction, useCallback, useEffect, useState} from 'react';
+import React, {Dispatch, PropsWithChildren, SetStateAction, useCallback, useEffect, useMemo, useState} from 'react';
 import {isPromise} from "../../lib/utils";
 import { toast } from "react-toastify";
 
 export interface TableProps<
     D extends Record<string, any> = Record<string, unknown>,
-    Key = any,
-    Edit = D
+    Key extends string = any,
+    Edit extends Record<string, any> = D
     > {
     instance: TableInstance<D>;
     loading: boolean;
@@ -31,6 +31,9 @@ export interface TableContextProps<
 
     rowLoading: Key[]
     setRowLoading: Dispatch<SetStateAction<Key[]>>
+    dispatchLoadingAction(action: Promise<any> | any, rows: Key[]): Promise<void>
+
+    selectedRows: Key[]
 
     // Edited row
     editing: Key | null
@@ -48,7 +51,7 @@ export const TableContext = React.createContext<any>({});
 
 export const Table = <
     D extends Record<string, any> = Record<string, unknown>,
-    Key = any,
+    Key extends string = any,
     Edit = D
     >({
                                children,
@@ -65,10 +68,35 @@ export const Table = <
     const [editValues, edit] = useState<Edit | null>(null)
     const [rowLoading, setRowLoading] = useState<Key[]>([])
 
-    // Clear editValues when edited row change
-    useEffect(() => {
-        edit(null)
-    }, [editing])
+    const selectedRows = useMemo(() => {
+        return Object.entries(instance.state.selectedRowIds).reduce<Key[]>((acc, [id, selected]) => {
+            if(selected) {
+                acc.push(id as Key)
+            }
+
+            return acc
+        }, [])
+    }, [instance.state.selectedRowIds])
+
+    const dispatchLoadingAction = useCallback(async(action: Promise<any> | any, rows: Key[]) => {
+        return new Promise((resolve, reject) => {
+            const res = action(rows) as Promise<void>
+
+            if(isPromise(res)) {
+                // Set loading state
+                setRowLoading((state) => {
+                    return Array.from(new Set([...state, ...rows]))
+                })
+
+                res.then(resolve).catch(reject).finally(() => {
+                    // Remove loading state
+                    setRowLoading((state) => {
+                        return state.filter(k => !rows.includes(k))
+                    })
+                })
+            } else { resolve(res) }
+        })
+    }, [])
 
     const submit = useCallback(() => {
         if(!editing) {
@@ -80,27 +108,18 @@ export const Table = <
             return
         }
 
-        function done() {
-                // Remove current row edition state
-                setEditing(null)
-        }
+        dispatchLoadingAction(() => onEdit(editing, editValues), [editing]).then(() => {
+            setEditing(null)
+        }).catch((err) => {
+            console.error(err)
+            toast.error("Erreur interne")
+        })
+    }, [dispatchLoadingAction, editValues, editing, onEdit])
 
-        const res = onEdit(editing, editValues) as Promise<void>
-
-        if(isPromise(res)) {
-            // Set loading state
-            setRowLoading((state) => {
-                return Array.from(new Set([...state, editing]))
-            })
-
-            res.then(done).finally(() => {
-                // Remove loading state
-                setRowLoading((state) => {
-                    return state.filter(k => k != editing)
-                })
-            })
-        } else { done() }
-    }, [editValues, editing, onEdit])
+    // Clear editValues when edited row change
+    useEffect(() => {
+        edit(null)
+    }, [editing])
 
     return (
         <TableContext.Provider value={{
@@ -114,6 +133,9 @@ export const Table = <
 
             rowLoading,
             setRowLoading,
+            dispatchLoadingAction,
+
+            selectedRows,
 
             editing,
             setEditing,

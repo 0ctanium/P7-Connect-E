@@ -22,7 +22,7 @@ const Home: NextPage = () => {
     }
 
     return (
-        <Layout current='feed' sideBar={<p>hey</p>} >
+        <Layout current='feed'>
             <div className="flex justify-center mt-8 text-center">
                 <div className="flex-auto">
                     {session?.user?.image && (

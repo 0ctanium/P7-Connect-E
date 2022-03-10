@@ -138,7 +138,7 @@ export const UserDashboard: NextPage = () => {
     }, [error]);
 
     return (
-        <AdminLayout title="Utilisateurs" current="users">
+        <AdminLayout title="Utilisateurs" current="groups">
             <div className="py-4">
                 <div className="md:overflow-hidden md:rounded-lg shadow -mx-4 sm:-mx-6 md:mx-0">
                     <UserTable

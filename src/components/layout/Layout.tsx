@@ -1,4 +1,4 @@
-import {FC, Fragment, RefObject, useEffect, useMemo, useRef, useState} from 'react'
+import {FC, Fragment, RefObject, useEffect, useRef, useState} from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   HiX as XIcon,
@@ -29,9 +29,15 @@ const navigation = [
 const mobileNavigation = [
   { id: 'feed', name: "Fil d'actualités", href: '/', icon: HomeIconOutline, currentIcon: HomeIcon },
   { id: 'groups', name: 'Groupes', href: '/groups', icon: UserGroupIconOutline, currentIcon: UserGroupIcon },
-  { id: 'chat', name: 'Discussions', href: '/chats', icon: ChatIconOutline, currentIcon: ChatIcon },
+  { id: 'chats', name: 'Discussions', href: '/chats', icon: ChatIconOutline, currentIcon: ChatIcon },
   { id: 'notifications', name: 'Notifications', href: '/notifications', icon: BellIconOutline, currentIcon: BellIcon },
 ]
+
+export const SideBar: FC = () => {
+  return (
+      <p>Hey</p>
+  )
+}
 
 export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ children, current, sideBar }) => {
   const content = useRef<HTMLElement>(null)
@@ -198,13 +204,11 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
               </section>
 
               {/* Secondary column (hidden on smaller screens) */}
-              {sideBar && (
-                  <aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
-                    <div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto">
-                      {sideBar}
-                    </div>
-                  </aside>
-              )}
+              <aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
+                <div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto">
+                  {sideBar || <SideBar />}
+                </div>
+              </aside>
             </main>
 
             {/* Mobile bottom navigation */}
@@ -218,7 +222,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
                           className="h-12 w-12 inline-flex items-center justify-center bg-indigo-600 rounded-md text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                       >
 
-                          {item.id === current ? <item.currentIcon className="h-6 w-6" aria-hidden="true" /> : <item.icon className="h-6 w-6" aria-hidden="true" />}
+                        {item.id === current ? <item.currentIcon className="h-6 w-6" aria-hidden="true" /> : <item.icon className="h-6 w-6" aria-hidden="true" />}
                         <span className="sr-only">{item.name}</span>
                       </a>
                   ))}
@@ -245,7 +249,7 @@ const isElementXPercentInViewport = function(el: HTMLElement, percentVisible: nu
 const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({ contentRef }) => {
   const { data } = useSession()
 
-  const barRef = useRef<HTMLElement | null>(null)
+  const barRef = useRef<HTMLDivElement>(null)
   const isScrollingUp = useScrollingUp(contentRef)
   const [scrollPoint, setScrollPoint] = useState(0)
 

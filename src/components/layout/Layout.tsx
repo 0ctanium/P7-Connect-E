@@ -1,13 +1,17 @@
 import {FC, Fragment, RefObject, useEffect, useMemo, useRef, useState} from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
-  HiBookmarkAlt as BookmarkAltIcon,
-  HiFire as FireIcon,
+  HiX as XIcon,
+
   HiHome as HomeIcon,
-  HiInbox as InboxIcon,
-  HiMenu as MenuIcon,
-  HiUser as UserIcon,
-  HiX as XIcon
+  HiChat as ChatIcon,
+  HiUserGroup as UserGroupIcon,
+  HiBell as BellIcon,
+
+  HiOutlineHome as HomeIconOutline,
+  HiOutlineChat as ChatIconOutline,
+  HiOutlineUserGroup as UserGroupIconOutline,
+  HiOutlineBell as BellIconOutline,
 } from 'react-icons/hi'
 import {useSession} from "next-auth/react";
 import Link from 'next/link';
@@ -16,14 +20,20 @@ import clsx from "clsx";
 
 
 const navigation = [
-  { name: 'Accueil', href: '#', icon: HomeIcon },
-  { name: 'Trending', href: '#', icon: FireIcon },
-  { name: 'Bookmarks', href: '#', icon: BookmarkAltIcon },
-  { name: 'Messages', href: '#', icon: InboxIcon },
-  { name: 'Profile', href: '#', icon: UserIcon },
+  { id: 'feed', name: "Fil d'actualités", href: '/', icon: HomeIconOutline, currentIcon: HomeIcon },
+  { id: 'notifications', name: 'Notifications', href: '/notifications', icon: BellIconOutline, currentIcon: BellIcon },
+  { id: 'chats', name: 'Discussions', href: '/chats', icon: ChatIconOutline, currentIcon: ChatIcon },
+
 ]
 
-export const Layout: FC<{ sideBar?: JSX.Element }> = ({ children, sideBar }) => {
+const mobileNavigation = [
+  { id: 'feed', name: "Fil d'actualités", href: '/', icon: HomeIconOutline, currentIcon: HomeIcon },
+  { id: 'groups', name: 'Groupes', href: '/groups', icon: UserGroupIconOutline, currentIcon: UserGroupIcon },
+  { id: 'chat', name: 'Discussions', href: '/chats', icon: ChatIconOutline, currentIcon: ChatIcon },
+  { id: 'notifications', name: 'Notifications', href: '/notifications', icon: BellIconOutline, currentIcon: BellIcon },
+]
+
+export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ children, current, sideBar }) => {
   const content = useRef<HTMLElement>(null)
   const { data } = useSession()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -132,7 +142,7 @@ export const Layout: FC<{ sideBar?: JSX.Element }> = ({ children, sideBar }) => 
             <div className="flex flex-col w-20">
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto bg-indigo-600">
                 <div className="flex-1">
-                  <div className="bg-indigo-700 py-4 flex items-center justify-center">
+                  <div className="py-4 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                         className="h-8 w-auto"
@@ -147,7 +157,7 @@ export const Layout: FC<{ sideBar?: JSX.Element }> = ({ children, sideBar }) => 
                             href={item.href}
                             className="flex items-center p-4 rounded-lg text-indigo-200 hover:bg-indigo-700"
                         >
-                          <item.icon className="h-6 w-6" aria-hidden="true" />
+                          {item.id === current ? <item.currentIcon className="h-6 w-6" aria-hidden="true" /> : <item.icon className="h-6 w-6" aria-hidden="true" />}
                           <span className="sr-only">{item.name}</span>
                         </a>
                     ))}
@@ -199,25 +209,20 @@ export const Layout: FC<{ sideBar?: JSX.Element }> = ({ children, sideBar }) => 
 
             {/* Mobile bottom navigation */}
             <div className="lg:hidden">
-              <div className="bg-indigo-600 py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8">
-                <div>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                      className="h-8 w-auto"
-                      src="/icons/icon.svg"
-                      alt="Workflow"
-                  />
-                </div>
-                <div>
-                  <button
-                      type="button"
-                      className="-mr-3 h-12 w-12 inline-flex items-center justify-center bg-indigo-600 rounded-md text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                      onClick={() => setMobileMenuOpen(true)}
-                  >
-                    <span className="sr-only">Open sidebar</span>
-                    <MenuIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </div>
+              <div className="bg-indigo-600 py-2 px-4 sm:px-6 lg:px-8">
+                <nav className="mx-auto md:max-w-md sm:max-w-sm max-w-xs flex flex-row items-center justify-between">
+                  {mobileNavigation.map((item) => (
+                      <a
+                          key={item.name}
+                          href={item.href}
+                          className="h-12 w-12 inline-flex items-center justify-center bg-indigo-600 rounded-md text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                      >
+
+                          {item.id === current ? <item.currentIcon className="h-6 w-6" aria-hidden="true" /> : <item.icon className="h-6 w-6" aria-hidden="true" />}
+                        <span className="sr-only">{item.name}</span>
+                      </a>
+                  ))}
+                </nav>
               </div>
             </div>
           </div>
@@ -226,28 +231,10 @@ export const Layout: FC<{ sideBar?: JSX.Element }> = ({ children, sideBar }) => 
   )
 }
 
-// going down full => top: false, bottom: false
-// going up full => top: false, bottom: false
-
-// going down partially => top: ?, bottom: ?
-// going up partially => top: ?, bottom: ?
-
-function isInViewport(element: HTMLElement) {
-  return element.offsetTop < window.innerHeight &&
-      element.offsetTop > -element.offsetHeight
-      && element.offsetLeft > -element.offsetWidth
-      && element.offsetLeft < window.innerWidth;
-}
-
-const isElementXPercentInViewport = function(el, percentVisible) {
+const isElementXPercentInViewport = function(el: HTMLElement, percentVisible: number) {
   let
       rect = el.getBoundingClientRect(),
       windowHeight = (window.innerHeight || document.documentElement.clientHeight);
-
-  // console.log(
-  //     Math.floor(100 - (((rect.top >= 0 ? 0 : rect.top) / +-rect.height) * 100)),
-  //     Math.floor(100 - ((rect.bottom - windowHeight) / rect.height) * 100)
-  // )
 
   return !(
       Math.floor(100 - (((rect.top >= 0 ? 0 : rect.top) / +-rect.height) * 100)) < percentVisible ||
@@ -283,12 +270,6 @@ const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({ contentRef }
       }
     }
   }, [contentRef, isScrollingUp])
-
-
-
-  let render = useRef(0)
-  render.current++
-  console.log(`%crender (${render.current})`, "color:gray; font-weight: 900; font-size: 16px")
 
   return (
       <>

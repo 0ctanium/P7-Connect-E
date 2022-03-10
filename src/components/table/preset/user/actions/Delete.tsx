@@ -6,8 +6,6 @@ import {toast} from "react-toastify";
 export const DeleteAction: FC<{ onDelete(userIds: string[]): Promise<any> | any }> = ({ onDelete }) => {
     const { dispatchLoadingAction, selectedRows } = useReactTable()
 
-
-
     const handleDeletion = useCallback(() => {
         dispatchLoadingAction(() => onDelete(selectedRows), selectedRows).then(() => {
             toast.success("Les entrées ont étés supprimés avec succès")
@@ -17,7 +15,7 @@ export const DeleteAction: FC<{ onDelete(userIds: string[]): Promise<any> | any 
         })
     }, [dispatchLoadingAction, onDelete, selectedRows])
 
-    return <ConfirmButton
+    return selectedRows.length > 0 ? <ConfirmButton
         key={'delete'}
         className="btn-xs btn-white"
         dialogTitle="Êtes vous sûr de vouloir faire ça ?"
@@ -25,5 +23,5 @@ export const DeleteAction: FC<{ onDelete(userIds: string[]): Promise<any> | any 
         confirmLabel="Supprimer l'utilisateur"
         onConfirm={handleDeletion}>
         Supprimer
-    </ConfirmButton>;
+    </ConfirmButton> : null;
 }

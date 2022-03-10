@@ -10,6 +10,7 @@ export const ErrorLayout: FC<{ title: string; code: number; message: string, lab
               <Link href="/">
                 <a className="inline-flex">
                   <span className="sr-only">Groupomania</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                       className="h-12 w-auto"
                       src="/icons/icon.svg"

@@ -1,13 +1,16 @@
-import { Html, Head, Main, NextScript } from 'next/document'
+import {Html, Head, Main, NextScript, DocumentProps} from 'next/document'
+import {defaultBodyClass, defaultHtmlClass} from "../src/constants";
 
-export default function Document() {
-  return (
-    <Html lang="fr" className="h-full bg-gray-100">
-      <Head />
-      <body className="h-full">
-        <Main />
-        <NextScript />
-      </body>
-    </Html>
-  )
+export default function Document(props: DocumentProps) {
+    const pageProps = props?.__NEXT_DATA__?.props?.pageProps;
+
+    return (
+        <Html lang="fr" className={pageProps?.htmlClass || defaultHtmlClass}>
+            <Head />
+            <body className={pageProps?.bodyClass || defaultBodyClass}>
+                <Main />
+                <NextScript />
+            </body>
+        </Html>
+    )
 }

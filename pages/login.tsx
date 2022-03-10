@@ -33,6 +33,7 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
         <>
             <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                         className="mx-auto h-12 w-auto"
                         src="/icons/icon-left-font.svg"

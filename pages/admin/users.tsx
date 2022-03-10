@@ -29,8 +29,8 @@ export const usersQuery = gql`
 `;
 
 export const updateUserMutation = gql`
-    mutation UpdateUser($id: String!, $data: UserUpdateInput!) {
-        updateOneUser(where: { id: $id }, data: $data) {
+    mutation UpdateUser($ids: [String!], $data: UserUpdateInput!) {
+        deleteManyUser(where: { id: in { $ids } }, data: $data) {
             id
             email
             name
@@ -128,7 +128,7 @@ export const UserDashboard: NextPage = () => {
         //         id: userId,
         //     },
         // })
-    }, [deleteUser])
+    }, [])
 
     useEffect(() => {
         if (error) {

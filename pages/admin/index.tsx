@@ -2,6 +2,10 @@ import {AdminLayout} from "components/layout/Admin";
 import { Role } from "constants/role";
 import {NextPage} from "next";
 
+export async function getStaticProps() {
+    return { props: { htmlClass: 'bg-gray-100', bodyClass: '' } };
+}
+
 const Admin: NextPage = () => {
   return (
       <AdminLayout title="Accueil" current="home">

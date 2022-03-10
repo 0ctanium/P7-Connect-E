@@ -13,10 +13,16 @@ import moment from "moment";
 import 'styles/globals.css'
 import 'moment/locale/fr';
 import 'react-toastify/dist/ReactToastify.css';
+import {defaultBodyClass, defaultHtmlClass} from "../src/constants";
 moment.locale('fr')
 
-function MyApp({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
     const apolloClient = useApollo(pageProps.initialApolloState)
+
+    useEffect(() => {
+        document.documentElement.className = pageProps?.htmlClass || defaultHtmlClass;
+        document.body.className = pageProps?.bodyClass || defaultBodyClass;
+    });
 
     return (
         <SessionProvider session={pageProps.session}>
@@ -59,5 +65,3 @@ const AuthWall: FC<{ config: AuthWallConfig }> = ({ children, config }) => {
     // If no user, useEffect() will redirect.
     return <div>Loading...</div>
 }
-
-export default MyApp

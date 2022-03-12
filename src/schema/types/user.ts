@@ -1,17 +1,11 @@
-import {objectType, extendType, enumType, nonNull, inputObjectType} from 'nexus'
-import { Role } from "constants/role";
+import {objectType, extendType, nonNull, inputObjectType} from 'nexus'
 import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
 
-export const RoleEnum = enumType({
-  name: 'Role',
-  members: Object.values(Role)
-})
-
-export const AccountProvider = enumType({
-  name: 'AccountProvider',
-  members: Object.values(Providers)
-})
+// export const AccountProvider = enumType({
+//   name: 'AccountProvider',
+//   members: Object.values(Providers)
+// })
 
 const aliveTimout = 5 * 60 * 1000 // 5 minutes
 export const User = objectType({
@@ -35,6 +29,10 @@ export const User = objectType({
         // if the last time user alive was set is prior than the aliveTimeout, display the user as offline
         return !!(alive && now.getTime() - aliveTimout < parseInt(alive))
       }
+    })
+    t.model.groups({
+      pagination: false,
+      filtering: false
     })
     t.model.createdAt()
     t.model.updatedAt()
@@ -79,7 +77,7 @@ export const UserQueries = extendType({
 export const UserUpdateInput = inputObjectType({
   name: 'UserUpdateInput',
   definition(t) {
-    t.field('role', { type: RoleEnum })
+    t.field('role', { type: 'Role' })
     t.string('name')
   }
 })

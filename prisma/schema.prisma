@@ -64,8 +64,8 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
 
-  groups GroupsMembers[] @relation("GroupMember")
-  invitedMembers GroupsMembers[] @relation("MemberAssignedBy")
+  groups GroupMember[] @relation("GroupMember")
+  invitedMembers GroupMember[] @relation("MemberAssignedBy")
   medias        Media[]
   posts         Post[]
 }
@@ -91,12 +91,12 @@ model Group {
   // Media
   banner    String?
 
-  members GroupsMembers[]
+  members GroupMember[]
   posts   Post[]
-  media   Media[]
+  // media   Media[]
 }
 
-model GroupsMembers {
+model GroupMember {
   role          Role        @default(USER)
 
   group         Group       @relation(fields: [groupId], references: [id])
@@ -110,6 +110,7 @@ model GroupsMembers {
   assignedBy    User        @relation(name: "MemberAssignedBy", fields: [assignedById], references: [id])
 
   @@id([groupId, userId])
+  @@unique([groupId, userId])
 }
 
 model Post {
@@ -135,9 +136,6 @@ model Media {
 
   addedBy        User        @relation(fields: [addedById], references: [id])
   addedById      String
-
-  group         Group       @relation(fields: [groupId], references: [id])
-  groupId       String
 
   post         Post?        @relation(fields: [postId], references: [id])
   postId       String?

@@ -26,7 +26,9 @@ type FieldBaseProps = {
     input?: string;
   } & InputProps['classes'];
 };
-export type FieldProps = InputProps & FieldBaseProps;
+export type FieldProps = InputProps & FieldBaseProps & {
+  fullWidth?: boolean
+};
 
 export type InputProps = InputBaseProps & {
   trailingIcon?: IconType | ReactNode;

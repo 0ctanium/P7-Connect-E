@@ -19,9 +19,18 @@ export const Group = objectType({
       filtering: true,
       pagination: true,
     })
-    // t.model.posts()
-    // t.model.media()
 
+    t.int('memberCount', {
+      resolve(root, args, ctx) {
+        return ctx.prisma.groupMember.count({
+          where: {
+            groupId: root.id
+          }
+        })
+      }
+    })
+
+    t.model.posts()
 
     t.model.archived()
 
@@ -35,6 +44,21 @@ export const GroupQueries = extendType({
   type: 'Query',
   definition: (t) => {
     t.crud.group()
-    t.crud.groups()
+    t.crud.groups({
+      pagination: true,
+      filtering: true,
+      // ordering: true,
+    })
+  },
+})
+
+
+export const GroupMutations = extendType({
+  type: 'Mutation',
+  definition: (t) => {
+    t.crud.createOneGroup()
+    t.crud.updateOneGroup()
+    t.crud.deleteOneGroup()
+    t.crud.deleteManyGroup()
   },
 })

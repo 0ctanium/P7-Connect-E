@@ -7,13 +7,13 @@ import { HiExclamationCircle } from 'react-icons/hi';
 // eslint-disable-next-line react/display-name
 export const Field = React.forwardRef<HTMLInputElement, FieldProps>(
   (
-    { renderBase, hint, label, error, trailingIcon, className, ...inputProps },
+    { renderBase, fullWidth, hint, label, error, trailingIcon, className, ...inputProps },
     ref
   ) => {
     const { classes } = inputProps;
 
     return (
-      <div className={clsx(className || 'mb-5 last:mb-0')}>
+      <div className={className || clsx(fullWidth ? 'flex' : 'inline-flex', 'flex-col mb-5 last:mb-0')}>
         {(label || hint) && (
           <div className="flex justify-between">
             {label && (
@@ -23,7 +23,6 @@ export const Field = React.forwardRef<HTMLInputElement, FieldProps>(
                 )}
                 htmlFor={inputProps.id}>
                 {label}
-                {inputProps.required && ' *'}
               </label>
             )}
             {hint && (

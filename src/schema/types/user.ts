@@ -2,11 +2,6 @@ import {objectType, extendType, nonNull, inputObjectType} from 'nexus'
 import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
 
-// export const AccountProvider = enumType({
-//   name: 'AccountProvider',
-//   members: Object.values(Providers)
-// })
-
 const aliveTimout = 5 * 60 * 1000 // 5 minutes
 export const User = objectType({
   name: 'User',
@@ -98,6 +93,7 @@ export const UserMutations = extendType({
         })
       }
     })
+
     t.crud.deleteOneUser()
     t.crud.deleteManyUser()
   },

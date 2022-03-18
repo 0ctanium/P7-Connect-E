@@ -4,11 +4,11 @@ const prisma = new PrismaClient()
 
 export async function main() {
   try {
-    console.log(`Start seeding ...`)
+    console.info(`Start seeding ...`)
 
     // seed...
 
-    console.log(`Seeding finished.`)
+    console.info(`Seeding finished.`)
   } catch (err) {
     console.error(err)
     process.exit(1)

@@ -22,6 +22,10 @@ export const baseSchema = makeSchema({
       paginationStrategy: "prisma",
       scalars: {
         DateTime,
+      },
+      computedInputs: {
+        createdAt: () => undefined,
+        updatedAt: () => undefined,
       }
     })
   ],

@@ -12,7 +12,7 @@ type Providers = Record<LiteralUnion<BuiltInProviderType, string>, ClientSafePro
 
 const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ providers }) => {
     const [callbackUrl] = useQueryParam('callbackUrl', '/')
-    const [error] = useQueryParam('error')
+    const [error, setError] = useQueryParam('error')
     const providersMap = useMemo(() => providers ? Object.values(providers) : [], [providers])
 
     const router = useRouter()
@@ -26,8 +26,11 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
     }, [router, status])
 
     useEffect(() => {
-        toast.error(error)
-    }, [error])
+        if(error) {
+            toast.error(error)
+            setError('')
+        }
+    }, [error, setError])
 
     return (
         <>

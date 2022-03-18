@@ -28,6 +28,7 @@ type FieldBaseProps = {
 };
 export type FieldProps = InputProps & FieldBaseProps & {
   fullWidth?: boolean
+  desc?: string
 };
 
 export type InputProps = InputBaseProps & {

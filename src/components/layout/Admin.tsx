@@ -1,4 +1,4 @@
-import {FC, Fragment, useState} from 'react'
+import {FC, Fragment, HTMLAttributes, PropsWithChildren, ReactNode, useState} from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   HiHome as HomeIcon,
@@ -11,6 +11,7 @@ import {
 import clsx from "clsx";
 import Link from 'next/link';
 import {useSession} from "next-auth/react";
+import {Spinner} from "../../icons/Spinner";
 
 const navigation = [
   { id: 'home', name: 'Accueil', href: '/admin', icon: HomeIcon },
@@ -20,13 +21,13 @@ const navigation = [
   // { name: 'Reports', href: '/admin/analytics', icon: ChartBarIcon, current: false },
 ]
 
-export const AdminLayout: FC<{ title: string, desc?: string, actions?: JSX.Element, current: string }> = ({ children, actions, title, desc, current }) => {
-  const { data } = useSession()
+export const AdminLayout: FC<{ current: string, loading?: boolean }> = ({ children, loading, current }) => {
+  const { data, status } = useSession()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
       <>
-        <div>
+        <div className="min-h-full">
           <Transition.Root show={sidebarOpen} as={Fragment}>
             <Dialog as="div" className="fixed inset-0 flex z-40 md:hidden" onClose={setSidebarOpen}>
               <Transition.Child
@@ -185,7 +186,7 @@ export const AdminLayout: FC<{ title: string, desc?: string, actions?: JSX.Eleme
             </div>
           </div>
 
-          <div className="md:pl-64 flex flex-col flex-1">
+          <div className="md:pl-64 flex flex-col flex-1 min-h-full">
             <div className="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-gray-100">
               <button
                   type="button"
@@ -196,24 +197,36 @@ export const AdminLayout: FC<{ title: string, desc?: string, actions?: JSX.Eleme
                 <MenuIcon className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            <main className="flex-1">
-              <div className="py-6">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:flex sm:items-center">
-                  <div className="sm:flex-auto">
-                    <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
-                    {desc && <p className="mt-2 text-sm text-gray-700">{desc}</p>}
-                  </div>
-                  <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-                    {actions}
-                  </div>
-                </div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                  {children}
-                </div>
+            <main className="flex-1 min-h-full">
+              <div className="py-6 space-y-6 min-h-full">
+                {status === 'loading' || loading ? (
+                    <div className="min-h-full flex justify-center items-center">
+                      <Spinner className="w-8 h-8 mx-auto text-gray-800 animate-spin"/>
+                    </div>
+                ): children}
               </div>
             </main>
           </div>
         </div>
       </>
+  )
+}
+
+export const AdminLayoutSection = <Tag extends HTMLElement = HTMLElement>({ as: Component = "div", children, ...props }: PropsWithChildren<HTMLAttributes<Tag> & { as?: ReactNode }>): JSX.Element => {
+  // @ts-ignore
+  return <Component className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8" {...props}>{children}</Component>
+}
+
+export const AdminLayoutHeader: FC<{ title: string, desc?: string, actions?: JSX.Element}> = ({ title, desc, actions}) => {
+  return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:flex sm:items-center">
+        <div className="sm:flex-auto">
+          <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
+          {desc && <p className="mt-2 text-sm text-gray-700">{desc}</p>}
+        </div>
+        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          {actions}
+        </div>
+      </div>
   )
 }

@@ -3,12 +3,8 @@ import {NextPage} from "next";
 import {gql, useMutation, useQuery} from "@apollo/client";
 import {useCallback, useEffect, useRef} from "react";
 import {toast} from "react-toastify";
-import {UserTable, UserTableEdit} from "components/table/preset/user/UsersTable";
+import {UserTable, TableEdit} from "components/table/preset/user/UsersTable";
 import {Role} from "constants/role";
-
-export async function getStaticProps() {
-    return { props: { htmlClass: 'bg-gray-100', bodyClass: '' } };
-}
 
 export const usersQuery = gql`
     query GetUsers($skip: Int = 0, $take: Int = 20) {
@@ -111,7 +107,7 @@ export const UserDashboard: NextPage = () => {
         [refetch]
     );
 
-    const handleUpdateUser = useCallback(async (userId: string, values: UserTableEdit): Promise<any> => {
+    const handleUpdateUser = useCallback(async (userId: string, values: TableEdit): Promise<any> => {
         return updateUser({
             variables: {
                 id: userId,

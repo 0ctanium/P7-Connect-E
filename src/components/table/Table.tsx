@@ -12,10 +12,10 @@ export interface TableProps<
     loading: boolean;
     count: number;
     error?: any;
-    resolveKey(row: D): Key
+    resolveKey?(row: D): Key
 
     // Called when an edition is confirmed
-    onEdit(key: Key, value: Edit | null): any | Promise<any>
+    onEdit?(key: Key, value: Edit | null): any | Promise<any>
 }
 
 export interface TableContextProps<
@@ -60,7 +60,7 @@ export const Table = <
                                loading,
                                count,
                                error,
-                               resolveKey,
+                               resolveKey = (row) => row.id,
 
                                onEdit,
                            }: PropsWithChildren<TableProps<D, Key, Edit>>): JSX.Element => {
@@ -99,21 +99,23 @@ export const Table = <
     }, [])
 
     const submit = useCallback(() => {
-        if(!editing) {
-            toast.error("Aucune entée n'est en cours d'édition")
-            return
-        }
-        if(!editValues) {
-            toast.error("Aucune modification n'a été effectué")
-            return
-        }
+        if(onEdit) {
+            if(!editing) {
+                toast.error("Aucune entée n'est en cours d'édition")
+                return
+            }
+            if(!editValues) {
+                toast.error("Aucune modification n'a été effectué")
+                return
+            }
 
-        dispatchLoadingAction(() => onEdit(editing, editValues), [editing]).then(() => {
-            setEditing(null)
-        }).catch((err) => {
-            console.error(err)
-            toast.error("Erreur interne")
-        })
+            dispatchLoadingAction(() => onEdit(editing, editValues), [editing]).then(() => {
+                setEditing(null)
+            }).catch((err) => {
+                console.error(err)
+                toast.error("Erreur interne")
+            })
+        }
     }, [dispatchLoadingAction, editValues, editing, onEdit])
 
     // Clear editValues when edited row change

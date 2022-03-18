@@ -8,21 +8,27 @@ import {UnauthorizedErrorPage} from "components/layout/errors";
 import {FC, useEffect, useMemo} from "react";
 import {AuthWallConfig} from "types";
 import moment from "moment";
+import {defaultBodyClass, defaultHtmlClass} from "../src/constants";
+import { fr } from 'yup-locales';
+import * as yup  from 'yup';
 
 
 import 'styles/globals.css'
 import 'moment/locale/fr';
 import 'react-toastify/dist/ReactToastify.css';
-import {defaultBodyClass, defaultHtmlClass} from "../src/constants";
+
+yup.setLocale(fr);
 moment.locale('fr')
 
 export default function App({ Component, pageProps }: AppProps) {
     const apolloClient = useApollo(pageProps.initialApolloState)
 
     useEffect(() => {
-        document.documentElement.className = pageProps?.htmlClass || defaultHtmlClass;
-        document.body.className = pageProps?.bodyClass || defaultBodyClass;
+        document.documentElement.className = pageProps?.htmlClass !== undefined ? pageProps.htmlClass : defaultHtmlClass;
+        document.body.className = pageProps?.bodyClass !== undefined ? pageProps.bodyClass : defaultBodyClass;
     });
+
+    console.log('config', {...Component}, {pageProps})
 
     return (
         <SessionProvider session={pageProps.session}>
@@ -45,7 +51,6 @@ const AuthWall: FC<{ config: AuthWallConfig }> = ({ children, config }) => {
     useEffect(() => {
         if(isAuthenticated) {
             if(!isAuthorized) {
-                console.log('log')
                 toast.error("Vous n'êtes pas autorisé à accéder cette page")
                 if(config.unauthorized) {
                     router.push(config.unauthorized)
@@ -54,9 +59,15 @@ const AuthWall: FC<{ config: AuthWallConfig }> = ({ children, config }) => {
         }
     }, [config.unauthorized, isAuthenticated, isAuthorized, router])
 
+    console.log({isAuthenticated})
+
+    if(status === 'loading' && config.loadingLayout) {
+        return <>{config.loadingLayout}</>;
+    }
+
     if (isAuthenticated) {
         if(!isAuthorized) {
-            return config.unauthorizedLayout || <UnauthorizedErrorPage />
+            return <>{config.unauthorizedLayout}</> || <UnauthorizedErrorPage />
         }
     }
 

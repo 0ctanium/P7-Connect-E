@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
     Column,
     usePagination,
@@ -12,16 +12,17 @@ import {NexusGenFieldTypes} from "../../../../../generated/nexus-typegen";
 
 import {ApolloError} from "@apollo/client";
 import {AccountCell, Actions, NameCell, RoleCell} from "./cells";
-import {useIndeterminateCheckbox} from "../../Checkbox";
 import {TableRow} from "../../TableRow";
 import {TablePagination} from "../../pagination";
 import {DeleteAction} from "./actions/Delete";
+import {useControlledPagination} from "../../../../hooks/useControlledPage";
+import {useIndeterminateCheckbox} from "../../../../hooks/useIndeterminateCheckbox";
 
-export type UserTableData = NonNullable<
+export type TableData = NonNullable<
     NexusGenFieldTypes["User"]
     >;
-export type UserTableKey = string
-export type UserTableEdit = Partial<Pick<UserTableData, "role"> & Pick<UserTableData, "name">>
+export type TableKey = string
+export type TableEdit = Partial<Pick<TableData, "role"> & Pick<TableData, "name">>
 
 export interface UserTableProps<D extends Record<string, any>> {
     data: D[];
@@ -29,11 +30,11 @@ export interface UserTableProps<D extends Record<string, any>> {
     loading: boolean;
     count: number;
     error?: ApolloError;
-    onUpdate(userId: string, values: UserTableEdit | null): Promise<any> | any
+    onUpdate(userId: string, values: TableEdit | null): Promise<any> | any
     onDelete(userIds: string[]): Promise<any> | any
 }
 
-export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
+export const UserTable: React.FC<UserTableProps<TableData>> = ({
                                                                        data,
                                                                        fetchData,
                                                                        loading,
@@ -42,7 +43,7 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
                                                                        onUpdate,
                                                                        onDelete
                                                                    }) => {
-    const columns = React.useMemo<Column<UserTableData>[]>(
+    const columns = React.useMemo<Column<TableData>[]>(
         () => [
             {
                 Header: 'Nom',
@@ -68,38 +69,23 @@ export const UserTable: React.FC<UserTableProps<UserTableData>> = ({
         []
     );
 
-    const [controlledPageCount, setControlledPageCount] = useState(0);
-    const tableInstance = useTable<UserTableData>(
+    const tableInstance = useTable<TableData>(
         {
             columns,
             data,
             initialState: { pageIndex: 0, pageSize: 5 },
-            manualPagination: true,
-            pageCount: controlledPageCount,
-            getRowId: (row) => row.id
+            count,
+            fetchData,
+            getRowId: (row) => row.id,
+            renderActions: <DeleteAction key="delete" onDelete={onDelete} />
         },
+        useControlledPagination,
         usePagination,
         useRowSelect,
-        useIndeterminateCheckbox({
-            actions: [
-                <DeleteAction key="delete" onDelete={onDelete} />
-            ]
-        }),
+        useIndeterminateCheckbox,
     );
 
-    const {
-        state: { pageIndex, pageSize },
-    } = tableInstance;
-
-    useEffect(() => {
-        setControlledPageCount(Math.ceil(count / pageSize));
-    }, [count, pageSize]);
-
-    useEffect(() => {
-        fetchData({ pageIndex, pageSize });
-    }, [fetchData, pageIndex, pageSize]);
-
-    return <Table<UserTableData, UserTableKey, UserTableEdit>
+    return <Table<TableData, TableKey, TableEdit>
         instance={tableInstance}
         loading={loading}
         error={error}

@@ -26,7 +26,7 @@ module.exports = {
     },
     plugins: [
         require('@tailwindcss/forms')({
-            strategy: 'class',
+            // strategy: 'class',
         }),
         plugin(function ({ theme, e, addComponents }) {
             const colors = theme('colors');

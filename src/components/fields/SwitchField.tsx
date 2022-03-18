@@ -23,12 +23,12 @@ export interface SwitchFieldProps {
     offIcon?: IconType | ReactNode
     short?: boolean;
     hideOutline?: boolean; // hide white outline when short mode is enabled
-    value?: boolean;
-    defaultValue?: boolean;
+    value?: boolean | null;
+    defaultValue?: boolean | null;
     onChange?: (state: boolean) => void;
 }
 
-export const SwitchField: React.FC<SwitchFieldProps> = ({
+export const SwitchField = React.forwardRef<HTMLInputElement, SwitchFieldProps>(({
                                                             label,
                                                             desc,
                                                             onIcon: OnIcon,
@@ -45,10 +45,10 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
                                                             name,
 
                                                             classes,
-                                                        }) => {
+                                                        }, ref) => {
     const [state, setState] = useState(defaultValue);
     const checked = useMemo(
-        () => (typeof value === 'boolean' ? value : !!state),
+        () => (typeof value === 'boolean' || value === null ? !!value : !!state),
         [state, value]
     );
 
@@ -144,4 +144,4 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({
             {labelPos === 'right' && text}
         </Switch.Group>
     )
-};
+});

@@ -1,17 +1,17 @@
 import React, {useCallback, useMemo} from 'react'
-import {UserTableData, UserTableEdit, UserTableKey} from "../UsersTable";
+import {TableData, TableEdit, TableKey} from "../UsersTable";
 import {rolesConfig, Role} from "../../../../../constants";
 import clsx from "clsx";
 import {Selection} from "../../../../fields/Selector";
 import {CellComponent} from "../../../../../types";
 import {useTableCell} from "../../../../../hooks/useTable";
 
-export const RoleCell: CellComponent<UserTableData> = ({ row }) => {
+export const RoleCell: CellComponent<TableData> = ({ row }) => {
     const {
         isEditing,
         editValues,
         edit
-    } = useTableCell<UserTableData, UserTableKey, UserTableEdit>(row)
+    } = useTableCell<TableData, TableKey, TableEdit>(row)
 
     const options = useMemo(() => Object.values(Role).map(key => ({
         value: key,

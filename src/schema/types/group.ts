@@ -1,4 +1,5 @@
 import {extendType, objectType} from "nexus";
+import {Prisma} from "@prisma/client";
 
 export const Group = objectType({
   name: 'Group',
@@ -6,7 +7,7 @@ export const Group = objectType({
     t.model.id()
     t.model.name()
     t.model.description()
-    t.model.confidentiality()
+    t.model.privacy()
     t.model.official()
 
     t.model.onlyAdminCanPublish()
@@ -49,6 +50,17 @@ export const GroupQueries = extendType({
       filtering: true,
       // ordering: true,
     })
+    t.field('groupCount', {
+      type: "Int",
+      args: {
+        where: "GroupWhereInput"
+      },
+      resolve(root, args, ctx, info) {
+        return ctx.prisma.user.count({
+          where: args.where as Prisma.GroupWhereInput
+        })
+      }
+    })
   },
 })
 
@@ -56,8 +68,27 @@ export const GroupQueries = extendType({
 export const GroupMutations = extendType({
   type: 'Mutation',
   definition: (t) => {
-    t.crud.createOneGroup()
-    t.crud.updateOneGroup()
+
+    t.crud.createOneGroup({
+      computedInputs: {
+        id: () => undefined,
+        archived: () => undefined,
+
+        members: () => undefined,
+        posts: () => undefined,
+        medias: () => undefined,
+      }
+    })
+    t.crud.updateOneGroup({
+      computedInputs: {
+        id: () => undefined,
+
+        members: () => undefined,
+        posts: () => undefined,
+        medias: () => undefined,
+      }
+    })
+
     t.crud.deleteOneGroup()
     t.crud.deleteManyGroup()
   },

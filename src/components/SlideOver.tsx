@@ -31,7 +31,9 @@ export const SlideOverTitle: FC<{ onClose(state: boolean): void, title: string, 
   )
 }
 
-export const SlideOverBody = <Tag extends HTMLElement = HTMLElement>({ as: Component = "div", children, ...props }: PropsWithChildren<{ as?: ReactNode } & HTMLAttributes<Tag>>): JSX.Element => {
+type Test = HTMLAttributes<any>
+
+export const SlideOverBody = <Tag extends HTMLElement = HTMLElement>({ as: Component = "div", children, ...props }: PropsWithChildren<HTMLAttributes<Tag> & { as?: ReactNode }>): JSX.Element => {
     // @ts-ignore
     return <Component className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl" {...props}>{children}</Component>
 }

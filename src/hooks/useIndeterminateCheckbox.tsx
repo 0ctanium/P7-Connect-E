@@ -1,31 +1,38 @@
 import React, {HTMLAttributes, PropsWithChildren} from 'react'
-import {actions, Hooks} from "react-table";
+import {ensurePluginOrder, Hooks} from "react-table";
 
-export interface UseIndeterminateCheckboxConfig {
-    actions?: JSX.Element[]
-}
+export const useIndeterminateCheckbox = <D extends object = {}> (hooks: Hooks<D>): void => {
+    hooks.useInstance.push(({ plugins }) => {
+        ensurePluginOrder(plugins, ['useRowSelect'], 'useIndeterminateCheckbox')
+    })
 
-export const useIndeterminateCheckbox = <D extends object = {}> (config?: UseIndeterminateCheckboxConfig) => (hooks: Hooks<D>): void => {
-    hooks.visibleColumns.push((columns) => [
+    hooks.visibleColumns.push((columns, meta) => [
         {
             id: 'selection',
             headerClasses: 'relative w-12 px-6 sm:w-16 sm:px-8',
             cellClasses: 'relative w-12 px-6 sm:w-16 sm:px-8',
-            Header: ({ getToggleAllPageRowsSelectedProps }) => (
-                <>
-                    {/* @ts-ignore*/}
-                    <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
-                    {config?.actions && (
-                        <div className="absolute top-0 left-12 flex h-10 items-center space-x-3 bg-gray-50 sm:left-16" >{config.actions}</div>
-                    )}
-                </>
-            ),
+            Header: ({ getToggleAllPageRowsSelectedProps }) => {
+                const Actions = meta.instance?.renderActions
+                return (
+                    <>
+                        {/* @ts-ignore*/}
+                        <IndeterminateCheckbox {...getToggleAllPageRowsSelectedProps()} />
+                        {Actions && (
+                            <div className="absolute top-0 left-12 flex h-10 items-center space-x-3 bg-gray-50 sm:left-16" >
+                                {typeof Actions === 'function' ? <Actions instance={meta.instance} /> : Actions}
+                            </div>
+                        )}
+                    </>
+                )
+            },
             // @ts-ignore
             Cell: ({ row }) => <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
         },
         ...columns,
     ]);
 }
+
+useIndeterminateCheckbox.pluginName = 'useIndeterminateCheckbox';
 
 // eslint-disable-next-line react/display-name
 export const IndeterminateCheckbox = React.forwardRef<

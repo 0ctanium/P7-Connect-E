@@ -1,37 +1,16 @@
-import React, {useCallback} from 'react'
-import {UserTableData, UserTableEdit, UserTableKey} from "../GroupsTable";
+import React from 'react'
+import { TableData} from "../GroupsTable";
 import {CellComponent} from "types";
-import {useTableCell} from "hooks/useTable";
-import {ConfirmButton} from "../../../../ConfirmButton";
-import {isPromise} from "lib/utils";
+import Link from 'next/link';
 
-export const Actions: CellComponent<UserTableData> = ({ row }) => {
-    const {
-        isEditing,
-        setCurrentEditing,
-        cancelEditing,
-        submit,
-        setRowLoading,
-    } = useTableCell<UserTableData, UserTableKey, UserTableEdit>(row)
-
-    if(isEditing) {
-        return (
-            <div>
-                <button className="text-gray-600 hover:text-gray-900 mr-4" onClick={cancelEditing}>
-                    Annuler
-                </button>
-                <button className="text-indigo-600 hover:text-indigo-900" onClick={submit}>
-                    Confirmer
-                </button>
-            </div>
-        )
-    } else {
-        return (
-            <div>
-                <button className="text-indigo-600 hover:text-indigo-900 mr-4" onClick={setCurrentEditing}>
+export const Actions: CellComponent<TableData> = ({ row }) => {
+    return (
+        <div>
+            <Link href={`/admin/groups/${row.id}`}>
+                <a className="text-indigo-600 hover:text-indigo-900 mr-4">
                     Éditer
-                </button>
-            </div>
-        )
-    }
+                </a>
+            </Link>
+        </div>
+    )
 }

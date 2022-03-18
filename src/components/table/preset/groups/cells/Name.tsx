@@ -1,5 +1,5 @@
 import React, {FC, useCallback} from 'react'
-import {UserTableData, UserTableEdit, UserTableKey} from "../GroupsTable";
+import {TableData, TableEdit, TableKey} from "../GroupsTable";
 import {Tooltip} from "../../../../Tooltip";
 import {GoVerified} from "react-icons/go";
 import {CellComponent} from "types";
@@ -8,12 +8,12 @@ import {Field} from "../../../../fields/Field";
 
 
 
-export const NameCell: CellComponent<UserTableData> = ({ row }) => {
+export const NameCell: CellComponent<TableData> = ({ row }) => {
     const {
         isEditing,
         editValues,
         edit
-    } = useTableCell<UserTableData, UserTableKey, UserTableEdit>(row)
+    } = useTableCell<TableData, TableKey, TableEdit>(row)
 
     const handeEdit: React.FormEventHandler<HTMLInputElement> = useCallback((e) => {
         const { value } = e.currentTarget

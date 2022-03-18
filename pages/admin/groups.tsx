@@ -1,6 +1,6 @@
-import {AdminLayout} from "components/layout/Admin";
+import {AdminLayout, AdminLayoutHeader, AdminLayoutSection} from "components/layout/Admin";
 import {NextPage} from "next";
-import {gql, useQuery} from "@apollo/client";
+import {gql, useMutation, useQuery} from "@apollo/client";
 import {FC, useCallback, useEffect, useRef, useState} from "react";
 import {toast} from "react-toastify";
 import {Role} from "constants/role";
@@ -15,36 +15,95 @@ import {
 } from "components/SlideOver";
 import {Radio, RadioGroup } from "components/fields/Radio";
 import {Field} from "../../src/components/fields/Field";
-import { Disclosure, Switch } from "@headlessui/react";
-import {HiChevronUp as ChevronUpIcon, HiX, HiCheck} from 'react-icons/hi'
-import clsx from "clsx";
+import { Disclosure } from "@headlessui/react";
+import {HiChevronUp as ChevronUpIcon} from 'react-icons/hi'
 import {SwitchField} from "../../src/components/fields/SwitchField";
+import {Controller, SubmitHandler, useForm} from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
 
 export async function getStaticProps() {
     return { props: { htmlClass: 'bg-gray-100', bodyClass: '' } };
 }
 
 export const groupsQuery = gql`
-    query GetGroupes($skip: Int = 0, $take: Int = 20) {
+    query GetGroups($skip: Int = 0, $take: Int = 20) {
         groups(skip: $skip, take: $take) {
             id
             name
             description
-            confidentiality
+            privacy
             memberCount
             banner
             official
             archived
             
+            everyOneCanApproveMembers
+            
+            
             createdAt
         }
-        userCount
+        groupCount
     }
 `;
 
+export const createGroupMutation = gql`
+    mutation CreateGroup($data: GroupCreateInput!) {
+        createOneGroup(data: $data) {
+            id
+        }
+    }
+`;
+
+interface Inputs {
+    name: string;
+    description?: string
+    privacy: 'OPEN' | 'CLOSED' | 'SECRET'
+    everyOneCanApproveMembers: boolean
+    postNeedToBeApproved: boolean
+    onlyAdminCanPublish: boolean
+}
+
+const schema = yup.object<Inputs>({
+    name: yup.string().required(),
+    description: yup.string(),
+    privacy: yup.string().oneOf(['OPEN', 'CLOSED', 'SECRET']).required(),
+    everyOneCanApproveMembers: yup.boolean(),
+    postNeedToBeApproved: yup.boolean(),
+    onlyAdminCanPublish: yup.boolean()
+}).required();
+
 export const UserDashboard: NextPage = () => {
     const { data, loading, error, refetch } = useQuery(groupsQuery, { notifyOnNetworkStatusChange: true });
+    const [createGroup] = useMutation(createGroupMutation)
     const [open, setOpen] = useState(false)
+    const { register, handleSubmit, control, reset, formState: { errors } } = useForm<Inputs>({
+        defaultValues: {
+            privacy: 'OPEN',
+            everyOneCanApproveMembers: true,
+            onlyAdminCanPublish: false,
+            postNeedToBeApproved: false,
+        },
+        resolver: yupResolver(schema)
+    });
+    const onSubmit: SubmitHandler<Inputs> = useCallback((data) => {
+        createGroup({
+            variables: {
+                data: {
+                    ...data,
+                    official: true
+                }
+            }
+        }).then(() => {
+            toast.success('Groupe créé avec succès')
+            reset()
+            setOpen(false)
+            refetch()
+        }).catch((err) => {
+            console.error(err)
+            toast.error('Une erreur est survenue')
+        })
+    }, [createGroup, refetch, reset])
 
     const fetchIdRef = useRef(0);
     const fetchData = useCallback(
@@ -68,37 +127,36 @@ export const UserDashboard: NextPage = () => {
         }
     }, [error]);
 
-
-    const [onlyAdminCanPublish, setOnlyAdminCanPublish] = useState(false)
-    const [postNeedToBeApproved, setPostNeedToBeApproved] = useState(false)
-    const [everyOneCanApproveMembers, setEveryOneCanApproveMembers] = useState(false)
-
     return (
-        <AdminLayout title="Groupes" desc="Ajoutez ou supprimer des groupes" current="groups" actions={
-            <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => setOpen(true)}
-            >
-                Ajouter un groupe officiel
-            </button>
-        }>
-            <div className="py-4">
-                <div className="md:overflow-hidden md:rounded-lg shadow -mx-4 sm:-mx-6 md:mx-0">
-                    <GroupTable
-                        data={data?.users || []}
-                        fetchData={fetchData}
-                        loading={loading}
-                        error={error}
-                        count={data?.userCount || 0}
-                        onUpdate={console.log}
-                        onDelete={console.log}
-                    />
+        <AdminLayout current="groups" >
+            <AdminLayoutHeader  title="Groupes" desc="Ajoutez ou supprimer des groupes" actions={
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => setOpen(true)}
+                >
+                    Ajouter un groupe officiel
+                </button>
+            }/>
+
+            <AdminLayoutSection>
+                <div className="py-4">
+                    <div className="md:overflow-hidden md:rounded-lg shadow -mx-4 sm:-mx-6 md:mx-0">
+                        <GroupTable
+                            data={data?.groups || []}
+                            fetchData={fetchData}
+                            loading={loading}
+                            error={error}
+                            count={data?.groupCount || 0}
+                            onDelete={console.log}
+                        />
+                    </div>
                 </div>
-            </div>
+            </AdminLayoutSection>
 
             <SlideOver open={open} onClose={setOpen} className="max-w-md">
-                <SlideOverBody as="form">
+                {/* @ts-ignore */}
+                <SlideOverBody<HTMLFormElement> as="form" noValidate onSubmit={handleSubmit(onSubmit)}>
                     <SlideOverContainer>
                         <SlideOverTitle
                             onClose={setOpen}
@@ -109,53 +167,84 @@ export const UserDashboard: NextPage = () => {
                         <SlideOverContent>
                             <SlideOverSection>
                                 <div className="space-y-6 pt-6 pb-5">
-                                    <Field name="name" id="name" label="Nom du groupe" type="text" required fullWidth />
-                                    <Field name="description" id="description" label="Description" type="text" minRows={4} hint="Optionnelle" multiline fullWidth />
+                                    <Field {...register('name')} error={errors.name?.message} id="name" label="Nom du groupe" type="text" required fullWidth />
+                                    <Field {...register('description')} error={errors.description?.message}  id="description" label="Description" type="text" minRows={4} hint="Optionnelle" multiline fullWidth />
 
                                     <RadioGroup legend="Confidentialité">
                                         <Radio
                                             label="Ouvert"
                                             desc="Tout le monde peut voir le groupe, ses membres et leurs messages."
                                             id="privacy-public"
-                                            name="privacy" defaultChecked />
+                                            value="OPEN"
+                                            {...register('privacy')} />
                                         <Radio
                                             label="Fermé"
                                             desc="Tout le monde peut trouver le groupe et en voir les membres. Seuls les membres peuvent voir les publications."
                                             id="privacy-closed"
-                                            name="privacy" />
+                                            value="CLOSED"
+                                            {...register('privacy')}  />
                                         <Radio
                                             label="Secret"
                                             desc="Seuls les membres peuvent trouver le groupe, en voir les membres et leurs publications."
                                             id="privacy-secret"
-                                            name="privacy" />
+                                            value="SECRET"
+                                            {...register('privacy')}  />
+                                        {errors.privacy?.message && (
+                                            <p
+                                                id={`privacy-error`}
+                                                className="mt-2 text-sm text-red-600">
+                                                {errors.privacy?.message}
+                                            </p>
+                                        )}
                                     </RadioGroup>
 
                                     <div>
 
                                         <FormDisclosure label="Paramètres des adhésions">
-                                            <SwitchField
-                                                label="Tout le monde peut approuver les membres"
-                                                desc="."
-                                                name={'everyOneCanApproveMembers'}
-                                                onChange={setEveryOneCanApproveMembers}
-                                                value={everyOneCanApproveMembers}
-                                            />
+                                            <RadioGroup legend="Qui peut approuver les adhésions ?">
+                                                <Radio
+                                                    label="Tout le monde"
+                                                    desc="Les membres peuvent approuver seulement approuver les demandes de leurs collègues."
+                                                    id="everyOneCanApproveMembers-true"
+                                                    value="true"
+                                                    {...register('everyOneCanApproveMembers')} />
+                                                <Radio
+                                                    label="Administrateurs et modérateurs uniquement"
+                                                    id="everyOneCanApproveMembers-false"
+                                                    value="false"
+                                                    {...register('everyOneCanApproveMembers')}  />
+                                                {errors.everyOneCanApproveMembers?.message && (
+                                                    <p
+                                                        id={`everyOneCanApproveMembers-error`}
+                                                        className="mt-2 text-sm text-red-600">
+                                                        {errors.everyOneCanApproveMembers?.message}
+                                                    </p>
+                                                )}
+                                            </RadioGroup>
                                         </FormDisclosure>
 
                                         <FormDisclosure label="Paramètres des posts">
-                                            <SwitchField
-                                                label="Restreindre les publications"
-                                                desc="Seulement les administrateurs peuvent publier des posts."
-                                                name={'onlyAdminCanPublish'}
-                                                onChange={setOnlyAdminCanPublish}
-                                                value={onlyAdminCanPublish}
+                                            <Controller
+                                                name="onlyAdminCanPublish"
+                                                control={control}
+                                                render={({ field}) => (
+                                                    <SwitchField
+                                                        label="Restreindre les publications"
+                                                        desc="Seulement les administrateurs peuvent publier des posts."
+                                                        {...field}
+                                                    />
+                                                )}
                                             />
-                                            <SwitchField
-                                                label="Approuver les publications"
-                                                desc="Les publications des membres doivent êtres approuvé par un admin ou un modérateur."
-                                                name={'postNeedToBeApproved'}
-                                                onChange={setPostNeedToBeApproved}
-                                                value={postNeedToBeApproved}
+                                            <Controller
+                                                name="postNeedToBeApproved"
+                                                control={control}
+                                                render={({ field}) => (
+                                                    <SwitchField
+                                                        label="Approuver les publications"
+                                                        desc="Les publications des membres doivent êtres approuvé par un admin ou un modérateur."
+                                                        {...field}
+                                                    />
+                                                )}
                                             />
                                         </FormDisclosure>
                                     </div>

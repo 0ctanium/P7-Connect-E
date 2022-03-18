@@ -1,18 +1,18 @@
 import React, {useCallback} from 'react'
-import {UserTableData, UserTableEdit, UserTableKey} from "../UsersTable";
+import {TableData, TableEdit, TableKey} from "../UsersTable";
 import {CellComponent} from "types";
 import {useTableCell} from "hooks/useTable";
 import {ConfirmButton} from "../../../../ConfirmButton";
 import {isPromise} from "lib/utils";
 
-export const Actions: CellComponent<UserTableData> = ({ row }) => {
+export const Actions: CellComponent<TableData> = ({ row }) => {
     const {
         isEditing,
         setCurrentEditing,
         cancelEditing,
         submit,
         setRowLoading,
-    } = useTableCell<UserTableData, UserTableKey, UserTableEdit>(row)
+    } = useTableCell<TableData, TableKey, TableEdit>(row)
 
     if(isEditing) {
         return (

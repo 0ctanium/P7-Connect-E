@@ -1,4 +1,4 @@
-import {FC, MouseEventHandler} from 'react';
+import {FC, MouseEventHandler, PropsWithChildren, ReactNode} from 'react';
 import {
   ColumnGroup, ColumnWithLooseAccessor, ColumnWithStrictAccessor,
   TableInstance,
@@ -65,7 +65,11 @@ declare module 'react-table' {
           UsePaginationOptions<D>,
           UseResizeColumnsOptions<D>,
           UseRowSelectOptions<D>,
-          UseSortByOptions<D> {}
+          UseSortByOptions<D> {
+    fetchData?: (options: { pageIndex: number; pageSize: number }) => void;
+    count?: number;
+    renderActions?: ReactNode | ((props: PropsWithChildren<{ instance: TableInstance<D> }>) => JSX.Element)
+  }
 
   export interface Hooks<
       D extends Record<string, unknown> = Record<string, unknown>

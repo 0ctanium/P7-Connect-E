@@ -36,7 +36,7 @@ export default NextAuth({
       if(user?.id) {
         // set session alive status
         const cache = createClient();
-        cache.on('error', (err) => console.log('Redis Client Error', err));
+        cache.on('error', (err) => console.error('Redis Client Error', err));
         cache.connect().then(() => {
           cache.set(`session:${user.id}`, new Date().getTime())
         });
@@ -50,7 +50,7 @@ export default NextAuth({
       if(user?.id) {
         // set session alive status
         const cache = createClient();
-        cache.on('error', (err) => console.log('Redis Client Error', err));
+        cache.on('error', (err) => console.error('Redis Client Error', err));
         cache.connect().then(() => {
           cache.set(`session:${user.id}`, new Date().getTime())
         });

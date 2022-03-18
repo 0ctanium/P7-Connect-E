@@ -34,6 +34,7 @@ export const useScrollingUp = (refEl: RefObject<HTMLElement>, options: UseScroll
 
     return !!isScrollingUp
 }
+
 //
 // export const useScrollingUpWithOffset = (refEl: RefObject<HTMLElement>): [boolean, number] => {const prevScroll = useRef<number>(refEl.current?.scrollTop || 0)
 //     const prevScroll = useRef<number>(refEl.current?.scrollTop || 0)

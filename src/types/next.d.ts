@@ -5,16 +5,18 @@ import type {
 } from 'next';
 import {Router} from "next/router";
 import {AppPropsType, BaseContext} from "next/dist/shared/lib/utils";
+import {ReactNode} from "react";
 
 export type AuthWallConfig = {
     roles?: Role[]
-    loadingLayout?: JSX.Element
-    unauthorizedLayout?: JSX.Element
+    loadingLayout?: ReactNode
+    unauthorizedLayout?: ReactNode
     unauthorized?: string // redirect
 }
 
 interface ComponentProps {
     auth?: AuthWallConfig
+    layout?: AuthWallConfig
 }
 
 declare module 'next' {

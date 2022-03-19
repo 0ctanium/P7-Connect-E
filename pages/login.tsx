@@ -21,9 +21,9 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
     useEffect(() => {
         if(status === "authenticated") {
             toast.warn("Vous êtes déjà connecté")
-            router.push('/')
+            router.push(callbackUrl || '/')
         }
-    }, [router, status])
+    }, [callbackUrl, router, status])
 
     useEffect(() => {
         if(error) {

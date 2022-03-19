@@ -1,8 +1,9 @@
-import {extendType, inputObjectType, list, nonNull, objectType} from "nexus";
+import {arg, extendType, inputObjectType, list, nonNull, objectType} from "nexus";
 import { Prisma } from "@prisma/client";
 import {s3} from "services/s3";
 import {ManagedUpload} from "aws-sdk/lib/s3/managed_upload";
 import SendData = ManagedUpload.SendData;
+import {ApolloError} from "apollo-server-micro";
 
 export const Group = objectType({
   name: 'Group',
@@ -22,11 +23,15 @@ export const Group = objectType({
     t.nonNull.field('members', {
       type: list(nonNull("GroupMember")),
       args: {
-        skip: "Int",
-        take: "Int",
+        skip: arg({ type: "Int", default: 0 }),
+        take: arg({ type: "Int", default: 20 }),
         cursor: "ID"
       },
-      resolve(root, { skip = 0, take, cursor }, ctx) {
+      resolve(root, { skip, take, cursor }, ctx) {
+        if(take && take > 100) {
+          throw new ApolloError("You cannot take more than 100 items")
+        }
+
         return ctx.prisma.groupMember.findMany({
           skip: skip || undefined,
           take: take || undefined,
@@ -56,11 +61,15 @@ export const Group = objectType({
     t.nonNull.field('posts', {
       type: list(nonNull("Post")),
       args: {
-        skip: "Int",
-        take: "Int",
+        skip: arg({ type: "Int", default: 0 }),
+        take: arg({ type: "Int", default: 20 }),
         cursor: "ID"
       },
-      resolve(root, { skip = 0, take, cursor }, ctx) {
+      resolve(root, { skip, take, cursor }, ctx) {
+        if(take && take > 100) {
+          throw new ApolloError("You cannot take more than 100 items")
+        }
+
         return ctx.prisma.post.findMany({
           skip: skip || undefined,
           take: take || undefined,
@@ -102,12 +111,14 @@ export const GroupQueries = extendType({
     t.field('groups', {
       type: nonNull(list(nonNull("Group"))),
       args: {
-        skip: "Int",
-        take: "Int",
+        skip: arg({ type: "Int", default: 0 }),
+        take: arg({ type: "Int", default: 20 }),
         cursor: "ID"
       },
       resolve(root, { skip, take, cursor }, ctx) {
-        console.log(skip, take, cursor)
+        if(take && take > 100) {
+          throw new ApolloError("You cannot take more than 100 items")
+        }
 
         return ctx.prisma.group.findMany({
           skip: skip || undefined,

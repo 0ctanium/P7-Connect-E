@@ -1,6 +1,7 @@
-import {objectType, extendType, nonNull, inputObjectType, list} from 'nexus'
+import {objectType, extendType, nonNull, inputObjectType, list, arg} from 'nexus'
 import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
+import {ApolloError} from "apollo-server-micro";
 
 export const Account = objectType({
   name: 'Account',
@@ -23,7 +24,6 @@ export const User = objectType({
     t.nonNull.field('role', { type: "Role" })
     t.string('email')
     t.field('emailVerified', { type: "DateTime" })
-
     t.field('accounts', {
       type: nonNull(list(Account)),
       resolve(root, args, ctx) {
@@ -45,10 +45,28 @@ export const User = objectType({
       }
     })
 
+    // Relations
     t.field('groups', {
       type: nonNull(list("GroupMember")),
-      resolve(root, args, ctx) {
+      args: {
+        skip: arg({ type: "Int", default: 0 }),
+        take: arg({ type: "Int", default: 20 }),
+        cursor: "ID"
+      },
+      resolve(root, { skip, take, cursor }, ctx) {
+        if(take && take > 100) {
+          throw new ApolloError("You cannot take more than 100 items")
+        }
+
         return ctx.prisma.groupMember.findMany({
+          skip: skip || undefined,
+          take: take || undefined,
+          cursor: cursor ? {
+            groupId_userId: {
+              userId: root.id,
+              groupId: cursor
+            }
+          } : undefined,
           where: {
             userId: root.id || undefined
           }
@@ -58,8 +76,22 @@ export const User = objectType({
 
     t.field('posts', {
       type: nonNull(list("Post")),
-      resolve(root, args, ctx) {
+      args: {
+        skip: arg({ type: "Int", default: 0 }),
+        take: arg({ type: "Int", default: 20 }),
+        cursor: "ID"
+      },
+      resolve(root, { skip, take, cursor }, ctx) {
+        if(take && take > 100) {
+          throw new ApolloError("You cannot take more than 100 items")
+        }
+
         return ctx.prisma.post.findMany({
+          skip: skip || undefined,
+          take: take || undefined,
+          cursor: cursor ? {
+            id: cursor
+          } : undefined,
           where: {
             authorId: root.id || undefined
           }
@@ -92,11 +124,15 @@ export const UserQueries = extendType({
     t.field('users', {
       type: nonNull(list(nonNull(User))),
       args: {
-        skip: "Int",
-        take: "Int",
+        skip: arg({ type: "Int", default: 0 }),
+        take: arg({ type: "Int", default: 20 }),
         cursor: "ID"
       },
       resolve(root, { skip, take, cursor }, ctx) {
+        if(take && take > 100) {
+          throw new ApolloError("You cannot take more than 100 items")
+        }
+
         return ctx.prisma.user.findMany({
           skip: skip || undefined,
           take: take || undefined,
@@ -146,12 +182,12 @@ export const UserMutations = extendType({
     t.field('deleteOneUser', {
       type: 'User',
       args: {
-        id: "ID"
+        id: nonNull("ID")
       },
       resolve(root, args, ctx) {
         return ctx.prisma.user.delete({
           where: {
-            id: args.id || undefined
+            id: args.id
           }
         })
       }

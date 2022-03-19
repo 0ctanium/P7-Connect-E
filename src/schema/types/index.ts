@@ -1,19 +1,8 @@
-import * as User from './user'
-import * as Group from './group'
-import * as GroupMember from './groupMember'
-import * as Post from './post'
+export * as User from './user'
+export * as Group from './group'
+export * as GroupMember from './groupMember'
+export * as Post from './post'
 
-import * as Scalars from './scalars'
-import * as Enums from './enums'
-import * as Common from './common'
-
-export const typeDefs = [
-    User,
-    Group,
-    GroupMember,
-    Post,
-
-    Scalars,
-    Enums,
-    Common
-]
+export * as Scalars from './scalars'
+export * as Enums from './enums'
+export * as Common from './common'

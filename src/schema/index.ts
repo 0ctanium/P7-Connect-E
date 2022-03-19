@@ -4,7 +4,7 @@ import { applyMiddleware } from "graphql-middleware";
 import path from "path";
 
 // Types defs
-import { typeDefs as types } from './types';
+import * as types from './types';
 import { permissions } from './permissions'
 
 // Scalars

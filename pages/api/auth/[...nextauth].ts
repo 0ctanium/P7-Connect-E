@@ -45,6 +45,7 @@ export default NextAuth({
       return token
     },
     session({ session, user}) {
+      session.user.id = user.id
       session.user.role = user.role
 
       if(user?.id) {

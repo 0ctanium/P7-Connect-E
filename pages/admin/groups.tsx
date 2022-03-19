@@ -128,7 +128,7 @@ export const UserDashboard: NextPage = () => {
     }, [error]);
 
     return (
-        <AdminLayout current="groups" >
+        <AdminLayout current="groups">
             <AdminLayoutHeader  title="Groupes" desc="Ajoutez ou supprimer des groupes" actions={
                 <button
                     type="button"

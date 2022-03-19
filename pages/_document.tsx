@@ -4,8 +4,6 @@ import {defaultBodyClass, defaultHtmlClass} from "../src/constants";
 export default function Document(props: DocumentProps) {
     const pageProps = props?.__NEXT_DATA__?.props?.pageProps;
 
-    console.log({props, pageProps})
-
     return (
         <Html lang="fr" className={pageProps?.htmlClass || defaultHtmlClass}>
             <Head />

@@ -28,8 +28,6 @@ export default function App({ Component, pageProps }: AppProps) {
         document.body.className = pageProps?.bodyClass !== undefined ? pageProps.bodyClass : defaultBodyClass;
     });
 
-    console.log('config', {...Component}, {pageProps})
-
     return (
         <SessionProvider session={pageProps.session}>
             <ApolloProvider client={apolloClient}>
@@ -58,8 +56,6 @@ const AuthWall: FC<{ config: AuthWallConfig }> = ({ children, config }) => {
             }
         }
     }, [config.unauthorized, isAuthenticated, isAuthorized, router])
-
-    console.log({isAuthenticated})
 
     if(status === 'loading' && config.loadingLayout) {
         return <>{config.loadingLayout}</>;

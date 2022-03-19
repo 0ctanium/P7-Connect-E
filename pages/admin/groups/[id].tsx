@@ -41,7 +41,7 @@ export const groupQuery = gql`
 
 export const updateGroupMutation = gql`
     mutation UpdateGroup($data: GroupUpdateInput!, $id: String!) {
-        updateOneGroup(data: $data, where: { id: { equals: $id } }) {
+        updateOneGroup(data: $data, where: { id: $id }) {
             id
         }
     }

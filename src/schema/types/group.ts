@@ -101,37 +101,32 @@ export const GroupMutations = extendType({
       type: 'Group',
       args: {
         data: nonNull(GroupUpdateInput),
-        where: nonNull("GroupWhereInput")
+        where: nonNull("GroupWhereUniqueInput")
       },
       async resolve(root, { where, data }, ctx) {
-        const data = await new Promise<SendData>(((resolve, reject) => {
-          const { createReadStream, filename } = args.data.banner;
-          s3.upload({
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: filename,
-            Body: createReadStream()
-          }, (err: Error, data: SendData) => {
-            if (err) {
-              reject(err)
-            }
-            resolve(data)
-          })
-        }))
-
-        console.log(data)
-
-        ctx.prisma.group.update({
-          where,
-          data: {
-            ...data,
-            banner: data.banner && ({
-
+        if(data.banner) {
+          const { createReadStream, filename } = await data.banner;
+          const d = await new Promise<SendData>(((resolve, reject) => {
+            s3.upload({
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key: filename,
+              Body: createReadStream()
+            }, (err: Error, data: SendData) => {
+              if (err) {
+                reject(err)
+              }
+              resolve(data)
             })
-          }
+          }))
+          data.banner = d.Location
+        }
+
+        console.log({data})
+
+        return ctx.prisma.group.update({
+          where: where as Prisma.GroupWhereUniqueInput,
+          data: data as Prisma.GroupUpdateInput,
         })
-
-
-        return null
       }
     })
     // t.crud.updateOneGroup({

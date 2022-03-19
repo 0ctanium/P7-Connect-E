@@ -6,7 +6,7 @@ import Link from 'next/link';
 export const Actions: CellComponent<TableData> = ({ row }) => {
     return (
         <div>
-            <Link href={`/admin/groups/${row.id}`}>
+            <Link href={`/admin/groups/${row.id}/edit`}>
                 <a className="text-indigo-600 hover:text-indigo-900 mr-4">
                     Éditer
                 </a>

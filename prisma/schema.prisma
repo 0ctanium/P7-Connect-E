@@ -66,7 +66,6 @@ model User {
 
   groups GroupMember[] @relation("GroupMember")
   invitedMembers GroupMember[] @relation("MemberAssignedBy")
-  medias        Media[]
   posts         Post[]
 }
 
@@ -88,12 +87,10 @@ model Group {
   postNeedToBeApproved  Boolean @default(false)
   everyOneCanApproveMembers Boolean @default(true)
 
-  // Media
   banner    String?
 
   members GroupMember[]
   posts   Post[]
-  // media   Media[]
 }
 
 model GroupMember {
@@ -122,27 +119,32 @@ model Post {
   group         Group       @relation(fields: [groupId], references: [id])
   groupId       String
 
-  media         Media[]
+  media         String[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
 }
 
-model Media {
-  id            String    @id @default(cuid())
-
-  mimeType  String
-  url       String
-
-  addedBy        User        @relation(fields: [addedById], references: [id])
-  addedById      String
-
-  post           Post?        @relation(fields: [postId], references: [id])
-  postId         String?
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now())
-}
+// model Media {
+//   id            String    @id @default(cuid())
+//
+//   mimeType  String
+//   url       String
+//   ecoding   String
+//
+//   addedBy        User        @relation(fields: [addedById], references: [id])
+//   addedById      String
+//
+//   // Relations
+//   post           Post?        @relation(fields: [postId], references: [id])
+//   postId         String?
+//
+//   group           Group?        @relation(fields: [groupId], references: [id])
+//   groupId         String?
+//
+//   createdAt     DateTime  @default(now())
+//   updatedAt     DateTime  @default(now())
+// }
 
 
 

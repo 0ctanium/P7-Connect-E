@@ -103,7 +103,7 @@ export const GroupMutations = extendType({
         data: nonNull(GroupUpdateInput),
         where: nonNull("GroupWhereInput")
       },
-      async resolve(root, args) {
+      async resolve(root, { where, data }, ctx) {
         const data = await new Promise<SendData>(((resolve, reject) => {
           const { createReadStream, filename } = args.data.banner;
           s3.upload({
@@ -119,6 +119,16 @@ export const GroupMutations = extendType({
         }))
 
         console.log(data)
+
+        ctx.prisma.group.update({
+          where,
+          data: {
+            ...data,
+            banner: data.banner && ({
+
+            })
+          }
+        })
 
 
         return null

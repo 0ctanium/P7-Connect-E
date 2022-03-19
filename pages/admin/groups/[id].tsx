@@ -1,4 +1,4 @@
-import {AdminLayout, AdminLayoutHeader, AdminLayoutSection} from "components/layout/Admin";
+import {AdminLayout, AdminLayoutHeader} from "components/layout/Admin";
 import {GetServerSideProps, NextPage} from "next";
 import {gql, useQuery} from "@apollo/client";
 import {FC, useEffect} from "react";
@@ -14,8 +14,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 export const groupQuery = gql`
-    query GetGroup($id: String!) {
-        group(where: { id: $id }) {
+    query GetGroup($id: ID!) {
+        group(id: $id) {
             id
             name
             description
@@ -33,7 +33,7 @@ export const groupQuery = gql`
 
 export const UserDashboard: NextPage = () => {
     const { id } = useRouter().query
-    const { data, loading, error, refetch } = useQuery(groupQuery, { notifyOnNetworkStatusChange: true, variables: {
+    const { data, loading, error } = useQuery(groupQuery, { notifyOnNetworkStatusChange: true, variables: {
             id
         }});
 

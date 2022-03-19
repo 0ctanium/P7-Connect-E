@@ -1,4 +1,4 @@
-import {AdminLayout} from "components/layout/Admin";
+import {AdminLayout, AdminLayoutHeader, AdminLayoutSection} from "components/layout/Admin";
 import {NextPage} from "next";
 import {gql, useMutation, useQuery} from "@apollo/client";
 import {useCallback, useEffect, useRef} from "react";
@@ -25,8 +25,8 @@ export const usersQuery = gql`
 `;
 
 export const updateUserMutation = gql`
-    mutation UpdateUser($ids: [String!], $data: UserUpdateInput!) {
-        deleteManyUser(where: { id: { in: $ids } }, data: $data) {
+    mutation UpdateUser($id: ID!, $data: UserUpdateInput!) {
+        updateOneUser(id: $id, data: $data) {
             id
             email
             name
@@ -39,9 +39,9 @@ export const updateUserMutation = gql`
 `;
 
 export const deleteUserMutation = gql`
-    mutation DeleteUser($id: String!) {
-        deleteManyUser(where: { id: $id }) {
-            id
+    mutation DeleteUser($id: [ID!]!) {
+        deleteManyUser(id: $id) {
+            count
         }
     }
 `;
@@ -134,20 +134,23 @@ export const UserDashboard: NextPage = () => {
     }, [error]);
 
     return (
-        <AdminLayout title="Utilisateurs" current="users">
-            <div className="py-4">
-                <div className="md:overflow-hidden md:rounded-lg shadow -mx-4 sm:-mx-6 md:mx-0">
-                    <UserTable
-                        data={data?.users || []}
-                        fetchData={fetchData}
-                        loading={loading}
-                        error={error}
-                        count={data?.userCount || 0}
-                        onUpdate={handleUpdateUser}
-                        onDelete={handleDeleteUsers}
-                    />
+        <AdminLayout current="users">
+            <AdminLayoutHeader title="Utilisateurs" />
+            <AdminLayoutSection>
+                <div className="py-4">
+                    <div className="md:overflow-hidden md:rounded-lg shadow -mx-4 sm:-mx-6 md:mx-0">
+                        <UserTable
+                            data={data?.users || []}
+                            fetchData={fetchData}
+                            loading={loading}
+                            error={error}
+                            count={data?.userCount || 0}
+                            onUpdate={handleUpdateUser}
+                            onDelete={handleDeleteUsers}
+                        />
+                    </div>
                 </div>
-            </div>
+            </AdminLayoutSection>
         </AdminLayout>
     )
 }

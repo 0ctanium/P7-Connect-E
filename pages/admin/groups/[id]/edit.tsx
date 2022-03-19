@@ -24,8 +24,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 export const groupQuery = gql`
-    query GetGroup($id: String!) {
-        group(where: { id: $id }) {
+    query GetGroup($id: ID!) {
+        group(id: $id) {
             id
             name
             description
@@ -41,8 +41,8 @@ export const groupQuery = gql`
 `;
 
 export const updateGroupMutation = gql`
-    mutation UpdateGroup($data: GroupUpdateInput!, $id: String!) {
-        updateOneGroup(data: $data, where: { id: $id }) {
+    mutation UpdateGroup($data: GroupUpdateInput!, $id: ID!) {
+        updateOneGroup(data: $data, id: $id) {
             id
         }
     }

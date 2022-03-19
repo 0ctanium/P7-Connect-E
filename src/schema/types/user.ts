@@ -1,22 +1,41 @@
-import {objectType, extendType, nonNull, inputObjectType} from 'nexus'
+import {objectType, extendType, nonNull, inputObjectType, list} from 'nexus'
 import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
+
+export const Account = objectType({
+  name: 'Account',
+  definition(t) {
+    t.nonNull.string('provider', {
+      description: `Values: ${Object.values(Providers).join(', ')}`
+    })
+
+    t.nonNull.field('createdAt', { type: 'DateTime' })
+  },
+})
 
 const aliveTimout = 5 * 60 * 1000 // 5 minutes
 export const User = objectType({
   name: 'User',
   definition(t) {
-    t.model.id()
-    t.model.name()
-    t.model.image()
-    t.model.role()
-    t.model.email()
-    t.model.emailVerified()
-    t.model.accounts({
-      filtering: false,
-      pagination: false
+    t.nonNull.id('id')
+    t.string('name')
+    t.string('image')
+    t.nonNull.field('role', { type: "Role" })
+    t.string('email')
+    t.field('emailVerified', { type: "DateTime" })
+
+    t.field('accounts', {
+      type: nonNull(list(Account)),
+      resolve(root, args, ctx) {
+        return ctx.prisma.account.findMany({
+          where: {
+            userId: root.id
+          }
+        })
+      }
     })
-    t.boolean('online', {
+
+    t.nonNull.boolean('online', {
       async resolve(root, args, ctx) {
         const now = new Date()
 
@@ -25,45 +44,73 @@ export const User = objectType({
         return !!(alive && now.getTime() - aliveTimout < parseInt(alive))
       }
     })
-    t.model.groups({
-      pagination: false,
-      filtering: false
-    })
-    t.model.createdAt()
-    t.model.updatedAt()
-  },
-})
 
-export const Account = objectType({
-  name: 'Account',
-  definition(t) {
-    t.model.id()
-    t.model.provider({
-      description: `Values: ${Object.values(Providers).join(', ')}`
+    t.field('groups', {
+      type: nonNull(list("GroupMember")),
+      resolve(root, args, ctx) {
+        return ctx.prisma.groupMember.findMany({
+          where: {
+            userId: root.id || undefined
+          }
+        })
+      }
     })
-    t.model.createdAt()
-    t.model.updatedAt()
-    t.model.user()
+
+    t.field('posts', {
+      type: nonNull(list("Post")),
+      resolve(root, args, ctx) {
+        return ctx.prisma.post.findMany({
+          where: {
+            authorId: root.id || undefined
+          }
+        })
+      }
+    })
+
+    t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.nonNull.field('updatedAt', { type: 'DateTime' })
   },
 })
 
 export const UserQueries = extendType({
   type: 'Query',
   definition: (t) => {
-    t.crud.user()
-    t.crud.users({
-      filtering: true,
-      pagination: true
+    t.field('user', {
+      type: User,
+      args: {
+        id: 'ID'
+      },
+      resolve(root, args, ctx) {
+        return ctx.prisma.user.findUnique({
+          where: {
+            id: args.id || undefined
+          }
+        })
+      }
     })
+
+    t.field('users', {
+      type: nonNull(list(nonNull(User))),
+      args: {
+        skip: "Int",
+        take: "Int",
+        cursor: "ID"
+      },
+      resolve(root, { skip, take, cursor }, ctx) {
+        return ctx.prisma.user.findMany({
+          skip: skip || undefined,
+          take: take || undefined,
+          cursor: cursor ? {
+            id: cursor
+          } : undefined
+        })
+      }
+    })
+
     t.field('userCount', {
       type: "Int",
-      args: {
-        where: "UserWhereInput"
-      },
-      resolve(root, args, ctx, info) {
-        return ctx.prisma.user.count({
-          where: args.where as Prisma.UserWhereInput
-        })
+      resolve(root, args, ctx) {
+        return ctx.prisma.user.count()
       }
     })
   },
@@ -81,20 +128,49 @@ export const UserMutations = extendType({
   type: 'Mutation',
   definition: (t) => {
     t.field('updateOneUser', {
-      type: "User",
+      type: User,
       args: {
-        where: nonNull('UserWhereUniqueInput'),
+        id: nonNull('ID'),
         data: nonNull(UserUpdateInput)
       },
-      resolve(root, { where, data }, ctx, info) {
+      resolve(root, { id, data }, ctx) {
         return ctx.prisma.user.update({
-          where: where as Prisma.UserWhereUniqueInput,
+          where: {
+            id
+          },
           data: data as Prisma.UserUpdateInput
         })
       }
     })
 
-    t.crud.deleteOneUser()
-    t.crud.deleteManyUser()
+    t.field('deleteOneUser', {
+      type: 'User',
+      args: {
+        id: "ID"
+      },
+      resolve(root, args, ctx) {
+        return ctx.prisma.user.delete({
+          where: {
+            id: args.id || undefined
+          }
+        })
+      }
+    })
+
+    t.field('deleteManyUser', {
+      type: "AffectedRowsOutput",
+      args: {
+        id: nonNull(list(nonNull("ID")))
+      },
+      resolve(root, args, ctx) {
+        return ctx.prisma.user.deleteMany({
+          where: {
+            id: {
+              in: args.id || undefined
+            }
+          }
+        })
+      }
+    })
   },
 })

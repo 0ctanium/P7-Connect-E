@@ -1,5 +1,4 @@
 import { SchemaLink } from "@apollo/client/link/schema";
-import { nexusPrisma } from "nexus-plugin-prisma";
 import { makeSchema } from "nexus";
 import { applyMiddleware } from "graphql-middleware";
 import path from "path";
@@ -16,19 +15,6 @@ import {
 
 export const baseSchema = makeSchema({
   types,
-  plugins: [
-    nexusPrisma({
-      experimentalCRUD: true,
-      paginationStrategy: "prisma",
-      scalars: {
-        DateTime,
-      },
-      computedInputs: {
-        createdAt: () => undefined,
-        updatedAt: () => undefined,
-      }
-    })
-  ],
   outputs: {
     typegen: path.join(process.cwd(), 'generated/nexus-typegen.ts'),
     schema: path.join(process.cwd(), 'generated/schema.graphql'),

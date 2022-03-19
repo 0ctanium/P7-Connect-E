@@ -1,27 +1,22 @@
-import {extendType, objectType} from "nexus";
+import {objectType} from "nexus";
 
 export const Post = objectType({
   name: 'Post',
   definition(t) {
-    t.model.id()
-    t.model.group()
-    t.model.author()
+    t.id("id")
 
-    t.model.media({
-      filtering: false,
-      pagination: false
-    })
+    // t.model.group()
+    // t.model.author()
 
-
-    t.model.createdAt()
-    t.model.updatedAt()
+    t.field('createdAt', { type: "DateTime" })
+    t.field('updatedAt', { type: "DateTime" })
   },
 })
 
-export const PostQueries = extendType({
-  type: 'Query',
-  definition: (t) => {
-    t.crud.post()
-    t.crud.posts()
-  },
-})
+// export const PostQueries = extendType({
+//   type: 'Query',
+//   definition: (t) => {
+//     t.crud.post()
+//     t.crud.posts()
+//   },
+// })

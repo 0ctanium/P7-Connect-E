@@ -40,8 +40,8 @@ export const groupQuery = gql`
 `;
 
 export const updateGroupMutation = gql`
-    mutation CreateGroup($data: GroupUpdateInput!, $where: GroupWhereUniqueInput!) {
-        updateOneGroup(data: $data, where: $where) {
+    mutation UpdateGroup($data: GroupUpdateInput!, $id: String!) {
+        updateOneGroup(data: $data, where: { id: { equals: $id } }) {
             id
         }
     }
@@ -86,16 +86,19 @@ export const UserDashboard: NextPage = () => {
     }, [error]);
 
     const handleUpdate = useCallback((data: Inputs) => {
-        console.log(data)
+        console.log({data})
         return updateGroup({
-            variables: { data }
+            variables: {
+                id,
+                data
+            }
+        }).then(() => {
+            return refetch()
         }).catch((err) => {
             console.error(err)
             toast.error("Une erreur est intervenue lors le la mise à jour du groupe")
-        }).then(() => {
-            return refetch()
         })
-    }, [refetch, updateGroup])
+    }, [id, refetch, updateGroup])
 
     return (
         <AdminLayout current="groups" loading={loading}>

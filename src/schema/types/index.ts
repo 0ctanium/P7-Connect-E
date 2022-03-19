@@ -6,6 +6,8 @@ import * as GroupMember from './groupMember'
 import * as Post from './post'
 import * as Media from './media'
 
+import * as Scalars from './scalars'
+
 export const typeDefs = [
     ExampleQuery,
 
@@ -14,4 +16,6 @@ export const typeDefs = [
     GroupMember,
     Post,
     Media,
+
+    Scalars
 ]

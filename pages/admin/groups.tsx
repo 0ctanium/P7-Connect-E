@@ -98,7 +98,7 @@ export const UserDashboard: NextPage = () => {
             toast.success('Groupe créé avec succès')
             reset()
             setOpen(false)
-            refetch()
+            return refetch()
         }).catch((err) => {
             console.error(err)
             toast.error('Une erreur est survenue')
@@ -111,7 +111,7 @@ export const UserDashboard: NextPage = () => {
             const fetchId = ++fetchIdRef.current;
 
             if (fetchId === fetchIdRef.current) {
-                refetch({
+                return refetch({
                     skip: pageIndex * offset,
                     take: offset,
                 });

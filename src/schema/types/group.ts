@@ -1,5 +1,10 @@
-import {extendType, objectType} from "nexus";
+import {extendType, inputObjectType, nonNull, objectType} from "nexus";
 import {Prisma} from "@prisma/client";
+import path from "path";
+import * as fs from "fs";
+import {s3} from "../../services/s3";
+import {ManagedUpload} from "aws-sdk/lib/s3/managed_upload";
+import SendData = ManagedUpload.SendData;
 
 export const Group = objectType({
   name: 'Group',
@@ -64,6 +69,19 @@ export const GroupQueries = extendType({
   },
 })
 
+export const GroupUpdateInput = inputObjectType({
+  name: 'GroupUpdateInput',
+  definition(t) {
+    t.string('name')
+    t.string('description')
+    t.field('privacy', { type: 'GroupPrivacy' })
+    t.boolean('everyOneCanApproveMembers')
+    t.boolean('postNeedToBeApproved')
+    t.boolean('onlyAdminCanPublish')
+    t.field('banner', { type: "Upload" })
+  }
+})
+
 
 export const GroupMutations = extendType({
   type: 'Mutation',
@@ -79,15 +97,42 @@ export const GroupMutations = extendType({
         medias: () => undefined,
       }
     })
-    t.crud.updateOneGroup({
-      computedInputs: {
-        id: () => undefined,
+    t.field('updateOneGroup', {
+      type: 'Group',
+      args: {
+        data: nonNull(GroupUpdateInput),
+        where: nonNull("GroupWhereInput")
+      },
+      async resolve(root, args) {
+        const data = await new Promise<SendData>(((resolve, reject) => {
+          const { createReadStream, filename } = args.data.banner;
+          s3.upload({
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: filename,
+            Body: createReadStream()
+          }, (err: Error, data: SendData) => {
+            if (err) {
+              reject(err)
+            }
+            resolve(data)
+          })
+        }))
 
-        members: () => undefined,
-        posts: () => undefined,
-        medias: () => undefined,
+        console.log(data)
+
+
+        return null
       }
     })
+    // t.crud.updateOneGroup({
+    //   computedInputs: {
+    //     id: () => undefined,
+    //
+    //     members: () => undefined,
+    //     posts: () => undefined,
+    //     medias: () => undefined,
+    //   }
+    // })
 
     t.crud.deleteOneGroup()
     t.crud.deleteManyGroup()

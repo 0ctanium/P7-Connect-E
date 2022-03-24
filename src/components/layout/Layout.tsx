@@ -17,6 +17,7 @@ import {useSession} from "next-auth/react";
 import Link from 'next/link';
 import { useScrollingUp } from "hooks";
 import clsx from "clsx";
+import {SideBar} from "./SideBar";
 
 
 const navigation = [
@@ -32,12 +33,6 @@ const mobileNavigation = [
   { id: 'chats', name: 'Discussions', href: '/chats', icon: ChatIconOutline, currentIcon: ChatIcon },
   { id: 'notifications', name: 'Notifications', href: '/notifications', icon: BellIconOutline, currentIcon: BellIcon },
 ]
-
-export const SideBar: FC = () => {
-  return (
-      <p>Hey</p>
-  )
-}
 
 export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ children, current, sideBar }) => {
   const content = useRef<HTMLElement>(null)

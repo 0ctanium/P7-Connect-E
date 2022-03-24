@@ -46,34 +46,6 @@ export const User = objectType({
     })
 
     // Relations
-    // t.field('groups', {
-    //   type: nonNull(list("GroupMember")),
-    //   args: {
-    //     skip: arg({ type: "Int", default: 0 }),
-    //     take: arg({ type: "Int", default: 20 }),
-    //     cursor: "ID"
-    //   },
-    //   resolve(root, { skip, take, cursor }, ctx) {
-    //     if(take && take > 100) {
-    //       throw new ApolloError("You cannot take more than 100 items")
-    //     }
-    //
-    //     return ctx.prisma.groupMember.findMany({
-    //       skip: skip || undefined,
-    //       take: take || undefined,
-    //       cursor: cursor ? {
-    //         groupId_userId: {
-    //           userId: root.id,
-    //           groupId: cursor
-    //         }
-    //       } : undefined,
-    //       where: {
-    //         userId: root.id || undefined
-    //       }
-    //     })
-    //   }
-    // })
-    //
     // t.field('posts', {
     //   type: nonNull(list("Post")),
     //   args: {

@@ -51,6 +51,9 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+
+
+
 model User {
   id            String    @id @default(cuid())
 
@@ -64,8 +67,6 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
 
-  groups GroupMember[] @relation("GroupMember")
-  invitedMembers GroupMember[] @relation("MemberAssignedBy")
   posts         Post[]
 }
 
@@ -74,40 +75,16 @@ model Group {
 
   name          String
   description   String?
-  privacy       GroupPrivacy
-  official       Boolean @default(false)
+  banner        String?
+
+  // Permissions
+  restricted    Boolean @default(false) // Only admin can create posts in this group
+
+  // Relations
+  posts   Post[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
-
-  archived      Boolean  @default(false)
-
-  // Permissions
-  onlyAdminCanPublish   Boolean @default(false)
-  postNeedToBeApproved  Boolean @default(false)
-  everyOneCanApproveMembers Boolean @default(true)
-
-  banner    String?
-
-  members GroupMember[]
-  posts   Post[]
-}
-
-model GroupMember {
-  role          Role        @default(USER)
-
-  group         Group       @relation(fields: [groupId], references: [id])
-  groupId       String
-
-  user          User        @relation(name: "GroupMember", fields: [userId], references: [id])
-  userId        String
-
-  assignedAt    DateTime    @default(now())
-  assignedById  String
-  assignedBy    User        @relation(name: "MemberAssignedBy", fields: [assignedById], references: [id])
-
-  @@id([groupId, userId])
-  @@unique([groupId, userId])
 }
 
 model Post {
@@ -146,13 +123,6 @@ model Post {
 //   updatedAt     DateTime  @default(now())
 // }
 
-
-
-enum GroupPrivacy {
-  OPEN // Everyone can see and join the group
-  CLOSED // Everyone can see the group. But only members can see posts
-  SECRET // Only members can see the group and
-}
 
 enum Role {
   USER

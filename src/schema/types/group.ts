@@ -11,52 +11,9 @@ export const Group = objectType({
     t.nonNull.id('id')
     t.nonNull.string('name')
     t.string('description')
-    t.nonNull.field('privacy', { type: "GroupPrivacy" })
-    t.nonNull.boolean('official')
-
-    t.nonNull.boolean('onlyAdminCanPublish')
-    t.nonNull.boolean('postNeedToBeApproved')
-    t.nonNull.boolean('everyOneCanApproveMembers')
-
     t.string('banner')
 
-    t.nonNull.field('members', {
-      type: list(nonNull("GroupMember")),
-      args: {
-        skip: arg({ type: "Int", default: 0 }),
-        take: arg({ type: "Int", default: 20 }),
-        cursor: "ID"
-      },
-      resolve(root, { skip, take, cursor }, ctx) {
-        if(take && take > 100) {
-          throw new ApolloError("You cannot take more than 100 items")
-        }
-
-        return ctx.prisma.groupMember.findMany({
-          skip: skip || undefined,
-          take: take || undefined,
-          cursor: cursor ? {
-            groupId_userId: {
-              groupId: root.id,
-              userId: cursor,
-            }
-          } : undefined,
-          where: {
-            groupId: root.id
-          },
-        })
-      }
-    })
-
-    t.nonNull.int('memberCount', {
-      resolve(root, args, ctx) {
-        return ctx.prisma.groupMember.count({
-          where: {
-            groupId: root.id
-          }
-        })
-      }
-    })
+    t.nonNull.boolean('restricted')
 
     t.nonNull.field('posts', {
       type: list(nonNull("Post")),
@@ -83,8 +40,6 @@ export const Group = objectType({
       }
     })
 
-    t.boolean('archived')
-
     t.field('createdAt', { type: 'DateTime' })
     t.field('updatedAt', { type: 'DateTime' })
   },
@@ -110,23 +65,8 @@ export const GroupQueries = extendType({
 
     t.field('groups', {
       type: nonNull(list(nonNull("Group"))),
-      args: {
-        skip: arg({ type: "Int", default: 0 }),
-        take: arg({ type: "Int", default: 20 }),
-        cursor: "ID"
-      },
-      resolve(root, { skip, take, cursor }, ctx) {
-        if(take && take > 100) {
-          throw new ApolloError("You cannot take more than 100 items")
-        }
-
-        return ctx.prisma.group.findMany({
-          skip: skip || undefined,
-          take: take || undefined,
-          cursor: cursor ? {
-            id: cursor
-          } : undefined,
-        })
+      resolve(root, _args, ctx) {
+        return ctx.prisma.group.findMany()
       }
     })
 
@@ -145,12 +85,9 @@ export const GroupCreateInput = inputObjectType({
   definition(t) {
     t.nonNull.string('name')
     t.string('description')
-    t.nonNull.field('privacy', { type: "GroupPrivacy" })
 
-    t.boolean('official', { default: false })
-    t.boolean('everyOneCanApproveMembers')
-    t.boolean('postNeedToBeApproved')
-    t.boolean('onlyAdminCanPublish')
+    t.boolean('restricted')
+
     t.field('banner', { type: "Upload" })
   }
 })
@@ -160,12 +97,9 @@ export const GroupUpdateInput = inputObjectType({
   definition(t) {
     t.string('name')
     t.string('description')
-    t.field('privacy', { type: "GroupPrivacy" })
-    t.boolean('official')
-    t.boolean('archived')
-    t.boolean('everyOneCanApproveMembers')
-    t.boolean('postNeedToBeApproved')
-    t.boolean('onlyAdminCanPublish')
+
+    t.boolean('restricted')
+
     t.field('banner', { type: "Upload" })
   }
 })

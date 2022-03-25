@@ -30,5 +30,8 @@ declare namespace NodeJS {
     OWN_AWS_ACCESS_KEY_ID: string
     OWN_AWS_SECRET_ACCESS_KEY: string
     OWN_AWS_BUCKET_NAME: string
+
+    DATABASE_URL: string
+    REDIS_URL: string
   }
 }

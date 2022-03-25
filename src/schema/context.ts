@@ -14,7 +14,9 @@ export interface Context {
 }
 
 export const createContext: ContextFunction<Context> = async ({ res, req }) => {
-  const cache = createClient();
+  const cache = createClient({
+    url: process.env.REDIS_URL,
+  });
 
   cache.on('error', (err) => console.error('Redis Client Error', err));
 

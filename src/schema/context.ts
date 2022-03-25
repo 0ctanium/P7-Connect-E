@@ -2,25 +2,19 @@ import { PrismaClient } from '@prisma/client'
 import { MicroRequest } from 'apollo-server-micro/dist/types'
 import { ServerResponse } from 'http'
 import {ContextFunction} from "apollo-server-core";
-import {RedisClientType, createClient} from 'redis';
+import {Redis} from "@upstash/redis";
 
 const prisma = new PrismaClient()
 
 export interface Context {
   prisma: PrismaClient
-  cache: RedisClientType
+  cache: Redis
   res: ServerResponse
   req: MicroRequest
 }
 
 export const createContext: ContextFunction<Context> = async ({ res, req }) => {
-  const cache = createClient({
-    url: process.env.REDIS_URL,
-  });
-
-  cache.on('error', (err) => console.error('Redis Client Error', err));
-
-  await cache.connect();
+  const cache = Redis.fromEnv()
 
   return { prisma, cache, res, req }
 }

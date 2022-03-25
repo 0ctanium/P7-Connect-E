@@ -14,10 +14,10 @@ export const AccountCell: CellComponent<TableData> = ({ row }) => (
                     key={i}
                     render={
                         <p className="text-sm font-bold text-white">
-                            Depuis {moment(account.createdAt).calendar().toLocaleLowerCase()}
+                            Depuis {moment(account?.createdAt).calendar().toLocaleLowerCase()}
                         </p>
                     }>
-                    <SocialIcon className="w-6 h-6" provider={account.provider as AccountProvider} circled />
+                    <SocialIcon className="w-6 h-6" provider={account?.provider as AccountProvider} circled />
                 </Tooltip>
             ))}
         </div>

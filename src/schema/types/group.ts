@@ -117,7 +117,7 @@ export const GroupMutations = extendType({
           const { createReadStream, filename } = await data.banner;
           const d = await new Promise<SendData>(((resolve, reject) => {
             s3.upload({
-              Bucket: process.env.AWS_BUCKET_NAME,
+              Bucket: process.env.OWN_AWS_BUCKET_NAME,
               Key: filename,
               Body: createReadStream()
             }, (err: Error, data: SendData) => {
@@ -147,7 +147,7 @@ export const GroupMutations = extendType({
           const { createReadStream, filename } = await data.banner;
           const d = await new Promise<SendData>(((resolve, reject) => {
             s3.upload({
-              Bucket: process.env.AWS_BUCKET_NAME,
+              Bucket: process.env.OWN_AWS_BUCKET_NAME,
               Key: filename,
               Body: createReadStream()
             }, (err: Error, data: SendData) => {

@@ -21,7 +21,7 @@ const getGroupInfoAndPostQuery = gql`
                 id
                 
                 text
-                media
+#                media
                 author {
                     id
                     
@@ -53,7 +53,7 @@ const GroupPage: NextPage = () => {
         <Layout current='feed'>
             <div className="flex justify-center mt-8 text-center">
                 <div className="flex-auto">
-                    <PostForm groupId={groupId} />
+                    <PostForm groupId={groupId as string} />
                     {JSON.stringify(group, null, 4)}
                 </div>
             </div>
@@ -70,11 +70,7 @@ const createPostMutation = gql`
 `
 
 export const PostForm: FC<{ groupId: string }> = ({ groupId }) => {
-    const [createPost] = useMutation(createPostMutation, {
-        variables: {
-            group: groupId
-        }
-    })
+    const [createPost] = useMutation(createPostMutation)
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback((e) => {
         e.preventDefault()
@@ -85,10 +81,11 @@ export const PostForm: FC<{ groupId: string }> = ({ groupId }) => {
 
         return createPost({
             variables: {
+                group: groupId,
                 text
             }
         })
-    }, [createPost])
+    }, [createPost, groupId])
 
     console.log('render')
 

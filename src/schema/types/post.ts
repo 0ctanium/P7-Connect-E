@@ -11,7 +11,7 @@ export const Post = objectType({
     t.id("id")
 
     t.nonNull.string("text")
-    t.list.string("media")
+    // t.list.string("media")
 
     t.nonNull.id('authorId')
     t.field('author', {
@@ -56,27 +56,27 @@ export const PostMutations = extendType({
       },
       async resolve(root, args, ctx) {
         const session = await getSession(ctx)
-        if(!session || !session.user) throw new AuthenticationError("You must be authenticated")
+        if(!session?.user?.id) throw new AuthenticationError("You must be authenticated")
 
-        let media = undefined
-        if(args.media) {
-          media = await Promise.all(args.media.map(async (m) => {
-            const { createReadStream, filename } = await m;
-            const d = await new Promise<SendData>(((resolve, reject) => {
-              s3.upload({
-                Bucket: process.env.AWS_BUCKET_NAME,
-                Key: filename,
-                Body: createReadStream()
-              }, (err: Error, data: SendData) => {
-                if (err) {
-                  reject(err)
-                }
-                resolve(data)
-              })
-            }))
-            return d.Location
-          }))
-        }
+        // let media = undefined
+        // if(args.media) {
+        //   media = await Promise.all(args.media.map(async (m) => {
+        //     const { createReadStream, filename } = await m;
+        //     const d = await new Promise<SendData>(((resolve, reject) => {
+        //       s3.upload({
+        //         Bucket: process.env.OWN_AWS_BUCKET_NAME,
+        //         Key: filename,
+        //         Body: createReadStream()
+        //       }, (err: Error, data: SendData) => {
+        //         if (err) {
+        //           reject(err)
+        //         }
+        //         resolve(data)
+        //       })
+        //     }))
+        //     return d.Location
+        //   }))
+        // }
 
 
 
@@ -93,7 +93,7 @@ export const PostMutations = extendType({
               }
             },
             text: args.text,
-            media
+            // media
           }
         })
       }

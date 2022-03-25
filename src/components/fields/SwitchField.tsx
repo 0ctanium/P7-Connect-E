@@ -145,3 +145,4 @@ export const SwitchField = React.forwardRef<HTMLInputElement, SwitchFieldProps>(
         </Switch.Group>
     )
 });
+SwitchField.displayName = "SwitchField"

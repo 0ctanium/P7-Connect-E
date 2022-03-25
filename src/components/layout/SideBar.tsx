@@ -39,7 +39,7 @@ export const SideBar: FC = () => {
                             </Link>
                         ))}
                     </div>
-                ) : <p>Aucun groupe n'a été créé</p>
+                ) : <p>{"Aucun groupe n'a été créé"}</p>
             }
         </div>
     )

@@ -10,7 +10,7 @@ import SlackProvider from "next-auth/providers/slack"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
 import prisma from "lib/prisma"
-import {Redis} from "@upstash/redis";
+import {redis} from "../../../src/services/redis";
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -35,7 +35,7 @@ export default NextAuth({
 
       if(user?.id) {
         // set session alive status
-        const cache = Redis.fromEnv()
+        const cache = redis()
         cache.set(`session:${user.id}`, new Date().getTime()).catch(console.error)
       }
 
@@ -47,7 +47,7 @@ export default NextAuth({
 
       if(user?.id) {
         // set session alive status
-        const cache = Redis.fromEnv()
+        const cache = redis()
         cache.set(`session:${user.id}`, new Date().getTime()).catch(console.error)
       }
 

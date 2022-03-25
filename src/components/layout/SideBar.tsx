@@ -4,6 +4,7 @@ import {Spinner} from "../../icons/Spinner";
 import {NexusGenFieldTypes} from "../../../generated/nexus-typegen";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {defaultFormProps, NewGroupInputs, NewGroupSlideOver} from "../forms/NewGroup";
+import Link from 'next/link';
 
 const getUserGroups = gql`
     query GetGroups {
@@ -30,10 +31,12 @@ export const SideBar: FC = () => {
                 (
                     <div>
                         {groups.map(group => (
-                            <div key={group.id}>
-                                <p>{group.name}</p>
-                                <p>{group.description}</p>
-                            </div>
+                            <Link href={`/groups/${group.id}`} key={group.id}>
+                                <a>
+                                    <p>{group.name}</p>
+                                    <p>{group.description}</p>
+                                </a>
+                            </Link>
                         ))}
                     </div>
                 ) : <p>Aucun groupe n'a été créé</p>

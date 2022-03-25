@@ -90,6 +90,8 @@ model Group {
 model Post {
   id            String    @id @default(cuid())
 
+  text          String
+
   author        User        @relation(fields: [authorId], references: [id])
   authorId      String
 

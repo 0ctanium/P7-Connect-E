@@ -18,17 +18,16 @@ export const Group = objectType({
     t.nonNull.field('posts', {
       type: list(nonNull("Post")),
       args: {
-        skip: arg({ type: "Int", default: 0 }),
         take: arg({ type: "Int", default: 20 }),
         cursor: "ID"
       },
-      resolve(root, { skip, take, cursor }, ctx) {
+      resolve(root, { take, cursor }, ctx) {
         if(take && take > 100) {
           throw new ApolloError("You cannot take more than 100 items")
         }
 
         return ctx.prisma.post.findMany({
-          skip: skip || undefined,
+          skip: cursor ? 1 : undefined,
           take: take || undefined,
           cursor: cursor ? {
             id: cursor

@@ -30,10 +30,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
     return (
         <SessionProvider session={pageProps.session}>
-            <ApolloProvider client={apolloClient}>
-                {Component.auth ? <AuthWall config={Component.auth}><Component {...pageProps} /></AuthWall> : <Component {...pageProps} />}
-            <ToastContainer />
-            </ApolloProvider>
+            {apolloClient && (
+                <>
+                    <ApolloProvider client={apolloClient}>
+                        {Component.auth ? <AuthWall config={Component.auth}><Component {...pageProps} /></AuthWall> : <Component {...pageProps} />}
+                        <ToastContainer />
+                    </ApolloProvider>
+                </>
+            )}
         </SessionProvider>
     )
 }

@@ -76,7 +76,6 @@ export const UserDashboard: NextPage = () => {
     }, [error]);
 
     const handleUpdate = useCallback((data: Inputs) => {
-        console.log({data})
         return updateGroup({
             variables: {
                 id,

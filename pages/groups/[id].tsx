@@ -1,65 +1,102 @@
-import {gql, useMutation, useQuery} from "@apollo/client";
-import {signOut, useSession} from "next-auth/react";
-import {NextPage} from "next";
+import { gql , useMutation} from "@apollo/client";
+import {GetStaticPaths, GetStaticProps, InferGetStaticPropsType, NextPage} from "next";
 import {Layout} from "components/layout";
-import {useRouter} from "next/router";
 import {NexusGenFieldTypes} from "../../generated/nexus-typegen";
-import {Spinner} from "../../src/icons/Spinner";
 import {Field} from "../../src/components/fields/Field";
-import {FC, FormEventHandler, useCallback, useRef} from "react";
+import {FC, FormEventHandler, useCallback} from "react";
+// import {initializeApollo} from "../../src/services/apollo/client";
+import prisma from "../../src/services/prisma";
+// import { createContext } from "schema/context";
 
-const getGroupInfoAndPostQuery = gql`
-    query GetGroupInfoAndPost($id: ID!, $cursor: ID) {
-        group(id: $id) {
-            name
-            description
-            banner
-            
-            restricted
-            
-            posts(cursor: $cursor) {
-                id
-                
-                text
-#                media
-                author {
-                    id
-                    
-                    name
-                    image
-                }
-                
-                createdAt
-            }
-        }
-    }
-`
+// const getGroupInfoAndPostQuery = gql`
+//     query GetGroupInfoAndPost($id: ID!, $cursor: ID) {
+//         group(id: $id) {
+//             id
+//             name
+//             description
+//             banner
+//
+//             restricted
+//
+//             posts(cursor: $cursor) {
+//                 id
+//
+//                 text
+//                 #                media
+//                 author {
+//                     id
+//
+//                     name
+//                     image
+//                 }
+//
+//                 createdAt
+//             }
+//         }
+//     }
+// `
 
-const GroupPage: NextPage = () => {
-    const { id: groupId } = useRouter().query
-    const { loading, data } = useQuery<{ group: NexusGenFieldTypes["Group"] }>(getGroupInfoAndPostQuery, {
-        variables: {
-            id: groupId
-        }
-    })
+interface PageData {
+    group: NexusGenFieldTypes["Group"]
+}
 
-    if(loading) {
-        return <Spinner className="w-6 h-6 mx-auto text-gray-800 animate-spin" />
-    }
-
-    const group = data?.group
-
+const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ group }) => {
     return (
         <Layout current='feed'>
+            <div>
+                <img src={group?.banner || ''} alt={`Bannière du groupe ${group?.name}`}/>
+            </div>
             <div className="flex justify-center mt-8 text-center">
                 <div className="flex-auto">
-                    <PostForm groupId={groupId as string} />
+                    <PostForm groupId={group?.id} />
                     {JSON.stringify(group, null, 4)}
                 </div>
             </div>
         </Layout>
     )
 }
+
+export const getStaticProps: GetStaticProps<PageData, { id: string }> = async ({ params }) => {
+    if(!params) {
+        return {
+            notFound: true
+        }
+    }
+
+    // const { id } = params
+    // const context = await createContext({})
+    // const apollo = await initializeApollo(null, context)
+    //
+    // const res = await apollo.query<PageData>({
+    //     query: getGroupInfoAndPostQuery,
+    //     variables: {
+    //         id
+    //     }
+    // })
+    //
+    // console.log(res)
+
+    return {
+        props: {},
+        revalidate: 1 // 1 minute
+    }
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+    const [groups] = await prisma.$transaction([
+        prisma.group.findMany({ select: { id: true } }),
+    ])
+
+    const paths = groups.map((group) => ({
+        params: { id: group.id },
+    }))
+
+    return { paths, fallback: 'blocking' }
+}
+
+
+
+
 
 const createPostMutation = gql`
     mutation CreatePost($group: ID!, $text: String!) {
@@ -77,8 +114,6 @@ export const PostForm: FC<{ groupId: string }> = ({ groupId }) => {
         // @ts-ignore
         const text: string = e.target.text.value
 
-        console.log({ text })
-
         return createPost({
             variables: {
                 group: groupId,
@@ -86,8 +121,6 @@ export const PostForm: FC<{ groupId: string }> = ({ groupId }) => {
             }
         })
     }, [createPost, groupId])
-
-    console.log('render')
 
     return (
         <form onSubmit={handleSubmit}>

@@ -15,7 +15,7 @@ export const config = {
 }
 
 const apolloServer = new ApolloServer({
-  schema,
+  schema: schema,
   context: createContext,
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 })

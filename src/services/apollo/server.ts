@@ -1,21 +1,19 @@
 import {SchemaLink} from "@apollo/client/link/schema";
 import ResolverContext = SchemaLink.ResolverContext;
 import {ApolloClient, InMemoryCache, NormalizedCacheObject} from "@apollo/client";
+import {schema} from "../../schema";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>
 
-async function createIsomorphLink(context: ResolverContext = {}) {
-  console.log('window is', typeof window)
+function createIsomorphLink(context: ResolverContext = {}) {
   if (typeof window === 'undefined') {
-    console.log('here back')
+    console.log('test')
+
     const { SchemaLink } = require('@apollo/client/link/schema')
-    const schema = await require('../../schema')
+    // const { schema } = require('../../schema')
 
-    console.log(SchemaLink, schema)
-
-    return new SchemaLink({ schema: schema.schema, context })
+    return new SchemaLink({ schema, context })
   } else {
-    console.log('here front')
     const createUploadLink = require("apollo-upload-client/public/createUploadLink.js")
 
     return createUploadLink({
@@ -26,6 +24,8 @@ async function createIsomorphLink(context: ResolverContext = {}) {
 }
 
 async function createApolloClient(context?: ResolverContext) {
+  console.log(await createIsomorphLink(context))
+
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: await createIsomorphLink(context),
@@ -34,7 +34,7 @@ async function createApolloClient(context?: ResolverContext) {
 }
 
 export async function initializeApollo(
-  initialState: NormalizedCacheObject | null = null,
+  initialState?: NormalizedCacheObject,
   // Pages with Next.js data fetching methods, like `getStaticProps`, can send
   // a custom context which will be used by `SchemaLink` to server render pages
   context?: ResolverContext

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import React, {FC, HTMLAttributes, HTMLProps} from 'react'
-import {AccountProvider} from "../constants/provider";
+import React, {FC, HTMLAttributes} from 'react'
+import {ClientSafeProvider, LiteralUnion} from "next-auth/react";
+import {BuiltInProviderType} from "next-auth/providers";
 
 type SocialIconType<P = {}> = FC<HTMLAttributes<unknown> & P>
 
@@ -20,25 +21,25 @@ export const FacebookIcon: SocialIconType = (props) => <img {...props} src="/ico
 export const TwitterIcon: SocialIconType = (props) => <img {...props} src="/icons/social/twitter.svg" alt="Twitter" />
 export const LinkedInIcon: SocialIconType = ({ className, ...props}) => <div {...props} className={'p-0.5 ' + className}><img src="/icons/social/linkedin-square.svg" alt="LinkedIn" /></div>
 
-export const circledSocialIcons: Record<AccountProvider, SocialIconType> = {
-    [AccountProvider.Apple]: CircledAppleIcon,
-    [AccountProvider.Google]: CircledGoogleIcon,
-    [AccountProvider.Slack]: CircledSlackIcon,
-    [AccountProvider.Facebook]: CircledFacebookIcon,
-    [AccountProvider.Twitter]: CircledTwitterIcon,
-    [AccountProvider.LinkedIn]: CircledLinkedInIcon,
+export const circledSocialIcons: { [p in LiteralUnion<BuiltInProviderType>]?: SocialIconType } = {
+    apple: CircledAppleIcon,
+    google: CircledGoogleIcon,
+    slack: CircledSlackIcon,
+    facebook: CircledFacebookIcon,
+    twitter: CircledTwitterIcon,
+    linkedin: CircledLinkedInIcon,
 }
 
-export const socialIcons: Record<AccountProvider, SocialIconType> = {
-    [AccountProvider.Apple]: AppleIcon,
-    [AccountProvider.Google]: GoogleIcon,
-    [AccountProvider.Slack]: SlackIcon,
-    [AccountProvider.Facebook]: FacebookIcon,
-    [AccountProvider.Twitter]: TwitterIcon,
-    [AccountProvider.LinkedIn]: LinkedInIcon,
+export const socialIcons: { [p in LiteralUnion<BuiltInProviderType>]?: SocialIconType } = {
+    apple: AppleIcon,
+    google: GoogleIcon,
+    slack: SlackIcon,
+    facebook: FacebookIcon,
+    twitter: TwitterIcon,
+    linkedin: LinkedInIcon,
 }
 
-export const SocialIcon: SocialIconType<{ provider: AccountProvider, circled?: boolean }> = ({ provider, circled, ...props}) => {
+export const SocialIcon: SocialIconType<{ provider: LiteralUnion<BuiltInProviderType>, circled?: boolean }> = ({ provider, circled, ...props}) => {
     const Icon = circled ? circledSocialIcons[provider] : socialIcons[provider]
 
     if(Icon) {

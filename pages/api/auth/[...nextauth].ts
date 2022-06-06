@@ -84,8 +84,8 @@ export default NextAuth({
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: {  label: "Password", type: "password" }
+        email: { label: "Adresse email", type: "email", placeholder: "mail@exemple.fr" },
+        password: {  label: "Mot de passe", type: "password" }
       },
       async authorize(credentials, req) {
         // You need to provide your own logic here that takes the credentials
@@ -105,6 +105,7 @@ export default NextAuth({
         if (res.ok && user) {
           return user
         }
+
         // Return null if user data could not be retrieved
         return null
       }

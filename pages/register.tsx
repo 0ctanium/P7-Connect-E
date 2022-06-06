@@ -1,12 +1,12 @@
 import {GetServerSideProps, InferGetServerSidePropsType, NextPage} from "next";
-import {ClientSafeProvider, getCsrfToken, getProviders, LiteralUnion, signIn, useSession} from "next-auth/react";
+import {ClientSafeProvider, getProviders, LiteralUnion, signIn, useSession} from "next-auth/react";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {BuiltInProviderType} from "next-auth/providers";
 import {SocialIcon} from "icons/Social";
 import {useQueryParam} from "hooks";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
-import {SignInForm, defaultFormProps, Inputs} from "../src/components/forms/SignIn";
+import {SignUnForm, defaultFormProps, Inputs} from "../src/components/forms/SignUp";
 import Link from "next/link";
 import {SubmitHandler, useForm} from "react-hook-form";
 
@@ -14,15 +14,14 @@ type Providers = Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>
 
 interface PageProps {
     providers: Providers | null
-    csrfToken?: string
 }
 
-const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ providers, csrfToken }) => {
+const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ providers }) => {
     const [callbackUrl] = useQueryParam('callbackUrl', '/')
     const [error, setError] = useQueryParam('error')
     const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.type === "oauth") : [], [providers])
-    const loginForm = useForm<Inputs>(defaultFormProps)
-    const [loginLoading, setLoginLoading] = useState(false)
+    const registerForm = useForm<Inputs>(defaultFormProps)
+    const [registerLoading, setLoginLoading] = useState(false)
 
     const router = useRouter()
     const { status } = useSession()
@@ -69,12 +68,12 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
                         src="/icons/icon-left-font.svg"
                         alt="Workflow"
                     />
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Connectez vous à votre compte</h2>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Créer un nouveau compte</h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
                         Ou{' '}
                         <Link href="/register" >
                             <a className="font-medium text-indigo-600 hover:text-indigo-500">
-                                inscrivez-vous
+                                connectez vous
                             </a>
                         </Link>
                     </p>
@@ -92,7 +91,7 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
                                         redirect: true
                                     })}
                                 >
-                                    <SocialIcon className="w-6 h-6 mr-2" provider={provider.id} />Connexion avec {provider.name}
+                                    <SocialIcon className="w-6 h-6 mr-2" provider={provider.id} />Inscription avec {provider.name}
                                 </button>
                             ))}
                         </div>
@@ -106,7 +105,7 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
                                 </div>
                             </div>
 
-                            <SignInForm form={loginForm} loading={loginLoading} onSubmit={handleLogin}  />
+                            <SignUnForm form={registerForm} loading={registerLoading} onSubmit={handleLogin}  />
                         </div>
                     </div>
                 </div>
@@ -115,14 +114,12 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
     );
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (ctx) => {
-    const providers = await getProviders()
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     return {
         props: {
-            csrfToken: await getCsrfToken(ctx),
-            providers
+            providers: await getProviders()
         },
     }
 }
 
-export default LoginPage
+export default RegisterPage

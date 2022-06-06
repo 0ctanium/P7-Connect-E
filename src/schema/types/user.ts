@@ -1,14 +1,11 @@
 import {objectType, extendType, nonNull, inputObjectType, list, arg} from 'nexus'
-import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
 import {ApolloError} from "apollo-server-micro";
 
 export const Account = objectType({
   name: 'Account',
   definition(t) {
-    t.nonNull.string('provider', {
-      description: `Values: ${Object.values(Providers).join(', ')}`
-    })
+    t.nonNull.string('provider')
 
     t.nonNull.field('createdAt', { type: 'DateTime' })
   },

@@ -1,54 +1,14 @@
 import {AdminLayout, AdminLayoutHeader, AdminLayoutSection} from "components/layout/Admin";
 import {NextPage} from "next";
-import {gql, useMutation, useQuery} from "@apollo/client";
 import {useCallback, useEffect, useRef} from "react";
 import {toast} from "react-toastify";
 import {UserTable, TableEdit} from "components/table/preset/user/UsersTable";
 import {Role} from "constants/role";
-
-export const usersQuery = gql`
-    query GetUsers($skip: Int = 0, $take: Int = 20) {
-        users(skip: $skip, take: $take) {
-            id
-            email
-            name
-            image
-            role
-            accounts {
-                provider
-                createdAt
-            }
-            createdAt
-        }
-        userCount
-    }
-`;
-
-export const updateUserMutation = gql`
-    mutation UpdateUser($id: ID!, $data: UserUpdateInput!) {
-        updateOneUser(id: $id, data: $data) {
-            id
-            email
-            name
-            image
-            role
-            createdAt
-            updatedAt
-        }
-    }
-`;
-
-export const deleteUserMutation = gql`
-    mutation DeleteUser($id: [ID!]!) {
-        deleteManyUser(id: $id) {
-            count
-        }
-    }
-`;
+import {useDeleteUserMutation, useGetUsersQuery, useUpdateUserMutation} from "generated/graphql";
 
 export const UserDashboard: NextPage = () => {
-    const { data, loading, error, refetch } = useQuery(usersQuery, { notifyOnNetworkStatusChange: true });
-    const [updateUser] = useMutation(updateUserMutation, {
+    const { data, loading, error, refetch } = useGetUsersQuery()
+    const [updateUser] = useUpdateUserMutation({
         onError(err) {
             // check if user off-line
             if(err.networkError && typeof window !== 'undefined' && !window.navigator.onLine) {
@@ -75,9 +35,9 @@ export const UserDashboard: NextPage = () => {
                 toast.error(message)
             }
         }
-    });
+    })
 
-    const [deleteUser] = useMutation(deleteUserMutation, {
+    const [deleteUser] = useDeleteUserMutation({
         onError(err) {
             // check if user off-line
             if(err.networkError && typeof window !== 'undefined' && !window.navigator.onLine) {

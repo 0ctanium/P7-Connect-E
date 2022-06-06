@@ -1,26 +1,13 @@
-import React, {FC, useCallback, useState} from 'react'
-import {gql, useMutation, useQuery} from "@apollo/client";
-import {Spinner} from "../../icons/Spinner";
-import {NexusGenFieldTypes} from "../../../generated/nexus-typegen";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {defaultFormProps, NewGroupInputs, NewGroupSlideOver} from "../forms/NewGroup";
+import React, {FC} from 'react'
 import Link from 'next/link';
-
-const getUserGroups = gql`
-    query GetGroups {
-        groups {
-            id
-            name
-            banner
-        }
-    }
-`
+import {LoadingSpinner} from "../LoadingSpinner";
+import {useGetAllGroupsQuery} from "generated/graphql";
 
 export const SideBar: FC = () => {
-    const { loading, data } = useQuery<{ groups: NexusGenFieldTypes["Group"][] }>(getUserGroups)
+    const { loading, data } = useGetAllGroupsQuery()
 
     if(loading) {
-        return <Spinner className="w-6 h-6 mx-auto text-gray-800 animate-spin" />
+        return <LoadingSpinner className="w-6 h-6" />
     }
 
     const groups = data?.groups

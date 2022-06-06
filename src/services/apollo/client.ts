@@ -4,18 +4,13 @@ import {ApolloClient, InMemoryCache, NormalizedCacheObject} from "@apollo/client
 
 let apolloClient: ApolloClient<NormalizedCacheObject>
 
-async function createIsomorphLink(context: ResolverContext = {}) {
-  console.log('window is', typeof window)
+function createIsomorphLink(context: ResolverContext = {}) {
   if (typeof window === 'undefined') {
-    console.log('here back')
     const { SchemaLink } = require('@apollo/client/link/schema')
-    const schema = await require('../../schema')
-
-    console.log(SchemaLink, schema)
+    const schema = require('../../schema')
 
     return new SchemaLink({ schema: schema.schema, context })
   } else {
-    console.log('here front')
     const createUploadLink = require("apollo-upload-client/public/createUploadLink.js")
 
     return createUploadLink({

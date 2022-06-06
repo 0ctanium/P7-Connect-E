@@ -1,4 +1,4 @@
 export * from './role'
+export * from './provider'
+export * from './style'
 
-export const defaultHtmlClass = 'bg-gray-50'
-export const defaultBodyClass = 'overflow-hidden'

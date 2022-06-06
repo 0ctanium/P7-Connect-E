@@ -1,3 +1,3 @@
-import {NotFoundErrorPage} from "../src/components/layout/errors";
+import {NotFoundErrorPage} from "components/layout/errors";
 
 export default NotFoundErrorPage

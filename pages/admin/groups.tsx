@@ -1,88 +1,48 @@
 import {AdminLayout, AdminLayoutHeader, AdminLayoutSection} from "components/layout/Admin";
-import {NextPage} from "next";
-import {gql, useMutation, useQuery} from "@apollo/client";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {GetServerSideProps, InferGetServerSidePropsType, NextPage} from "next";
+import {useCallback, useState} from "react";
 import {toast} from "react-toastify";
 import {Role} from "constants/role";
-import {GroupTable} from "../../src/components/table/preset/groups/GroupsTable";
+import {GroupTable} from "components/table/preset/groups/GroupsTable";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {defaultFormProps, NewGroupInputs, NewGroupSlideOver} from "components/forms/NewGroup";
+import {
+    GetAllGroupsDocument, GetAllGroupsQuery, GetAllGroupsQueryVariables,
+    useCreateGroupMutation,
+} from "generated/graphql";
+import {getSession} from "next-auth/react";
+import {checkSessionRole} from "lib/session";
+import {initializeApollo} from "services/apollo/client";
+import {useRefetch} from "hooks";
+import {createApolloContext} from "../../src/schema/context";
 
-export async function getStaticProps() {
-    return { props: { htmlClass: 'bg-gray-100', bodyClass: '' } };
-}
+type PageProps = GetAllGroupsQuery
 
-export const groupsQuery = gql`
-    query GetGroups {
-        groups {
-            id
-            name
-            description
-            banner
-            
-            restricted
-            
-            createdAt
-        }
-        groupCount
-    }
-`;
-
-export const createGroupMutation = gql`
-    mutation CreateGroup($data: GroupCreateInput!) {
-        createOneGroup(data: $data) {
-            id
-        }
-    }
-`;
-
-export const UserDashboard: NextPage = () => {
-    const { data, loading, error, refetch } = useQuery(groupsQuery, { notifyOnNetworkStatusChange: true });
-    const [createGroup] = useMutation(createGroupMutation)
+export const GroupsDashboard: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ groups }) => {
+    const refetch = useRefetch()
+    const [createLoading, setCreateLoading] = useState(false)
+    const [createGroup] = useCreateGroupMutation()
     const form = useForm<NewGroupInputs>(defaultFormProps);
     const { reset } = form
 
     const [open, setOpen] = useState(false)
     const handleSubmit: SubmitHandler<NewGroupInputs> = useCallback((data) => {
+        setCreateLoading(true)
         createGroup({
-            variables: {
-                data: {
-                    ...data,
-                    official: true
-                }
-            }
+            variables: { data }
         }).then(() => {
             toast.success('Groupe créé avec succès')
+            return refetch()
+        }).then(() => {
             reset()
             setOpen(false)
-            return refetch()
         }).catch((err) => {
             console.error(err)
             toast.error('Une erreur est survenue')
+        }).finally(() => {
+            setCreateLoading(false)
         })
     }, [createGroup, refetch, reset])
-
-    const fetchIdRef = useRef(0);
-    const fetchData = useCallback(
-        ({ pageIndex, pageSize: offset }) => {
-            const fetchId = ++fetchIdRef.current;
-
-            if (fetchId === fetchIdRef.current) {
-                return refetch({
-                    skip: pageIndex * offset,
-                    take: offset,
-                });
-            }
-        },
-        [refetch]
-    );
-
-    useEffect(() => {
-        if (error) {
-            toast.error('Erreur interne');
-            console.error(error);
-        }
-    }, [error]);
 
     return (
         <AdminLayout current="groups">
@@ -100,24 +60,38 @@ export const UserDashboard: NextPage = () => {
                 <div className="py-4">
                     <div className="md:overflow-hidden md:rounded-lg shadow -mx-4 sm:-mx-6 md:mx-0">
                         <GroupTable
-                            data={data?.groups || []}
-                            fetchData={fetchData}
-                            loading={loading}
-                            error={error}
-                            count={data?.groupCount || 0}
+                            data={groups}
                             onDelete={console.log}
                         />
                     </div>
                 </div>
             </AdminLayoutSection>
 
-            <NewGroupSlideOver open={open} onClose={setOpen} onSubmit={handleSubmit} form={form} />
+            <NewGroupSlideOver open={open} onClose={setOpen} onSubmit={handleSubmit} form={form} loading={createLoading} />
         </AdminLayout>
     )
 }
 
-UserDashboard.auth = {
+export const getServerSideProps: GetServerSideProps<PageProps> = async (ctx) => {
+    const user = await getSession(ctx)
+
+    if(!checkSessionRole(user, Role.ADMIN)) {
+        ctx.res.statusCode = 403
+        throw new Error('test')
+    }
+
+    const context = await createApolloContext(null)
+    const apollo = await initializeApollo(null, context)
+
+    const res = await apollo.query<GetAllGroupsQuery, GetAllGroupsQueryVariables>({
+        query: GetAllGroupsDocument
+    })
+
+    return { props: res.data };
+}
+
+GroupsDashboard.auth = {
     roles: [Role.ADMIN],
 }
 
-export default UserDashboard
+export default GroupsDashboard

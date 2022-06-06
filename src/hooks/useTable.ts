@@ -25,7 +25,7 @@ export const useTableCell = <
     Key = any,
     Edit = D
     >(row: D): TableCell<D, Key, Edit> => {
-    const ctx = useContext<TableContextProps<D, Key, Edit>>(TableContext);
+    const ctx = useReactTable<D, Key, Edit>();
 
     const {
         resolveKey,

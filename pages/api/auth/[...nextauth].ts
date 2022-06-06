@@ -13,6 +13,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
 import prisma from "services/prisma"
 import redis from "services/redis";
+import {providers} from "next-auth/core/routes";
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -27,6 +28,25 @@ export default NextAuth({
 
   pages: {
     signIn: '/login'
+  },
+
+  events: {
+    async signIn({user, account, profile}) {
+
+      // Automatically update facebook profile picture
+      if(account.provider === "facebook") {
+        if(profile?.image) {
+          await prisma.user.update({
+            where: {
+              id: user.id
+            },
+            data: {
+              image: profile.image
+            }
+          })
+        }
+      }
+    }
   },
 
   callbacks: {

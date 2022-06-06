@@ -8,7 +8,7 @@ import {UnauthorizedErrorPage} from "components/layout/errors";
 import {FC, useEffect, useMemo} from "react";
 import {AuthWallConfig} from "types";
 import moment from "moment";
-import {defaultBodyClass, defaultHtmlClass} from "../src/constants";
+import {defaultBodyClass, defaultHtmlClass} from "constants/style";
 import { fr } from 'yup-locales';
 import * as yup  from 'yup';
 

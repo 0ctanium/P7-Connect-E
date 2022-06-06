@@ -6,7 +6,7 @@ import {
     HiChevronRight,
 } from 'react-icons/hi';
 import clsx from 'clsx';
-import {useReactTable} from "../../../hooks/useTable";
+import {useReactTable} from "hooks/useTable";
 
 
 export const DesktopTablePagination: FC = () => {

@@ -5,8 +5,8 @@ export const TablePaginationInfo: FC = () => {
     const {
         instance: {
             state: { pageIndex, pageSize },
+            count,
         },
-        count
     } = useReactTable()
 
     return (
@@ -14,7 +14,7 @@ export const TablePaginationInfo: FC = () => {
             Affichage des entrées {' '}
             <span className="font-medium">{pageIndex * pageSize}</span> à{' '}
             <span className="font-medium">
-                {Math.min((pageIndex + 1) * pageSize, count)}
+                {Math.min((pageIndex + 1) * pageSize, count || 0)}
             </span>{' '}
             sur <span className="font-medium">{count}</span>
         </p>

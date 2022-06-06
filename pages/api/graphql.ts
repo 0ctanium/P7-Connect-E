@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-micro'
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
-import { createContext } from 'schema/context'
+import { createApolloContext } from 'schema/context'
 import { schema } from "schema";
 import {processRequest} from "graphql-upload";
 import {NextApiHandler} from "next";
@@ -16,7 +16,7 @@ export const config = {
 
 const apolloServer = new ApolloServer({
   schema: schema,
-  context: createContext,
+  context: createApolloContext,
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 })
 

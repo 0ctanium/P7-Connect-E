@@ -141,7 +141,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
           {/* Static sidebar for desktop */}
           <div className="hidden lg:flex lg:flex-shrink-0">
             <div className="flex flex-col w-20">
-              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto bg-indigo-600">
+              <div className="flex-1 flex flex-col min-h-0 overflow-y-auto bg-scarlet-600">
                 <div className="flex-1">
                   <div className="py-4 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -156,7 +156,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
                         <a
                             key={item.name}
                             href={item.href}
-                            className="flex items-center p-4 rounded-lg text-indigo-200 hover:bg-indigo-700"
+                            className="flex items-center p-4 rounded-lg text-scarlet-200 hover:bg-scarlet-700"
                         >
                           {item.id === current ? <item.currentIcon className="h-6 w-6" aria-hidden="true" /> : <item.icon className="h-6 w-6" aria-hidden="true" />}
                           <span className="sr-only">{item.name}</span>
@@ -208,13 +208,13 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
 
             {/* Mobile bottom navigation */}
             <div className="lg:hidden">
-              <div className="bg-indigo-600 py-2 px-4 sm:px-6 lg:px-8">
+              <div className="bg-scarlet-600 py-2 px-4 sm:px-6 lg:px-8">
                 <nav className="mx-auto md:max-w-md sm:max-w-sm max-w-xs flex flex-row items-center justify-between">
                   {mobileNavigation.map((item) => (
                       <a
                           key={item.name}
                           href={item.href}
-                          className="h-12 w-12 inline-flex items-center justify-center bg-indigo-600 rounded-md text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                          className="h-12 w-12 inline-flex items-center justify-center bg-scarlet-600 rounded-md text-white hover:bg-scarlet-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                       >
 
                         {item.id === current ? <item.currentIcon className="h-6 w-6" aria-hidden="true" /> : <item.icon className="h-6 w-6" aria-hidden="true" />}

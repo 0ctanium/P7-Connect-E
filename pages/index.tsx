@@ -1,7 +1,7 @@
 import {useQuery} from "@apollo/client";
 import {signOut, useSession} from "next-auth/react";
 import {NextPage} from "next";
-import {Layout} from "../src/components/layout";
+import {Layout} from "components/layout";
 
 const Home: NextPage = () => {
     const { data: session } = useSession({ required: true })

@@ -1,0 +1,52 @@
+fragment AdminUser on User {
+    ...User
+
+    # Admin fields
+    email
+    emailVerified
+    createdAt
+    updatedAt
+    accounts {
+        provider
+        createdAt
+    }
+}
+
+fragment User on User {
+    id
+    name
+    image
+    online
+    role
+}
+
+fragment Group on Group {
+    id
+    name
+    banner
+    description
+    createdAt
+    restricted
+}
+
+
+fragment Post on Post {
+    id
+    createdAt
+    text
+}
+
+fragment GroupPost on Post {
+    ...Post
+    author {
+        ...User
+    }
+}
+
+fragment UserPost on Post {
+    ...Post
+    group {
+        id
+        name
+    }
+}

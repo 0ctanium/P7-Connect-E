@@ -1,100 +1,84 @@
-import {gql, useMutation, useQuery} from "@apollo/client";
-import {signOut, useSession} from "next-auth/react";
-import {NextPage} from "next";
+import {GetStaticPaths, GetStaticProps, InferGetStaticPropsType, NextPage} from "next";
 import {Layout} from "components/layout";
-import {useRouter} from "next/router";
-import {NexusGenFieldTypes} from "../../generated/nexus-typegen";
-import {Spinner} from "../../src/icons/Spinner";
-import {Field} from "../../src/components/fields/Field";
-import {FC, FormEventHandler, useCallback, useRef} from "react";
+import prisma from "services/prisma";
+import {initializeApollo} from "services/apollo/client";
+import { createApolloContext } from "schema/context";
+import Image from "next/image";
+import {
+    GetGroupInfoDocument,
+    GetGroupInfoQuery,
+    GetGroupInfoQueryVariables
+} from "generated/graphql";
+import {NotFoundErrorPage} from "../../src/components/layout/errors";
+import {GroupPosts, Post} from "components/Post";
+import {CreatePost} from "../../src/components/forms/CreatePost";
 
-const getGroupInfoAndPostQuery = gql`
-    query GetGroupInfoAndPost($id: ID!, $cursor: ID) {
-        group(id: $id) {
-            name
-            description
-            banner
-            
-            restricted
-            
-            posts(cursor: $cursor) {
-                id
-                
-                text
-#                media
-                author {
-                    id
-                    
-                    name
-                    image
-                }
-                
-                createdAt
-            }
-        }
-    }
-`
-
-const GroupPage: NextPage = () => {
-    const { id: groupId } = useRouter().query
-    const { loading, data } = useQuery<{ group: NexusGenFieldTypes["Group"] }>(getGroupInfoAndPostQuery, {
-        variables: {
-            id: groupId
-        }
-    })
-
-    if(loading) {
-        return <Spinner className="w-6 h-6 mx-auto text-gray-800 animate-spin" />
-    }
-
-    const group = data?.group
+const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({ group }) => {
+    if(!group) return <NotFoundErrorPage />
 
     return (
         <Layout current='feed'>
+            <div>
+                <div className="relative w-full h-48">
+                    {group.banner && <Image src={group.banner} layout="fill" objectFit="cover" alt={`Bannière du groupe ${group.name}`}/>}
+                </div>
+                <div>
+                    <p>{group.name}</p>
+                    <p>{group.description}</p>
+                    <p>{group.createdAt}</p>
+                    {/*{JSON.stringify(group, null, 4)}*/}
+                </div>
+            </div>
             <div className="flex justify-center mt-8 text-center">
                 <div className="flex-auto">
-                    <PostForm groupId={groupId as string} />
-                    {JSON.stringify(group, null, 4)}
+                    <CreatePost groupId={group.id} />
+                    <GroupPosts groupId={group.id} />
                 </div>
             </div>
         </Layout>
     )
 }
 
-const createPostMutation = gql`
-    mutation CreatePost($group: ID!, $text: String!) {
-        createPost(group: $group, text: $text) {
-            id
+export const getStaticProps: GetStaticProps<GetGroupInfoQuery, { id: string }> = async ({ params }) => {
+    if(!params) {
+        return {
+            notFound: true
         }
     }
-`
 
-export const PostForm: FC<{ groupId: string }> = ({ groupId }) => {
-    const [createPost] = useMutation(createPostMutation)
+    const { id } = params
+    const context = await createApolloContext(null)
+    const apollo = await initializeApollo(null, context)
 
-    const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback((e) => {
-        e.preventDefault()
-        // @ts-ignore
-        const text: string = e.target.text.value
+    const res = await apollo.query<GetGroupInfoQuery, GetGroupInfoQueryVariables>({
+        query: GetGroupInfoDocument,
+        variables: {
+            id
+        }
+    })
 
-        console.log({ text })
+    if(!res.data.group) {
+        return {
+            notFound: true
+        }
+    }
 
-        return createPost({
-            variables: {
-                group: groupId,
-                text
-            }
-        })
-    }, [createPost, groupId])
+    return {
+        props: res.data,
+        revalidate: 1 // minute
+    }
+}
 
-    console.log('render')
+export const getStaticPaths: GetStaticPaths = async () => {
+    const [groups] = await prisma.$transaction([
+        prisma.group.findMany({ select: { id: true } }),
+    ])
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <Field name="text" required />
-            <button type="submit" className="btn btn-primary">Envoyer</button>
-        </form>
-    )
+    const paths = groups.map((group) => ({
+        params: { id: group.id },
+    }))
+
+    return { paths, fallback: 'blocking' }
 }
 
 GroupPage.auth = {}

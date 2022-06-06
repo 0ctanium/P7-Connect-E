@@ -9,8 +9,8 @@ export interface TableProps<
     Edit extends Record<string, any> = D
     > {
     instance: TableInstance<D>;
-    loading: boolean;
-    count: number;
+    loading?: boolean;
+
     error?: any;
     resolveKey?(row: D): Key
 
@@ -25,7 +25,9 @@ export interface TableContextProps<
     > {
     instance: TableInstance<D>;
     loading: boolean;
+
     count: number;
+
     error?: any;
     resolveKey(row: D): Key
 
@@ -57,13 +59,15 @@ export const Table = <
                                children,
 
                                instance,
-                               loading,
-                               count,
+                               loading = false,
                                error,
                                resolveKey = (row) => row.id,
 
                                onEdit,
                            }: PropsWithChildren<TableProps<D, Key, Edit>>): JSX.Element => {
+    console.log(instance.count, instance.pageCount * instance.state.pageSize)
+    const count = instance.count || instance.pageCount * instance.state.pageSize
+
     const [editing, setEditing] = useState<Key | null>(null)
     const [editValues, edit] = useState<Edit | null>(null)
     const [rowLoading, setRowLoading] = useState<Key[]>([])
@@ -127,8 +131,8 @@ export const Table = <
         <TableContext.Provider value={{
             instance,
             loading,
-            count,
             error,
+            count,
 
             editValues,
             edit,

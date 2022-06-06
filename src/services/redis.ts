@@ -1,11 +1,14 @@
-import Redis from 'ioredis'
+import Redis from 'ioredis';
 
-let client: Redis.Redis;
+let redis: Redis.Redis;
 
-export function redis() {
-    if(!client) {
-        client = new Redis(process.env.REDIS_URL)
-    }
-
-    return client
+if (process.env.NODE_ENV === 'production') {
+  redis = new Redis(process.env.REDIS_URL);
+} else {
+  if (!global.redis) {
+    global.redis = new Redis(process.env.REDIS_URL);
+  }
+  redis = global.redis;
 }
+
+export default redis;

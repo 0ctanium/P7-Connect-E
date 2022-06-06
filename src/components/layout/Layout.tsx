@@ -200,7 +200,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
 
               {/* Secondary column (hidden on smaller screens) */}
               <aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
-                <div className="h-full relative flex flex-col w-64 border-r border-gray-200 bg-white overflow-y-auto">
+                <div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto">
                   {sideBar || <SideBar />}
                 </div>
               </aside>

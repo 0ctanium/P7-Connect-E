@@ -1,5 +1,7 @@
-import { FileUpload, GraphQLUpload } from "graphql-upload"
-import { GraphQLDateTime } from 'graphql-iso-date'
+import {FileUpload} from "graphql-upload";
+
+const { GraphQLUpload } = require("graphql-upload")
+const { GraphQLDateTime } = require('graphql-iso-date')
 
 import { asNexusMethod } from "nexus"
 

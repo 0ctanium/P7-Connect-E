@@ -1,15 +1,14 @@
 import {Row} from 'react-table';
 import React, {FC, useMemo} from 'react';
 import {useReactTable} from "hooks/useTable";
-import {Spinner} from "../../icons/Spinner";
+import {LoadingSpinner} from "../LoadingSpinner";
 
 export const TableRow: FC = () => {
     const {
         instance,
         loading,
         error,
-        rowLoading,
-        resolveKey
+        rowLoading
     } = useReactTable()
 
     const {
@@ -20,6 +19,7 @@ export const TableRow: FC = () => {
         prepareRow,
         page,
         rows,
+        getRowId
     } = instance
 
     const state = useMemo(() => {
@@ -87,9 +87,9 @@ export const TableRow: FC = () => {
                     prepareRow(row);
                     return (
                         <tr {...row.getRowProps()} key={i}>
-                            {(rowLoading.includes(resolveKey(row.original))) ? (
+                            {(getRowId && rowLoading.includes(getRowId(row.original, row.index))) ? (
                                 <td colSpan={10000} className="py-4 px-6 whitespace-nowrap">
-                                    <Spinner className="w-6 h-6 mx-auto text-gray-800 animate-spin" />
+                                    <LoadingSpinner className="w-6 h-6" />
                                 </td>
                             ) : row.cells.map((cell, j) => {
                                 return (

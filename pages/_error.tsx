@@ -1,4 +1,4 @@
-import {ErrorLayout} from "../src/components/layout/errors/Layout";
+import {ErrorLayout} from "components/layout/errors/Layout";
 import {NextPage} from "next";
 
 interface ErrorProps {

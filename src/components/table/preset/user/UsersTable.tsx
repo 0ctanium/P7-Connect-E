@@ -5,22 +5,17 @@ import {
     useRowSelect,
     useTable,
 } from 'react-table';
-
 import { Table } from 'components/table/Table';
-
-import {NexusGenFieldTypes} from "../../../../../generated/nexus-typegen";
-
 import {ApolloError} from "@apollo/client";
 import {AccountCell, Actions, NameCell, RoleCell} from "./cells";
 import {TableRow} from "../../TableRow";
 import {TablePagination} from "../../pagination";
 import {DeleteAction} from "./actions/Delete";
-import {useControlledPagination} from "../../../../hooks/useControlledPage";
-import {useIndeterminateCheckbox} from "../../../../hooks/useIndeterminateCheckbox";
+import {useControlledPagination} from "hooks/useControlledPage";
+import {useIndeterminateCheckbox} from "hooks/useIndeterminateCheckbox";
+import {AdminUserFragment} from "generated/graphql";
 
-export type TableData = NonNullable<
-    NexusGenFieldTypes["User"]
-    >;
+export type TableData = AdminUserFragment
 export type TableKey = string
 export type TableEdit = Partial<Pick<TableData, "role"> & Pick<TableData, "name">>
 
@@ -89,7 +84,6 @@ export const UserTable: React.FC<UserTableProps<TableData>> = ({
         instance={tableInstance}
         loading={loading}
         error={error}
-        count={count}
         resolveKey={(row) => row.id}
         onEdit={onUpdate}>
         <TableRow />

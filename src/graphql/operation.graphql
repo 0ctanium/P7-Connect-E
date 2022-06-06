@@ -1,0 +1,66 @@
+query GetGroupInfo($id: ID!) {
+    group(id: $id) {
+        ...Group
+    }
+}
+
+query GetAllGroups {
+    groups {
+        ...Group
+    }
+    # groupCount
+}
+
+query GetGroupPosts($id: ID!, $cursor: ID) {
+    posts(cursor: $cursor, where: { group: $id }) {
+        ...GroupPost
+    }
+}
+query GetUserPosts($id: ID!, $cursor: ID) {
+    posts(cursor: $cursor, where: { user: $id }) {
+        ...UserPost
+    }
+}
+
+mutation CreatePost($group: ID!, $text: String!) {
+    createPost(group: $group, text: $text) {
+        id
+    }
+}
+
+
+
+#######################################################
+#                        ADMIN                        #
+#######################################################
+
+mutation CreateGroup($data: GroupCreateInput!) {
+    createOneGroup(data: $data) {
+        id
+    }
+}
+
+mutation UpdateGroup($data: GroupUpdateInput!, $id: ID!) {
+    updateOneGroup(data: $data, id: $id) {
+        id
+    }
+}
+
+query GetUsers($skip: Int = 0, $take: Int = 20) {
+    users(skip: $skip, take: $take) {
+        ...AdminUser
+    }
+    userCount
+}
+
+mutation UpdateUser($id: ID!, $data: UserUpdateInput!) {
+    updateOneUser(id: $id, data: $data) {
+        ...AdminUser
+    }
+}
+
+ mutation DeleteUser($id: [ID!]!) {
+     deleteManyUser(id: $id) {
+         count
+     }
+ }

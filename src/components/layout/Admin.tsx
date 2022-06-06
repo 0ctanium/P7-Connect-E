@@ -11,7 +11,7 @@ import {
 import clsx from "clsx";
 import Link from 'next/link';
 import {useSession} from "next-auth/react";
-import {Spinner} from "../../icons/Spinner";
+import {LoadingSpinner} from "../LoadingSpinner";
 
 const navigation = [
   { id: 'home', name: 'Accueil', href: '/admin', icon: HomeIcon },
@@ -201,7 +201,7 @@ export const AdminLayout: FC<{ current: string, loading?: boolean }> = ({ childr
               <div className="py-6 space-y-6 min-h-full">
                 {status === 'loading' || loading ? (
                     <div className="min-h-full flex justify-center items-center">
-                      <Spinner className="w-8 h-8 mx-auto text-gray-800 animate-spin"/>
+                      <LoadingSpinner />
                     </div>
                 ): children}
               </div>

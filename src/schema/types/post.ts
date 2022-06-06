@@ -1,4 +1,4 @@
-import {arg, extendType, list, nonNull, objectType} from "nexus";
+import {arg, extendType, inputObjectType, list, nonNull, objectType} from "nexus";
 import {getSession} from "next-auth/react";
 import {s3} from "../../services/s3";
 import {ManagedUpload} from "aws-sdk/lib/s3/managed_upload";
@@ -40,6 +40,67 @@ export const Post = objectType({
     t.nonNull.field('createdAt', { type: "DateTime" })
     t.nonNull.field('updatedAt', { type: "DateTime" })
   },
+})
+
+export const PostWhereInput = inputObjectType({
+  name: 'PostWhereInput',
+  definition(t) {
+    t.id('group')
+    t.id('user')
+  }
+})
+
+export const PostQueries = extendType({
+  type: 'Query',
+  definition: (t) => {
+    t.field('post', {
+      type: 'Post',
+      args: {
+        id: 'ID'
+      },
+      resolve(root, args, ctx) {
+        return ctx.prisma.post.findUnique({
+          where: {
+            id: args.id || undefined
+          }
+        })
+      }
+    })
+
+    t.field('posts', {
+      type: nonNull(list(nonNull("Post"))),
+      args: {
+        where: PostWhereInput,
+        take: arg({ type: "Int", default: 20 }),
+        cursor: "ID"
+      },
+      resolve(root, { where, take, cursor }, ctx) {
+        return ctx.prisma.post.findMany({
+          skip: cursor ? 1 : undefined,
+          take: take || undefined,
+          cursor: cursor ? {
+            id: cursor
+          } : undefined,
+          where: {
+            groupId: where?.group || undefined,
+            authorId: where?.user || undefined,
+          }
+        })
+      }
+    })
+
+
+
+    t.field('postCount', {
+      type: "Int",
+      args: {
+        where: PostWhereInput,
+      },
+      resolve(root, args, ctx) {
+        return ctx.prisma.user.count()
+      }
+    })
+  }
 })
 
 export const PostMutations = extendType({

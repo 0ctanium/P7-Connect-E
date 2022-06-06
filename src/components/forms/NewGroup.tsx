@@ -6,6 +6,7 @@ import { SlideOver, SlideOverBody, SlideOverContainer, SlideOverContent, SlideOv
 import React, {FC} from 'react'
 import {Controller, SubmitHandler, UseFormProps, UseFormReturn} from 'react-hook-form';
 import * as yup from "yup";
+import {LoadingSpinner} from "../LoadingSpinner";
 
 export interface NewGroupInputs {
     name: string;
@@ -25,7 +26,7 @@ export const defaultFormProps: UseFormProps<NewGroupInputs> = {
     resolver: yupResolver(newGroupSchema)
 }
 
-export const NewGroupSlideOver: FC<{ open: boolean, onClose(state: boolean): any, onSubmit: SubmitHandler<NewGroupInputs>, form: UseFormReturn<NewGroupInputs> }> = ({ open, onClose, onSubmit, form }) => {
+export const NewGroupSlideOver: FC<{ loading?: boolean, open: boolean, onClose(state: boolean): any, onSubmit: SubmitHandler<NewGroupInputs>, form: UseFormReturn<NewGroupInputs> }> = ({ loading, open, onClose, onSubmit, form }) => {
     const { register, handleSubmit, control, formState: { errors } } = form
 
     return (
@@ -79,6 +80,8 @@ export const NewGroupSlideOver: FC<{ open: boolean, onClose(state: boolean): any
                         className="ml-4 btn btn-primary"
                     >
                         Créer
+
+                        {loading && <LoadingSpinner className="ml-3 h-4 w-4 text-gray-200" />}
                     </button>
                 </SlideOverFooter>
             </SlideOverBody>

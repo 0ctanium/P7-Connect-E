@@ -2,9 +2,9 @@ import {GetServerSideProps, InferGetServerSidePropsType, NextPage} from "next";
 import {ClientSafeProvider, getProviders, LiteralUnion, signIn, useSession} from "next-auth/react";
 import {useEffect, useMemo} from "react";
 import {BuiltInProviderType} from "next-auth/providers";
-import {SocialIcon} from "../src/icons/Social";
-import {AccountProvider} from "../src/constants/provider";
-import {useQueryParam} from "../src/hooks";
+import {SocialIcon} from "icons/Social";
+import {AccountProvider} from "constants/provider";
+import {useQueryParam} from "hooks";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
 

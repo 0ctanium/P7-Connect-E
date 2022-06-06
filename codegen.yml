@@ -3,6 +3,9 @@ schema: "generated/schema.graphql"
 documents: "src/**/*.graphql"
 generates:
   generated/graphql.tsx:
+    config:
+      enumValues:
+        Role: ../src/constants/role#Role
     plugins:
       - "typescript"
       - "typescript-operations"

@@ -3,6 +3,7 @@ fragment AdminUser on User {
 
     # Admin fields
     email
+    emailVerified
     createdAt
     updatedAt
     accounts {

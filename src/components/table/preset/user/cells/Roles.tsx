@@ -1,10 +1,10 @@
 import React, {useCallback, useMemo} from 'react'
 import {TableData, TableEdit, TableKey} from "../UsersTable";
-import {rolesConfig, Role} from "../../../../../constants";
+import {rolesConfig, Role} from "constants/role";
 import clsx from "clsx";
 import {Selection} from "../../../../fields/Selector";
-import {CellComponent} from "../../../../../types";
-import {useTableCell} from "../../../../../hooks/useTable";
+import {CellComponent} from "types";
+import {useTableCell} from "hooks";
 
 export const RoleCell: CellComponent<TableData> = ({ row }) => {
     const {
@@ -21,7 +21,7 @@ export const RoleCell: CellComponent<TableData> = ({ row }) => {
     const handleChange = useCallback((role: Role): void => {
         return edit({
             ...editValues,
-            role
+            role: role
         });
 
     }, [edit, editValues])

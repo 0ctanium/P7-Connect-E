@@ -10,6 +10,7 @@ import {SignUpForm, useSignUpForm} from "../src/components/forms/SignUp";
 import Link from "next/link";
 import {SubmitHandler} from "react-hook-form";
 import {UserCreateInput} from "../src/types";
+import {useRegisterMutation} from "generated/graphql";
 
 type Providers = Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>
 
@@ -22,6 +23,7 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
     const [error, setError] = useQueryParam('error')
     const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.type === "oauth") : [], [providers])
     const registerForm = useSignUpForm()
+    const [register, { data }] = useRegisterMutation()
     const [registerLoading, setLoginLoading] = useState(false)
 
     const router = useRouter()
@@ -41,23 +43,25 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
         }
     }, [error, setError])
 
-    const handleLogin: SubmitHandler<UserCreateInput> = useCallback(({ email, password }) => {
+    const handleLogin: SubmitHandler<UserCreateInput> = useCallback((input) => {
         setLoginLoading(true)
 
-        signIn("credentials", {
-            username: email,
-            password: password,
+        register({
+            variables: { input }
+        }).then(() => signIn("credentials", {
+            username: input.email,
+            password: input.password,
             redirect: true,
             callbackUrl: providers?.credentials?.callbackUrl
+        }))
+        .catch((err) => {
+            console.error(err)
+            toast.error('Erreur interne')
         })
-            .catch((err) => {
-                console.error(err)
-                toast.error('Erreur interne')
-            })
-            .finally(() => {
+        .finally(() => {
             setLoginLoading(false)
         })
-    }, [])
+    }, [providers?.credentials?.callbackUrl, register])
 
     return (
         <>
@@ -72,7 +76,7 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
                     <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Créer un nouveau compte</h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
                         Ou{' '}
-                        <Link href="/register" >
+                        <Link href={`/login${window.location.search}`} >
                             <a className="font-medium text-indigo-600 hover:text-indigo-500">
                                 connectez vous
                             </a>

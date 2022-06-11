@@ -1,31 +1,23 @@
 import React, { FC } from 'react'
 import {Field} from "../fields/Field";
 import Link from "next/link";
-import {SubmitHandler, UseFormProps, UseFormReturn} from "react-hook-form";
-import * as yup from 'yup'
+import {SubmitHandler, useForm, UseFormProps, UseFormReturn} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import {signInSchema} from "validators";
+import {SignInInputs} from "types";
 
-export interface Inputs {
-    email: string;
-    password: string
-}
-
-export const schema = yup.object<Inputs>({
-    email: yup.string().required().email(),
-    password: yup.string().required()
-}).required();
-
-export const defaultFormProps: UseFormProps<Inputs> = {
-    resolver: yupResolver(schema)
-}
-
-interface FormProps {
+interface SignInFormProps {
     loading?: boolean,
-    onSubmit: SubmitHandler<Inputs>,
-    form: UseFormReturn<Inputs>
+    onSubmit: SubmitHandler<SignInInputs>,
+    form: UseFormReturn<SignInInputs>
 }
 
-export const SignInForm: FC<FormProps> = ({ loading, onSubmit, form}) => {
+export const useSignInForm = (props?: Partial<UseFormProps<SignInInputs>>) => useForm<SignInInputs>({
+    ...props,
+    resolver: yupResolver(signInSchema),
+})
+
+export const SignInForm: FC<SignInFormProps> = ({ loading, onSubmit, form}) => {
     const { register, handleSubmit, formState: { errors } } = form
 
     return (

@@ -1,36 +1,23 @@
 import React, { FC } from 'react'
 import {Field} from "../fields/Field";
 import Link from "next/link";
-import {SubmitHandler, UseFormProps, UseFormReturn} from "react-hook-form";
-import * as yup from 'yup'
+import {SubmitHandler, useForm, UseFormProps, UseFormReturn} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
+import {userCreateSchema} from "validators";
+import {UserCreateInput} from "types";
 
-export interface Inputs {
-    email: string;
-    password: string;
-    passwordConfirm: string;
-}
-
-export const schema = yup.object<Inputs>({
-    email: yup.string().required().email(),
-    password: yup.string().required().min(6),
-    passwordConfirm: yup.string().required().test('password-match', 'Les mots de passe ne correspondent pas', function(value) {
-        const { password } = this.parent
-        return password === value
-    }),
-}).required();
-
-export const defaultFormProps: UseFormProps<Inputs> = {
-    resolver: yupResolver(schema),
-}
-
-interface FormProps {
+interface SignUpFormProps {
     loading?: boolean,
-    onSubmit: SubmitHandler<Inputs>,
-    form: UseFormReturn<Inputs>
+    onSubmit: SubmitHandler<UserCreateInput>,
+    form: UseFormReturn<UserCreateInput>
 }
 
-export const SignUnForm: FC<FormProps> = ({ loading, onSubmit, form}) => {
+export const useSignUpForm = (props?: Partial<UseFormProps<UserCreateInput>>) => useForm<UserCreateInput>({
+    ...props,
+    resolver: yupResolver(userCreateSchema),
+})
+
+export const SignUpForm: FC<SignUpFormProps> = ({ loading, onSubmit, form}) => {
     const { register, handleSubmit, formState: { errors } } = form
 
     return (

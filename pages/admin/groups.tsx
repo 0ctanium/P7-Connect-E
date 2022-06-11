@@ -4,8 +4,8 @@ import {useCallback, useState} from "react";
 import {toast} from "react-toastify";
 import {Role} from "constants/role";
 import {GroupTable} from "components/table/preset/groups/GroupsTable";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {defaultFormProps, NewGroupInputs, NewGroupSlideOver} from "components/forms/NewGroup";
+import {SubmitHandler} from "react-hook-form";
+import {NewGroupFormSlideOver, useNewGroupForm} from "components/forms/NewGroup";
 import {
     GetAllGroupsDocument, GetAllGroupsQuery, GetAllGroupsQueryVariables,
     useCreateGroupMutation,
@@ -14,7 +14,8 @@ import {getSession} from "next-auth/react";
 import {checkSessionRole} from "lib/session";
 import {initializeApollo} from "services/apollo/client";
 import {useRefetch} from "hooks";
-import {createApolloContext} from "../../src/schema/context";
+import {createApolloContext} from "schema/context";
+import {NewGroupInputs} from "types";
 
 type PageProps = GetAllGroupsQuery
 
@@ -22,7 +23,7 @@ export const GroupsDashboard: NextPage<InferGetServerSidePropsType<typeof getSer
     const refetch = useRefetch()
     const [createLoading, setCreateLoading] = useState(false)
     const [createGroup] = useCreateGroupMutation()
-    const form = useForm<NewGroupInputs>(defaultFormProps);
+    const form = useNewGroupForm();
     const { reset } = form
 
     const [open, setOpen] = useState(false)
@@ -67,7 +68,7 @@ export const GroupsDashboard: NextPage<InferGetServerSidePropsType<typeof getSer
                 </div>
             </AdminLayoutSection>
 
-            <NewGroupSlideOver open={open} onClose={setOpen} onSubmit={handleSubmit} form={form} loading={createLoading} />
+            <NewGroupFormSlideOver open={open} onClose={setOpen} onSubmit={handleSubmit} form={form} loading={createLoading} />
         </AdminLayout>
     )
 }

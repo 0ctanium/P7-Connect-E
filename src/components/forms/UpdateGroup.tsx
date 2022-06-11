@@ -4,7 +4,6 @@ import {Field} from "components/fields/Field";
 import {SwitchField} from "components/fields/SwitchField";
 import {Controller, SubmitHandler, useForm, useWatch} from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
 import {useDropzone} from "react-dropzone";
 import clsx from "clsx";
 import { isPromise } from "lib/utils";
@@ -12,30 +11,18 @@ import { Section } from "components/Section";
 import {LoadingSpinner} from "components/LoadingSpinner";
 import {AdminLayoutSection} from "components/layout/Admin";
 import {toast} from "react-toastify";
+import {UpdateGroupInputs} from "types";
+import {updateGroupSchema} from "validators";
 
-export interface Inputs {
-    name?: string | null;
-    description?: string | null;
-    restricted?: boolean | null;
-    banner?: (File & { preview: string }) | null;
-}
-
-export const schema = yup.object<Inputs>({
-    name: yup.string().nullable(),
-    description: yup.string().nullable(),
-    restricted: yup.boolean().nullable(),
-    banner: yup.mixed<Inputs["banner"]>().nullable()
-}).required();
-
-export const UpdateGroupForm: FC<{ group: GroupFragment, onUpdate(d: Inputs): any | Promise<any> }> = ({ group, onUpdate }) => {
+export const UpdateGroupForm: FC<{ group: GroupFragment, onUpdate(d: UpdateGroupInputs): any | Promise<any> }> = ({ group, onUpdate }) => {
     const defaultValues = {
         ...group,
         banner: null
     }
 
-    const { register, handleSubmit, control, reset, formState, setValue,  } = useForm<Inputs>({
+    const { register, handleSubmit, control, reset, formState, setValue } = useForm<UpdateGroupInputs>({
         defaultValues,
-        resolver: yupResolver(schema)
+        resolver: yupResolver(updateGroupSchema)
     });
     const banner = useWatch({
         control,
@@ -44,13 +31,13 @@ export const UpdateGroupForm: FC<{ group: GroupFragment, onUpdate(d: Inputs): an
 
     const [loading, setLoading] = useState(false)
 
-    const dirtyFields = useRef<Inputs>(null);
+    const dirtyFields = useRef<UpdateGroupInputs>(null);
     useEffect(() => {
         // @ts-ignore
         dirtyFields.current = formState.dirtyFields;
     });
 
-    const onSubmit: SubmitHandler<Inputs> = useCallback((data) => {
+    const onSubmit: SubmitHandler<UpdateGroupInputs> = useCallback((data) => {
         if(!dirtyFields?.current) {
             toast.warn("Impossible de lire les modifications apportés")
             return

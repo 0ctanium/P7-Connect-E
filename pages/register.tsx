@@ -6,9 +6,10 @@ import {SocialIcon} from "icons/Social";
 import {useQueryParam} from "hooks";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
-import {SignUnForm, defaultFormProps, Inputs} from "../src/components/forms/SignUp";
+import {SignUpForm, useSignUpForm} from "../src/components/forms/SignUp";
 import Link from "next/link";
-import {SubmitHandler, useForm} from "react-hook-form";
+import {SubmitHandler} from "react-hook-form";
+import {UserCreateInput} from "../src/types";
 
 type Providers = Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>
 
@@ -20,7 +21,7 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
     const [callbackUrl] = useQueryParam('callbackUrl', '/')
     const [error, setError] = useQueryParam('error')
     const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.type === "oauth") : [], [providers])
-    const registerForm = useForm<Inputs>(defaultFormProps)
+    const registerForm = useSignUpForm()
     const [registerLoading, setLoginLoading] = useState(false)
 
     const router = useRouter()
@@ -40,7 +41,7 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
         }
     }, [error, setError])
 
-    const handleLogin: SubmitHandler<Inputs> = useCallback(({ email, password }) => {
+    const handleLogin: SubmitHandler<UserCreateInput> = useCallback(({ email, password }) => {
         setLoginLoading(true)
 
         signIn("credentials", {
@@ -105,7 +106,7 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
                                 </div>
                             </div>
 
-                            <SignUnForm form={registerForm} loading={registerLoading} onSubmit={handleLogin}  />
+                            <SignUpForm form={registerForm} loading={registerLoading} onSubmit={handleLogin}  />
                         </div>
                     </div>
                 </div>

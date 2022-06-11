@@ -6,9 +6,10 @@ import {SocialIcon} from "icons/Social";
 import {useQueryParam} from "hooks";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
-import {SignInForm, defaultFormProps, Inputs} from "../src/components/forms/SignIn";
+import {SignInForm, useSignInForm} from "../src/components/forms/SignIn";
 import Link from "next/link";
-import {SubmitHandler, useForm} from "react-hook-form";
+import {SubmitHandler} from "react-hook-form";
+import {SignInInputs} from "../src/types";
 
 type Providers = Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>
 
@@ -21,7 +22,7 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
     const [callbackUrl] = useQueryParam('callbackUrl', '/')
     const [error, setError] = useQueryParam('error')
     const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.type === "oauth") : [], [providers])
-    const loginForm = useForm<Inputs>(defaultFormProps)
+    const loginForm = useSignInForm()
     const [loginLoading, setLoginLoading] = useState(false)
 
     const router = useRouter()
@@ -41,7 +42,7 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
         }
     }, [error, setError])
 
-    const handleLogin: SubmitHandler<Inputs> = useCallback(({ email, password }) => {
+    const handleLogin: SubmitHandler<SignInInputs> = useCallback(({ email, password }) => {
         setLoginLoading(true)
 
         signIn("credentials", {

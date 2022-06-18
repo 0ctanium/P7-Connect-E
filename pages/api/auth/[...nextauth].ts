@@ -33,8 +33,6 @@ export default NextAuth({
 
   events: {
     async signIn({user, account, profile, isNewUser}) {
-      console.log('signIn event', {account, user, profile, isNewUser})
-
       // Automatically update facebook profile picture
       if(account.provider === "facebook") {
         if(profile?.image) {
@@ -57,8 +55,6 @@ export default NextAuth({
 
   callbacks: {
     jwt({ token, user, profile, account, isNewUser}) {
-      console.log('jwt callback', {token, user,  profile, account, isNewUser})
-
       if (user?.role) {
         token.role = user.role
       }
@@ -71,8 +67,6 @@ export default NextAuth({
       return token
     },
     session({ session, user, token}) {
-      console.log('session callback', {session, user, token})
-
       session.user.id = token.sub
       session.user.role = token.role
 
@@ -130,8 +124,6 @@ export default NextAuth({
         if(passHash !== user.hash) {
           throw new Error('Password is incorrect')
         }
-
-        console.log('credentials', {user})
 
         return {
           id: user.id,

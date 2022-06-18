@@ -65,7 +65,6 @@ export const Table = <
 
                                onEdit,
                            }: PropsWithChildren<TableProps<D, Key, Edit>>): JSX.Element => {
-    console.log(instance.count, instance.pageCount * instance.state.pageSize)
     const count = instance.count || instance.pageCount * instance.state.pageSize
 
     const [editing, setEditing] = useState<Key | null>(null)

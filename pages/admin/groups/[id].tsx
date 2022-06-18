@@ -15,7 +15,8 @@ import {checkSessionRole} from "lib/session";
 import {useRefetch} from "hooks";
 import {createApolloContext} from "schema/context";
 import {initializeApollo} from "services/apollo/client";
-import {UpdateGroupForm, Inputs} from "components/forms/UpdateGroup";
+import {UpdateGroupForm} from "components/forms/UpdateGroup";
+import {UpdateGroupInputs} from "types";
 
 interface PageProps {
     group: GroupFragment
@@ -25,7 +26,7 @@ export const GroupDashboard: NextPage<InferGetServerSidePropsType<typeof getServ
     const refetch = useRefetch()
     const [updateGroup] = useUpdateGroupMutation()
 
-    const handleUpdate = useCallback((data: Inputs) => {
+    const handleUpdate = useCallback((data: UpdateGroupInputs) => {
         return updateGroup({
             variables: {
                 id: group.id,

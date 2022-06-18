@@ -64,6 +64,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   role          Role      @default(USER)
+  hash          String?
+  salt          String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
 
@@ -72,6 +74,10 @@ model User {
   reactions     Reaction[]
   replies       Reply[]
 }
+
+
+
+
 
 model Group {
   id            String    @id @default(cuid())

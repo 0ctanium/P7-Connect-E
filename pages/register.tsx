@@ -1,35 +1,37 @@
 import {GetServerSideProps, InferGetServerSidePropsType, NextPage} from "next";
-import {ClientSafeProvider, getCsrfToken, getProviders, LiteralUnion, signIn, useSession} from "next-auth/react";
+import {ClientSafeProvider, getProviders, LiteralUnion, signIn, useSession} from "next-auth/react";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {BuiltInProviderType} from "next-auth/providers";
 import {SocialIcon} from "icons/Social";
 import {useQueryParam} from "hooks";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
-import {SignInForm, useSignInForm} from "../src/components/forms/SignIn";
+import {SignUpForm, useSignUpForm} from "../src/components/forms/SignUp";
 import Link from "next/link";
 import {SubmitHandler} from "react-hook-form";
-import {SignInInputs} from "../src/types";
+import {UserCreateInput} from "../src/types";
+import {useRegisterMutation} from "generated/graphql";
 
 type Providers = Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>
 
 interface PageProps {
     providers: Providers | null
-    csrfToken?: string
 }
 
-const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ providers, csrfToken }) => {
+const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ providers }) => {
     const [callbackUrl] = useQueryParam('callbackUrl', '/')
     const [error, setError] = useQueryParam('error')
-    const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.id !== "credentials") : [], [providers])
-    const loginForm = useSignInForm()
-    const [loginLoading, setLoginLoading] = useState(false)
+    const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.type === "oauth") : [], [providers])
+    const registerForm = useSignUpForm()
+    const [register, { data }] = useRegisterMutation()
+    const [registerLoading, setLoginLoading] = useState(false)
 
     const router = useRouter()
-    const { status , data} = useSession()
+    const { status } = useSession()
 
     useEffect(() => {
         if(status === "authenticated") {
+            toast.warn("Vous êtes déjà connecté")
             router.push(callbackUrl || '/')
         }
     }, [callbackUrl, router, status])
@@ -41,22 +43,25 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
         }
     }, [error, setError])
 
-    const handleLogin: SubmitHandler<SignInInputs> = useCallback(async ({ email, password }) => {
+    const handleLogin: SubmitHandler<UserCreateInput> = useCallback((input) => {
         setLoginLoading(true)
 
-        const res = await signIn<"credentials">("credentials", {
-            email,
-            password,
-            redirect: false,
+        register({
+            variables: { input }
+        }).then(() => signIn("credentials", {
+            email: input.email,
+            password: input.password,
+            redirect: true,
+            callbackUrl,
+        }))
+        .catch((err) => {
+            console.error(err)
+            toast.error('Erreur interne')
         })
-        setLoginLoading(false)
-
-        if(res?.error) {
-            toast.error(res.error)
-        } else {
-            return router.push(callbackUrl || '/')
-        }
-    }, [callbackUrl, router])
+        .finally(() => {
+            setLoginLoading(false)
+        })
+    }, [callbackUrl, register])
 
     return (
         <>
@@ -68,12 +73,12 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
                         src="/icons/icon-left-font.svg"
                         alt="Workflow"
                     />
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Connectez vous à votre compte</h2>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Créer un nouveau compte</h2>
                     <p className="mt-2 text-center text-sm text-gray-600">
                         Ou{' '}
-                        <Link href={`/register${window.location.search}`} >
+                        <Link href={`/login${window.location.search}`} >
                             <a className="font-medium text-indigo-600 hover:text-indigo-500">
-                                inscrivez-vous
+                                connectez vous
                             </a>
                         </Link>
                     </p>
@@ -86,9 +91,12 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
                                 <button
                                     key={provider.id}
                                     className="btn btn-white justify-center"
-                                    onClick={() => signIn(provider.id, { callbackUrl, redirect: true })}
+                                    onClick={() => signIn(provider.id, {
+                                        callbackUrl,
+                                        redirect: true
+                                    })}
                                 >
-                                    <SocialIcon className="w-6 h-6 mr-2" provider={provider.id} />Connexion avec {provider.name}
+                                    <SocialIcon className="w-6 h-6 mr-2" provider={provider.id} />Inscription avec {provider.name}
                                 </button>
                             ))}
                         </div>
@@ -102,7 +110,7 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
                                 </div>
                             </div>
 
-                            <SignInForm form={loginForm} loading={loginLoading} onSubmit={handleLogin}  />
+                            <SignUpForm form={registerForm} loading={registerLoading} onSubmit={handleLogin}  />
                         </div>
                     </div>
                 </div>
@@ -111,14 +119,12 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
     );
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (ctx) => {
-    const providers = await getProviders()
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     return {
         props: {
-            csrfToken: await getCsrfToken(ctx),
-            providers
+            providers: await getProviders()
         },
     }
 }
 
-export default LoginPage
+export default RegisterPage

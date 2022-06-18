@@ -1,5 +1,6 @@
 import {FileUpload} from "graphql-upload";
 
+const {GraphQLEmailAddress} = require('graphql-scalars');
 const { GraphQLUpload } = require("graphql-upload")
 const { GraphQLDateTime } = require('graphql-iso-date')
 
@@ -11,3 +12,4 @@ export const Upload = asNexusMethod(GraphQLUpload!, "upload")
 
 // @ts-ignore
 export const DateTime = asNexusMethod(GraphQLDateTime, "date")
+export const EmailAddress = asNexusMethod(GraphQLEmailAddress, "email")

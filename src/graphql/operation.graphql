@@ -28,7 +28,11 @@ mutation CreatePost($group: ID!, $text: String!) {
     }
 }
 
-
+mutation Register($input: UserCreateInput!) {
+    register(input: $input) {
+        ...User
+    }
+}
 
 #######################################################
 #                        ADMIN                        #

@@ -1,10 +1,10 @@
 import React from 'react'
 import {TableData} from "../UsersTable";
-import {CellComponent} from "../../../../../types";
-import {AccountProvider} from "../../../../../constants/provider";
-import {Tooltip} from "../../../../Tooltip";
+import {CellComponent} from "types";
+import {Tooltip} from "components/Tooltip";
 import moment from "moment";
-import {SocialIcon} from "../../../../../icons/Social";
+import {SocialIcon} from "icons/Social";
+import {BuiltInProviderType} from "next-auth/providers";
 
 export const AccountCell: CellComponent<TableData> = ({ row }) => (
     <div className="flex items-center">
@@ -17,7 +17,7 @@ export const AccountCell: CellComponent<TableData> = ({ row }) => (
                             Depuis {moment(account?.createdAt).calendar().toLocaleLowerCase()}
                         </p>
                     }>
-                    <SocialIcon className="w-6 h-6" provider={account?.provider as AccountProvider} circled />
+                    <SocialIcon className="w-6 h-6" provider={account?.provider as BuiltInProviderType} circled />
                 </Tooltip>
             ))}
         </div>

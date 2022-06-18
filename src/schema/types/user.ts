@@ -1,14 +1,13 @@
 import {objectType, extendType, nonNull, inputObjectType, list, arg} from 'nexus'
-import { AccountProvider as Providers } from "constants/provider";
 import {Prisma} from "@prisma/client";
 import {ApolloError} from "apollo-server-micro";
+import {userCreateSchema} from "validators";
+import * as crypto from "crypto";
 
 export const Account = objectType({
   name: 'Account',
   definition(t) {
-    t.nonNull.string('provider', {
-      description: `Values: ${Object.values(Providers).join(', ')}`
-    })
+    t.nonNull.string('provider')
 
     t.nonNull.field('createdAt', { type: 'DateTime' })
   },
@@ -132,6 +131,20 @@ export const UserUpdateInput = inputObjectType({
   }
 })
 
+export const UserCreateInput = inputObjectType({
+  name: 'UserCreateInput',
+  definition(t) {
+        t.nonNull.field({
+          type: 'EmailAddress',
+          name: 'email'
+        }),
+        t.nonNull.string('password'),
+        t.nonNull.string('passwordConfirm'),
+    t.field('role', { type: 'Role' })
+    t.string('name')
+  }
+})
+
 export const UserMutations = extendType({
   type: 'Mutation',
   definition: (t) => {
@@ -177,6 +190,28 @@ export const UserMutations = extendType({
               in: args.id || undefined
             }
           }
+        })
+      }
+    })
+
+    t.field('register', {
+      type: "User",
+      args: {
+        input: nonNull(UserCreateInput),
+      },
+      async resolve(root, { input }, ctx) {
+        const { email, password, passwordConfirm } = userCreateSchema.validateSync(input)
+
+        // Generated hash
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+
+        return ctx.prisma.user.create({
+          data: {
+            email,
+            hash,
+            salt,
+          },
         })
       }
     })

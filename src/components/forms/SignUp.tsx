@@ -27,34 +27,12 @@ export const SignUpForm: FC<SignUpFormProps> = ({ loading, onSubmit, form}) => {
             <Field {...register('password')} error={errors.password?.message} id="password" type="password" autoComplete="new-password" label="Mot de passe" fullWidth required />
             <Field {...register('passwordConfirm')} error={errors.passwordConfirm?.message} id="passwordConfirm" type="password" label="Confirmation" fullWidth required />
 
-            <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                    <input
-                        id="remember-me"
-                        name="remember-me"
-                        type="checkbox"
-                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                        Se souvenir de moi
-                    </label>
-                </div>
-
-                <div className="text-sm">
-                    <Link href="/forgot-password">
-                        <a className="font-medium text-indigo-600 hover:text-indigo-500">
-                            Mot de passe oublié ?
-                        </a>
-                    </Link>
-                </div>
-            </div>
-
             <div>
                 <button
                     type="submit"
                     className="btn btn-primary btn-full"
                 >
-                    Connexion
+                    Inscription
                 </button>
             </div>
         </form>

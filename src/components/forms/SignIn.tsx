@@ -5,6 +5,7 @@ import {SubmitHandler, useForm, UseFormProps, UseFormReturn} from "react-hook-fo
 import {yupResolver} from "@hookform/resolvers/yup";
 import {signInSchema} from "validators";
 import {SignInInputs} from "types";
+import {LoadingSpinner} from "../LoadingSpinner";
 
 interface SignInFormProps {
     loading?: boolean,
@@ -34,12 +35,14 @@ export const SignInForm: FC<SignInFormProps> = ({ loading, onSubmit, form}) => {
                         type="checkbox"
                         className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
+                    {/* TODO: make feature */}
                     <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                         Se souvenir de moi
                     </label>
                 </div>
 
                 <div className="text-sm">
+                    {/* TODO: make feature */}
                     <Link href="/forgot-password">
                         <a className="font-medium text-indigo-600 hover:text-indigo-500">
                             Mot de passe oublié ?
@@ -54,6 +57,7 @@ export const SignInForm: FC<SignInFormProps> = ({ loading, onSubmit, form}) => {
                     className="btn btn-primary btn-full"
                 >
                     Connexion
+                    {loading && <LoadingSpinner className="ml-3 h-4 w-4 text-gray-200" />}
                 </button>
             </div>
         </form>

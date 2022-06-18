@@ -21,16 +21,15 @@ interface PageProps {
 const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ providers, csrfToken }) => {
     const [callbackUrl] = useQueryParam('callbackUrl', '/')
     const [error, setError] = useQueryParam('error')
-    const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.type === "oauth") : [], [providers])
+    const providersMap = useMemo(() => providers ? Object.values(providers).filter(p => p.id !== "credentials") : [], [providers])
     const loginForm = useSignInForm()
     const [loginLoading, setLoginLoading] = useState(false)
 
     const router = useRouter()
-    const { status } = useSession()
+    const { status , data} = useSession()
 
     useEffect(() => {
         if(status === "authenticated") {
-            toast.warn("Vous êtes déjà connecté")
             router.push(callbackUrl || '/')
         }
     }, [callbackUrl, router, status])
@@ -42,23 +41,22 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
         }
     }, [error, setError])
 
-    const handleLogin: SubmitHandler<SignInInputs> = useCallback(({ email, password }) => {
+    const handleLogin: SubmitHandler<SignInInputs> = useCallback(async ({ email, password }) => {
         setLoginLoading(true)
 
-        signIn("credentials", {
-            username: email,
-            password: password,
-            redirect: true,
-            callbackUrl: providers?.credentials?.callbackUrl
+        const res = await signIn<"credentials">("credentials", {
+            email,
+            password,
+            redirect: false,
         })
-            .catch((err) => {
-                console.error(err)
-                toast.error('Erreur interne')
-            })
-            .finally(() => {
-            setLoginLoading(false)
-        })
-    }, [])
+        setLoginLoading(false)
+
+        if(res?.error) {
+            toast.error(res.error)
+        } else {
+            return router.push(callbackUrl || '/')
+        }
+    }, [callbackUrl, router])
 
     return (
         <>
@@ -88,10 +86,7 @@ const LoginPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
                                 <button
                                     key={provider.id}
                                     className="btn btn-white justify-center"
-                                    onClick={() => signIn(provider.id, {
-                                        callbackUrl,
-                                        redirect: true
-                                    })}
+                                    onClick={() => signIn(provider.id, { callbackUrl, redirect: true })}
                                 >
                                     <SocialIcon className="w-6 h-6 mr-2" provider={provider.id} />Connexion avec {provider.name}
                                 </button>

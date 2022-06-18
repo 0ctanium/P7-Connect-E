@@ -13,11 +13,12 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
 import prisma from "services/prisma"
 import redis from "services/redis";
-import {providers} from "next-auth/core/routes";
+import * as crypto from "crypto";
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
 
+  // useSecureCookies: true,
   secret: process.env.AUTH_SECRET,
 
   theme: {
@@ -27,11 +28,12 @@ export default NextAuth({
   },
 
   pages: {
-    signIn: '/login'
+    signIn: '/login',
   },
 
   events: {
-    async signIn({user, account, profile}) {
+    async signIn({user, account, profile, isNewUser}) {
+      console.log('signIn event', {account, user, profile, isNewUser})
 
       // Automatically update facebook profile picture
       if(account.provider === "facebook") {
@@ -46,11 +48,17 @@ export default NextAuth({
           })
         }
       }
-    }
+    },
+  },
+
+  session: {
+    strategy: 'jwt'
   },
 
   callbacks: {
-    jwt({ token, user}) {
+    jwt({ token, user, profile, account, isNewUser}) {
+      console.log('jwt callback', {token, user,  profile, account, isNewUser})
+
       if (user?.role) {
         token.role = user.role
       }
@@ -62,13 +70,15 @@ export default NextAuth({
 
       return token
     },
-    session({ session, user}) {
-      session.user.id = user.id
-      session.user.role = user.role
+    session({ session, user, token}) {
+      console.log('session callback', {session, user, token})
 
-      if(user?.id) {
+      session.user.id = token.sub
+      session.user.role = token.role
+
+      if(token?.sub) {
         // set session alive status
-        redis.set(`session:${user.id}`, new Date().getTime()).catch(console.error)
+        redis.set(`session:${token.sub}`, new Date().getTime()).catch(console.error)
       }
 
       return session
@@ -77,6 +87,8 @@ export default NextAuth({
 
   providers: [
     CredentialsProvider({
+      id: 'credentials',
+      type: 'credentials',
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Mot de passe',
       // The credentials is used to generate a suitable form on the sign in page.
@@ -88,26 +100,47 @@ export default NextAuth({
         password: {  label: "Mot de passe", type: "password" }
       },
       async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        const res = await fetch("/your/endpoint", {
-          method: 'POST',
-          body: JSON.stringify(credentials),
-          headers: { "Content-Type": "application/json" }
-        })
-        const user = await res.json()
+        if(!credentials) {
+          throw new Error('No credentials given');
+        }
+        const { email, password } = credentials
 
-        // If no error and we have user data, return it
-        if (res.ok && user) {
-          return user
+        if(!email) {
+          throw new Error('No email given');
+        }
+        if(!password) {
+          throw new Error('No password given');
         }
 
-        // Return null if user data could not be retrieved
-        return null
+        const user = await prisma.user.findUnique({
+          where: {
+            email
+          }
+        })
+
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        if(!user.hash || !user.salt) {
+          throw new Error('No password configured')
+        }
+
+        const passHash = crypto.pbkdf2Sync(password, user.salt, 1000, 64, `sha512`).toString(`hex`)
+        if(passHash !== user.hash) {
+          throw new Error('Password is incorrect')
+        }
+
+        console.log('credentials', {user})
+
+        return {
+          id: user.id,
+          name: user.id,
+          email: user.email,
+          role: user.role,
+          picture: user.image,
+          sub: user.id,
+        }
       }
     }),
 

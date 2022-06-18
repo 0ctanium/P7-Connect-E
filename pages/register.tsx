@@ -49,10 +49,10 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
         register({
             variables: { input }
         }).then(() => signIn("credentials", {
-            username: input.email,
+            email: input.email,
             password: input.password,
             redirect: true,
-            callbackUrl: providers?.credentials?.callbackUrl
+            callbackUrl,
         }))
         .catch((err) => {
             console.error(err)
@@ -61,7 +61,7 @@ const RegisterPage: NextPage<InferGetServerSidePropsType<typeof getServerSidePro
         .finally(() => {
             setLoginLoading(false)
         })
-    }, [providers?.credentials?.callbackUrl, register])
+    }, [callbackUrl, register])
 
     return (
         <>

@@ -8,6 +8,8 @@ import { Role } from 'constants'
 declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT {
+    /** The user's id */
+    id?: string | null;
     /** The user's role group. */
     role: Role
   }

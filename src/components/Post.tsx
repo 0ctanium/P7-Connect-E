@@ -2,6 +2,7 @@ import React, {FC} from 'react'
 import {Post as PostType, useGetGroupPostsQuery, useGetUserPostsQuery} from "generated/graphql";
 import {LoadingSpinner} from "./LoadingSpinner";
 import Image from "next/image";
+import {Avatar} from "./Avatar";
 
 export const Post: FC<{ post: PostType}> = ({ post }) => {
     const { author, group } = post
@@ -9,7 +10,7 @@ export const Post: FC<{ post: PostType}> = ({ post }) => {
     return <div>
         {author && (
             <div>
-                {<img src={author.image || ''} referrerPolicy="no-referrer" alt={`Photo de profil de ${author.name}`} />}
+                <Avatar user={author} showTooltip hideStatus />
                 <p>{author?.name}</p>
             </div>
         )}

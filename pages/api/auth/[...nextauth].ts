@@ -54,7 +54,9 @@ export default NextAuth({
   },
 
   callbacks: {
-    jwt({ token, user, profile, account, isNewUser}) {
+    jwt({ token, user}) {
+      token.online = true
+
       if (user?.role) {
         token.role = user.role
       }
@@ -67,7 +69,9 @@ export default NextAuth({
       return token
     },
     session({ session, user, token}) {
-      session.user.id = token.sub
+      session.user.online = true
+
+      session.user.id = token.sub || user.id
       session.user.role = token.role
 
       if(token?.sub) {

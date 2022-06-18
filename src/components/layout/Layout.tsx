@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { useScrollingUp } from "hooks";
 import clsx from "clsx";
 import {SideBar} from "./SideBar";
+import {Avatar} from "../Avatar";
 
 
 const navigation = [
@@ -119,9 +120,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
                     <a href="#" className="flex-shrink-0 group block">
                       <div className="flex items-center">
                         <div>
-                          {/* TODO: add image placeholder*/}
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img className="inline-block h-10 w-10 rounded-full" src={user.image || ''} alt="" />
+                          <Avatar user={user} hideStatus />
                         </div>
                         <div className="ml-3">
                           <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
@@ -167,8 +166,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
                 <div className="flex-shrink-0 flex pb-5">
                   <Link href="/profile">
                     <a className="flex-shrink-0 w-full">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img className="block mx-auto h-10 w-10 rounded-full" src={user.image || ''} alt="" />
+                      <Avatar user={user} hideStatus />
                       <div className="sr-only">
                         <p>{user.name}</p>
                         <p>Account settings</p>
@@ -242,7 +240,7 @@ const isElementXPercentInViewport = function(el: HTMLElement, percentVisible: nu
 };
 
 const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({ contentRef }) => {
-  const { data } = useSession()
+  const { data: session, status } = useSession<true>({ required: true })
 
   const barRef = useRef<HTMLDivElement>(null)
   const isScrollingUp = useScrollingUp(contentRef)
@@ -272,7 +270,7 @@ const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({ contentRef }
 
   return (
       <>
-        <div className={clsx('lg:hidden absolute w-full min-h-[3rem]' )} style={{ 'height': scrollPoint }}>
+        <div className={clsx('lg:hidden absolute w-full min-h-[4rem]' )} style={{ 'height': scrollPoint }}>
           <div ref={barRef} className="sticky top-0   bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8">
             <div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -283,18 +281,19 @@ const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({ contentRef }
               />
             </div>
             <div>
-              <a className="flex-shrink-0 w-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="block mx-auto h-8 w-8 rounded-full" src={data?.user.image || ''} alt="" />
-                <div className="sr-only">
-                  <p>{data?.user.name}</p>
-                  <p>Account settings</p>
-                </div>
-              </a>
+              <Link href="/profile">
+                <a className="flex-shrink-0 w-full">
+                  <Avatar user={session?.user} hideStatus size="md" />
+                  <div className="sr-only">
+                    <p>{session?.user.name}</p>
+                    <p>Account settings</p>
+                  </div>
+                </a>
+              </Link>
             </div>
           </div>
         </div>
-        <div className="mb-12 lg:mb-0" />
+        <div className="mb-16 lg:mb-0" />
       </>
   )
 }

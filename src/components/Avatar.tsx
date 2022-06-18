@@ -103,8 +103,8 @@ interface UserToolTipProps {
 
 export const UserToolTip: FC<UserToolTipProps> = ({ user }) => {
         return (
-            <div className="flex justify-between">
-                <div>
+            <div className="flex justify-between px-4 py-1">
+                <div className="mr-4">
                     <p className="text-base">{user.name}</p>
                     {user.role && <RoleBadge role={user.role} />}
                 </div>

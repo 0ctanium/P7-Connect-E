@@ -36,7 +36,7 @@ export const NameCell: CellComponent<TableData> = ({ row }) => {
                 </div>
                 <div className="flex flex-row items-center text-sm text-gray-500">
                     {row.emailVerified && (
-                        <Tooltip render={<p className="text-sm font-bold text-white"> Email confirmé</p>}>
+                        <Tooltip className="tooltip-bg-gray-900/80 text-xs font-light text-white" render="Email confirmé">
                             <GoVerified
                                 className="mr-1.5 w-4 h-4 text-gray-400"
                                 aria-hidden="true"

@@ -23,7 +23,7 @@ const PostDate: FC<{ date: MomentInput}> = ({ date }) => {
             }), [date])
     const completeDate = useMemo(() => moment(date).format("[le] dddd D MMMM YYYY [à] LT"), [date])
 
-    return <Tooltip render={completeDate}>{calendar}</Tooltip>
+    return <Tooltip render={completeDate} className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light" config={{ delayShow: 200 }}>{calendar}</Tooltip>
 
 }
 

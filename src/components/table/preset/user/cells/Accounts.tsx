@@ -12,11 +12,8 @@ export const AccountCell: CellComponent<TableData> = ({ row }) => (
             {row.accounts.map((account, i) => (
                 <Tooltip
                     key={i}
-                    render={
-                        <p className="text-sm font-bold text-white">
-                            Depuis {moment(account?.createdAt).calendar().toLocaleLowerCase()}
-                        </p>
-                    }>
+                    className="tooltip-bg-gray-900/80 text-xs font-light text-white"
+                    render={moment(account?.createdAt).format("[depuis le] dddd D MMMM YYYY [à] LT")}>
                     <SocialIcon className="w-6 h-6" provider={account?.provider as BuiltInProviderType} circled />
                 </Tooltip>
             ))}

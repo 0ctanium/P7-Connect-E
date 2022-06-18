@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --tooltip-background: rgb(255 255 255 / var(--tw-bg-opacity));
+    --tooltip-border: transparent;
+}
+
 @layer base {
     html, body, #__next {
         @apply h-full
@@ -109,5 +114,100 @@
     }
     .badge-lg.badge-rounded {
         @apply rounded-md;
+    }
+
+
+
+
+    /* From node_modules/react-popper-tooltip/dist/styles.css */
+    .tooltip {
+        @apply shadow-md rounded flex flex-col z-50 border border-solid;
+        background-color: var(--tooltip-background);
+        border-color: var(--tooltip-border);
+        padding: .4rem;
+    }
+
+    .tooltip[data-popper-interactive='false'] {
+        @apply pointer-events-none;
+    }
+
+    .tooltip-arrow {
+        @apply h-4 w-4 absolute pointer-events-none;
+    }
+
+    .tooltip-arrow::before {
+        @apply border-solid block h-0 w-0 m-auto;
+        content: '';
+    }
+
+    .tooltip-arrow::after {
+        @apply border-solid block absolute h-0 w-0 m-auto;
+        content: '';
+    }
+
+    .tooltip[data-popper-placement*='bottom'] .tooltip-arrow {
+        @apply left-0 top-0;
+        margin-top: -.4rem;
+    }
+
+    .tooltip[data-popper-placement*='bottom'] .tooltip-arrow::before {
+        @apply absolute -top-px;
+        border-color: transparent transparent var(--tooltip-border) transparent;
+        border-width: 0 .5rem .4rem .5rem;
+    }
+
+    .tooltip[data-popper-placement*='bottom'] .tooltip-arrow::after {
+        border-color: transparent transparent var(--tooltip-background) transparent;
+        border-width: 0 .5rem .4rem .5rem;
+    }
+
+    .tooltip[data-popper-placement*='top'] .tooltip-arrow {
+        @apply bottom-0 left-0;
+        margin-bottom: -1rem;
+    }
+
+    .tooltip[data-popper-placement*='top'] .tooltip-arrow::before {
+        @apply absolute top-px;
+        border-color: var(--tooltip-border) transparent transparent transparent;
+        border-width: .4rem .5rem 0 .5rem;
+    }
+
+    .tooltip[data-popper-placement*='top'] .tooltip-arrow::after {
+        border-color: var(--tooltip-background) transparent transparent transparent;
+        border-width: .4rem .5rem 0 .5rem;
+    }
+
+    .tooltip[data-popper-placement*='right'] .tooltip-arrow {
+        @apply left-0;
+        margin-left: -.7rem;
+    }
+
+    .tooltip[data-popper-placement*='right'] .tooltip-arrow::before {
+        border-color: transparent var(--tooltip-border) transparent transparent;
+        border-width: .5rem .4rem .5rem 0;
+    }
+
+    .tooltip[data-popper-placement*='right'] .tooltip-arrow::after {
+        @apply top-0;
+        border-color: transparent var(--tooltip-background) transparent transparent;
+        border-width: .5rem .4rem .5rem 0;
+        left: 6px;
+    }
+
+    .tooltip[data-popper-placement*='left'] .tooltip-arrow {
+        @apply right-0;
+        margin-right: -.7rem;
+    }
+
+    .tooltip[data-popper-placement*='left'] .tooltip-arrow::before {
+        border-color: transparent transparent transparent var(--tooltip-border);
+        border-width: .5rem 0 .5rem .4em;
+    }
+
+    .tooltip[data-popper-placement*='left'] .tooltip-arrow::after {
+        @apply top-0;
+        border-color: transparent transparent transparent var(--tooltip-background);
+        border-width: .5rem 0 .5rem .4em;
+        left: 3px;
     }
 }

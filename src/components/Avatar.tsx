@@ -89,7 +89,7 @@ export const Avatar: FC<AvatarProps> = ({
     )
 
     if(showTooltip && user) {
-        return <Tooltip render={<UserToolTip user={user} />}>
+        return <Tooltip render={<UserToolTip user={user} />} config={{ delayShow: 400, delayHide: 150, interactive: true }}>
             {Image}
         </Tooltip>
     } else {

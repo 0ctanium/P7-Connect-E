@@ -1,10 +1,15 @@
 import {FC, HTMLProps, ReactNode} from "react";
 import {IconType} from "react-icons";
+import {usePopperTooltip} from "react-popper-tooltip";
 
-export interface TooltipProps {
+
+type TooltipParams = Parameters<typeof usePopperTooltip>
+export interface TooltipProps  {
   render: ReactNode;
-  show?: boolean;
   className?: string;
+  showArrow?: boolean;
+  config?: TooltipParams[0];
+  popperOptions?: TooltipParams[1];
 }
 
 export type CellComponent<

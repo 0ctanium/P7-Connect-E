@@ -165,7 +165,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
                 </div>
                 <div className="flex-shrink-0 flex pb-5">
                   <Link href="/profile">
-                    <a className="flex-shrink-0 w-full">
+                    <a className="flex-shrink-0 w-full text-center">
                       <Avatar user={user} hideStatus />
                       <div className="sr-only">
                         <p>{user.name}</p>

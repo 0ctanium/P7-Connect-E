@@ -98,7 +98,7 @@
     }
 
     .badge-lg {
-        @apply badge px-3 py-0.5 text-sm;
+        @apply px-3 py-0.5 text-sm;
     }
     .badge-dot::before {
         content: '';

@@ -15,7 +15,7 @@ const Home: NextPage = () => {
         <Layout current='feed'>
             <div className="flex justify-center mt-8 text-center">
                 <div className="flex-auto">
-                    <Avatar user={session.user} size="xl" showTooltip hideStatus className="mx-auto mb-2" />
+                    <Avatar user={session.user} size="xl" showTooltip className="mx-auto mb-2" />
                     <div className="text-lg mb-2">Hello, {session?.user?.email ?? session?.user?.name}</div>
                     <div className="h-screen">
                         <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus asperiores debitis delectus dignissimos doloremque enim eos fuga libero maiores non officia, quis quisquam sequi soluta tempore ullam velit veritatis! Et!</h3>

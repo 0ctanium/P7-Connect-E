@@ -120,7 +120,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
                     <a href="#" className="flex-shrink-0 group block">
                       <div className="flex items-center">
                         <div>
-                          <Avatar user={user} hideStatus />
+                          <Avatar user={user} />
                         </div>
                         <div className="ml-3">
                           <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">{user.name}</p>
@@ -166,7 +166,7 @@ export const Layout: FC<{ sideBar?: JSX.Element, current: string }> = ({ childre
                 <div className="flex-shrink-0 flex pb-5">
                   <Link href="/profile">
                     <a className="flex-shrink-0 w-full text-center">
-                      <Avatar user={user} hideStatus />
+                      <Avatar user={user} />
                       <div className="sr-only">
                         <p>{user.name}</p>
                         <p>Account settings</p>
@@ -283,7 +283,7 @@ const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({ contentRef }
             <div>
               <Link href="/profile">
                 <a className="flex-shrink-0 w-full">
-                  <Avatar user={session?.user} hideStatus size="md" />
+                  <Avatar user={session?.user} size="md" />
                   <div className="sr-only">
                     <p>{session?.user.name}</p>
                     <p>Account settings</p>

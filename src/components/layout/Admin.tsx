@@ -108,7 +108,7 @@ export const AdminLayout: FC<{ current: string, loading?: boolean }> = ({ childr
                     <a href="#" className="flex-shrink-0 group block">
                       <div className="flex items-center">
                         <div>
-                          <Avatar user={data?.user} />
+                          <Avatar user={data?.user} showStatus />
                         </div>
                         <div className="ml-3">
                           <p className="text-base font-medium text-white">{data?.user.name}</p>
@@ -164,7 +164,7 @@ export const AdminLayout: FC<{ current: string, loading?: boolean }> = ({ childr
                   <div className="flex items-center">
                     <div>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <Avatar user={data?.user} imgSize="h-9 w-9" hideStatus />
+                      <Avatar user={data?.user} imgSize="h-9 w-9" />
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-white">{data?.user.name}</p>

@@ -8,7 +8,7 @@ interface AvatarProps {
     user?: Partial<User> | null;
     className?: string;
     square?: boolean;
-    hideStatus?: boolean;
+    showStatus?: boolean;
     showTooltip?: boolean;
 
     size?: keyof typeof sizes;
@@ -52,9 +52,9 @@ export const Avatar: FC<AvatarProps> = ({
                                             className,
                                             size: sizeName = "md",
                                             square,
-                                            hideStatus,
+                                            showStatus,
                                             showTooltip,
-    imgSize, statusSize
+                                            imgSize, statusSize
                                         }) => {
     const { image, name, email, online } = user || {}
     const size = sizes[sizeName]
@@ -62,7 +62,7 @@ export const Avatar: FC<AvatarProps> = ({
     if(statusSize) size.status = statusSize
 
     const Image = (
-        <span className={clsx('inline-block relative', className)}>
+        <span className={clsx('inline-block relative', size.img, className)}>
             {image ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -76,7 +76,7 @@ export const Avatar: FC<AvatarProps> = ({
             )}
 
 
-            {!hideStatus &&
+            {showStatus &&
                 (square ? (
                     <span className="absolute bottom-0 right-0 transform translate-y-1/2 translate-x-1/2 block border-2 border-white rounded-full">
                         <span className={clsx('block rounded-full', size.status, online ? 'bg-green-400' : 'bg-gray-300' )} />
@@ -89,26 +89,33 @@ export const Avatar: FC<AvatarProps> = ({
     )
 
     if(showTooltip && user) {
-        return <Tooltip render={<UserToolTip user={user} />} config={{ delayShow: 400, delayHide: 150, interactive: true }}>
+        return <UserToolTip user={user}>
             {Image}
-        </Tooltip>
+        </UserToolTip>
     } else {
         return Image
     }
 }
 
 interface UserToolTipProps {
-    user: Partial<User>
+    user?: Partial<User> | null
 }
 
-export const UserToolTip: FC<UserToolTipProps> = ({ user }) => {
-        return (
-            <div className="flex justify-between px-4 py-1">
-                <div className="mr-4">
-                    <p className="text-base">{user.name}</p>
-                    {user.role && <RoleBadge role={user.role} />}
-                </div>
-                <Avatar user={user} size="2xl"/>
+export const UserToolTip: FC<UserToolTipProps> = ({ user, children }) => {
+    const content = (
+        <div className="flex justify-between px-4 py-1">
+            <div className="mr-4">
+                <p className="text-base">{user?.name || 'Utilisateur inconnu'}</p>
+                {user?.role && <RoleBadge role={user.role} />}
             </div>
-        )
+            <Avatar user={user} size="2xl" showStatus/>
+        </div>
+    )
+
+    return (
+        <Tooltip render={content} config={{ delayShow: 400, delayHide: 150, interactive: true }}>
+            {children}
+        </Tooltip>
+
+    )
 }

@@ -13,15 +13,17 @@ interface ItemRenderPropArg {
   active: boolean;
   disabled: boolean;
 }
-interface DropdownItemProps {
+interface DropdownItemProps extends Partial<ItemRenderPropArg> {
   as?: ReactNode;
-  icon: IconType;
-  label: ReactNode;
+  icon?: IconType;
+  label?: ReactNode;
+  className?: string | ((classes: string) => string);
+  iconClasses?: string | ((classes: string) => string);
 }
 
 export type DropdownAction =
   | DropdownItemProps
-  | React.ExoticComponent<ItemRenderPropArg & DropdownItemProps>;
+  | React.ExoticComponent<DropdownItemProps>;
 export type DropdownActions = DropdownAction[] | DropdownActions[];
 
 interface DropdownProps {
@@ -92,20 +94,28 @@ export const DropdownItem = <Tag extends HTMLElement = HTMLElement>({
   label,
   icon: Icon,
   children,
+  className,
+  iconClasses,
   ...props
 }: PropsWithChildren<HTMLAttributes<Tag> & DropdownItemProps>): JSX.Element => {
-  // @ts-ignore
   return (
+    // @ts-ignore
     <Component
       className={clsx(
         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-        'group flex items-center px-4 py-2 text-sm'
+        'group flex items-center px-4 py-2 text-sm',
+        className
       )}
       {...props}>
-      <Icon
-        className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-        aria-hidden="true"
-      />
+      {Icon && (
+        <Icon
+          className={clsx(
+            'mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500',
+            iconClasses
+          )}
+          aria-hidden="true"
+        />
+      )}
       {label}
     </Component>
   );

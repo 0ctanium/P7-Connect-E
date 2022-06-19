@@ -1,4 +1,4 @@
-import React, { FC, HTMLProps, useMemo } from 'react';
+import React, { FC, HTMLProps, useCallback, useMemo } from 'react';
 import { Post as PostType } from 'generated/graphql';
 import { Avatar, UserToolTip } from './Avatar';
 import moment, { MomentInput } from 'moment';
@@ -18,6 +18,9 @@ import {
   HiUserAdd,
 } from 'react-icons/hi';
 import { useSession } from 'next-auth/react';
+import { Role } from 'constants/role';
+import copy from 'copy-to-clipboard';
+import { toast } from 'react-toastify';
 
 export const Post: FC<{ post: PostType }> = ({ post }) => {
   const { author, group } = post;
@@ -51,7 +54,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
         <div className="flex-grow" />
 
         <div className="-mr-4">
-          <PostActions owner={post.authorId} />
+          <PostActions post={post} />
         </div>
       </div>
 
@@ -60,33 +63,54 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
   );
 };
 
-const publicActions = [
-  {
-    icon: HiClipboard,
-    label: 'Copier le lien du post',
-  },
-];
+const PostActions: FC<{ post: PostType }> = ({ post }) => {
+  const { data: session } = useSession();
 
-const PostActions: FC<{ owner?: string }> = ({ owner }) => {
-  const { data } = useSession();
+  const handleDelete = useCallback(() => {
+    toast.success('Post supprimé');
+  }, []);
+
+  const handleCopy = useCallback(() => {
+    copy(`https://${window.location.host}/post/${post.id}`);
+    toast.success('Lien copié');
+  }, [post.id]);
 
   const actions: DropdownActions = useMemo(() => {
-    console.log(data?.user?.id, owner);
+    const baseActions = [
+      [
+        {
+          as: 'button',
+          className: 'w-full',
+          icon: HiClipboard,
+          label: 'Copier le lien du post',
+          onClick: handleCopy,
+        },
+      ],
+    ];
 
-    if (data?.user) {
-      if (data.user.id === owner) {
+    if (session?.user) {
+      if (
+        session.user.id === post.authorId ||
+        session.user.role === Role.MODERATOR ||
+        session.user.role === Role.ADMIN
+      ) {
         return [
-          ...publicActions,
-          {
-            icon: HiTrash,
-            label: 'Supprimer',
-          },
+          ...baseActions,
+          [
+            {
+              as: 'button',
+              className: 'w-full',
+              icon: HiTrash,
+              label: 'Supprimer',
+              onClick: handleDelete,
+            },
+          ],
         ];
       }
     }
 
-    return publicActions;
-  }, [data?.user, owner]);
+    return baseActions;
+  }, [handleCopy, session?.user, post.authorId, handleDelete]);
 
   return (
     <Dropdown menu={actions}>

@@ -35,6 +35,9 @@ export const Group = objectType({
           where: {
             groupId: root.id
           },
+          orderBy: {
+            createdAt: 'desc',
+          }
         })
       }
     })

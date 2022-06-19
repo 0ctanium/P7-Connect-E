@@ -1,5 +1,5 @@
 import * as yup from 'yup'
-import {NewGroupInputs, SignInInputs, UpdateGroupInputs, UserCreateInput} from "types";
+import {CreatePostFormInputs, Media, NewGroupInputs, SignInInputs, UpdateGroupInputs, UserCreateInput} from "types";
 
 export const userCreateSchema = yup.object<UserCreateInput>({
     email: yup.string().required().email(),
@@ -19,12 +19,17 @@ export const updateGroupSchema = yup.object<UpdateGroupInputs>({
     name: yup.string().nullable(),
     description: yup.string().nullable(),
     restricted: yup.boolean().nullable(),
-    banner: yup.mixed<UpdateGroupInputs["banner"]>().nullable()
+    banner: yup.mixed<Media>().nullable()
 }).required();
 
 export const newGroupSchema = yup.object<NewGroupInputs>({
     name: yup.string().required(),
     description: yup.string(),
     restricted: yup.boolean(),
-    banner: yup.mixed<NewGroupInputs["banner"]>().nullable()
+    banner: yup.mixed<Media>().nullable()
+}).required();
+
+export const createPostSchema = yup.object<CreatePostFormInputs>({
+    text: yup.string().required(),
+    media: yup.array<Media>(yup.mixed<Media>().nullable()).nullable()
 }).required();

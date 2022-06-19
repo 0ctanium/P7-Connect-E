@@ -84,6 +84,9 @@ export const PostQueries = extendType({
           where: {
             groupId: where?.group || undefined,
             authorId: where?.user || undefined,
+          },
+          orderBy: {
+            createdAt: 'desc',
           }
         })
       }

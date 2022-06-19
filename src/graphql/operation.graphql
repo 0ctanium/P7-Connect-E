@@ -24,7 +24,7 @@ query GetUserPosts($id: ID!, $cursor: ID) {
 
 mutation CreatePost($group: ID!, $text: String!) {
     createPost(group: $group, text: $text) {
-        id
+        ...GroupPost
     }
 }
 

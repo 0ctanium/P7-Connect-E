@@ -23,6 +23,7 @@ export const useNewGroupForm = (props?: Partial<UseFormProps<NewGroupInputs>>) =
         resolver: yupResolver(newGroupSchema),
     })
 }
+
 export const NewGroupFormSlideOver: FC<NewGroupSlideOverProps> = ({ loading, open, onClose, onSubmit, form }) => {
     const { register, handleSubmit, control, formState: { errors } } = form
 

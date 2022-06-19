@@ -34,6 +34,8 @@ fragment Post on Post {
     id
     createdAt
     text
+    authorId
+    groupId
 }
 
 fragment GroupPost on Post {

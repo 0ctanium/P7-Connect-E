@@ -345,7 +345,7 @@ const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({
         style={{ height: scrollPoint }}>
         <div
           ref={barRef}
-          className="sticky top-0 z-50 bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8">
+          className="sticky top-0 z-30 bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

@@ -84,25 +84,6 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
       );
     },
   });
-  const [deletePost] = useDeletePostMutation({
-    onError(err) {
-      console.error(err);
-      toast.error('Erreur lors de la suppression du port');
-    },
-    onCompleted(res) {
-      toast.success('Post supprimé');
-      return cache.updateQuery<GetGroupPostsQuery, GetGroupPostsQueryVariables>(
-        {
-          query: GetGroupPostsDocument,
-          variables: { id: groupId },
-        },
-        (data) => ({
-          // @ts-expect-error
-          posts: data.posts.filter((p) => p.id !== res.deletePost),
-        })
-      );
-    },
-  });
 
   const { data, loading } = useGetGroupPostsQuery({
     variables: { id: groupId },
@@ -125,17 +106,6 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
     [createPost, form, groupId]
   );
 
-  const handlePostDelete = useCallback(
-    (postId: string) => {
-      deletePost({
-        variables: {
-          post: postId,
-        },
-      });
-    },
-    [deletePost]
-  );
-
   if (loading) return <LoadingSpinner />;
 
   if (!data) return <p>Ce groupe ne contient aucun post</p>;
@@ -149,11 +119,7 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
       />
       <div className="space-y-4">
         {data.posts.map((post) => (
-          <Post
-            post={post as PostType}
-            key={post.id}
-            onDelete={handlePostDelete}
-          />
+          <Post post={post as PostType} key={post.id} />
         ))}
       </div>
     </div>

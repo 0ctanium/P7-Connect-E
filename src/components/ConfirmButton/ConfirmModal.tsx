@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { HiOutlineExclamation } from 'react-icons/hi';
 import clsx from 'clsx';
 import { ConfirmModalProps } from '../../types';
+import { LoadingSpinner } from '../LoadingSpinner';
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onClose,
@@ -15,6 +16,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   dismissLabel = 'Annuler',
   hideIcon,
   icon: Icon = HiOutlineExclamation,
+  loading,
 }) => {
   const cancelButtonRef = useRef(null);
 
@@ -22,7 +24,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     <Transition show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="overflow-y-auto fixed inset-0 z-10"
+        static
+        className="overflow-y-auto fixed inset-0 z-40"
         initialFocus={cancelButtonRef}
         open={open}
         onClose={onClose}>
@@ -88,6 +91,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   className="inline-flex justify-center py-2 px-4 sm:ml-3 w-full sm:w-auto text-base sm:text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md border border-transparent focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-sm focus:outline-none"
                   onClick={onConfirm}>
                   {confirmLabel}
+                  {loading && (
+                    <LoadingSpinner className="ml-3 h-4 w-4 text-gray-200" />
+                  )}
                 </button>
                 <button
                   type="button"

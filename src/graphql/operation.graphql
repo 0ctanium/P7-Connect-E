@@ -32,6 +32,12 @@ mutation DeletePost($post: ID!) {
     deletePost(post: $post)
 }
 
+mutation EditPost($post: ID!, $text: String!) {
+    editPost(post: $post, text: $text) {
+        ...Post
+    }
+}
+
 mutation Register($input: UserCreateInput!) {
     register(input: $input) {
         ...User

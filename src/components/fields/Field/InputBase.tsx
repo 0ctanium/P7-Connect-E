@@ -3,11 +3,9 @@ import { InputBaseProps } from 'types';
 import TextareaAutosize from 'react-textarea-autosize';
 import clsx from 'clsx';
 
-// eslint-disable-next-line react/display-name
 export const InputBase = React.forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   InputBaseProps
-  // @ts-ignore
 >(({ className, multiline, minRows = 1, maxRows, ...props }, ref) =>
   multiline ? (
     <TextareaAutosize
@@ -18,7 +16,7 @@ export const InputBase = React.forwardRef<
       )}
       minRows={minRows}
       maxRows={maxRows}
-      // @ts-ignore
+      // @ts-expect-error
       ref={ref}
     />
   ) : (
@@ -33,3 +31,4 @@ export const InputBase = React.forwardRef<
     />
   )
 );
+InputBase.displayName = 'InputBase';

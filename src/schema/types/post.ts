@@ -167,6 +167,50 @@ export const PostMutations = extendType({
       },
     });
 
+    t.field('editPost', {
+      type: 'Post',
+      args: {
+        post: nonNull('ID'),
+        text: nonNull('String'),
+        // media: arg({
+        //   type: list('Upload'),
+        // }),
+      },
+      async resolve(root, args, ctx) {
+        const session = await getSession(ctx);
+        if (!session?.user?.id)
+          throw new AuthenticationError('You must be authenticated');
+
+        const postToDelete = await ctx.prisma.post.findUnique({
+          where: {
+            id: args.post,
+          },
+        });
+
+        if (!postToDelete) {
+          throw new ApolloError('Post not found');
+        }
+
+        if (
+          postToDelete.authorId !== session.user.id &&
+          session.user.role !== Role.MODERATOR &&
+          session.user.role !== Role.ADMIN
+        ) {
+          throw new ApolloError("You don't have the permission to do this");
+        }
+
+        return ctx.prisma.post.update({
+          where: {
+            id: args.post,
+          },
+          data: {
+            text: args.text,
+            // media
+          },
+        });
+      },
+    });
+
     t.field('deletePost', {
       type: 'ID',
       args: {

@@ -73,6 +73,7 @@ export interface ConfirmButtonProps
   dismissLabel?: ReactNode;
   hideIcon?: boolean;
   icon?: IconType;
+  loading?: boolean;
 }
 
 export interface ConfirmModalProps {
@@ -86,4 +87,5 @@ export interface ConfirmModalProps {
   dismissLabel?: ReactNode;
   hideIcon?: boolean;
   icon?: IconType;
+  loading?: boolean;
 }

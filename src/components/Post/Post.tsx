@@ -4,6 +4,7 @@ import { Avatar, UserToolTip } from 'components/Avatar';
 import Link from 'next/link';
 import { PostActions } from './PostActions';
 import { PostDate } from './PostDate';
+import { PostReactionSelector } from './PostReactionSelector';
 
 export const Post: FC<{ post: PostType }> = ({ post }) => {
   const { author, group } = post;
@@ -42,6 +43,8 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
       </div>
 
       <p className="text-left">{post.text}</p>
+
+      <PostReactionSelector />
     </div>
   );
 };

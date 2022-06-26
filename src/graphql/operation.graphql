@@ -28,6 +28,10 @@ mutation CreatePost($group: ID!, $text: String!) {
     }
 }
 
+mutation DeletePost($post: ID!) {
+    deletePost(post: $post)
+}
+
 mutation Register($input: UserCreateInput!) {
     register(input: $input) {
         ...User

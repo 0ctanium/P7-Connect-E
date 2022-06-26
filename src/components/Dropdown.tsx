@@ -1,6 +1,7 @@
 import { Menu, Transition } from '@headlessui/react';
 import React, {
   FC,
+  forwardRef,
   Fragment,
   HTMLAttributes,
   PropsWithChildren,
@@ -33,27 +34,27 @@ interface DropdownProps {
 const DropdownGroup: FC<{ actions: DropdownActions }> = ({ actions }) => {
   return (
     <>
-      {actions.map((item) => {
+      {actions.map((item, i) => {
         if (Array.isArray(item)) {
           return (
-            <div className="py-1">
+            <div className="py-1" key={i}>
               <DropdownGroup actions={item} />
             </div>
           );
         } else {
           if (typeof item === 'function') {
             return (
-              <Menu.Item>
+              <Menu.Item key={i}>
                 {/* @ts-ignore */}
                 {(props) => item(props)}
               </Menu.Item>
             );
           } else {
             return (
-              <Menu.Item>
+              <Menu.Item key={i}>
                 {(props) => (
+                  // @ts-ignore
                   <DropdownItem
-                    // @ts-ignore
                     {...(item as unknown as DropdownItemProps)}
                     {...props}
                   />
@@ -88,35 +89,42 @@ export const Dropdown: FC<DropdownProps> = ({ children, menu }) => {
   );
 };
 
-export const DropdownItem = <Tag extends HTMLElement = HTMLElement>({
-  as: Component = 'div',
-  active,
-  label,
-  icon: Icon,
-  children,
-  className,
-  iconClasses,
-  ...props
-}: PropsWithChildren<HTMLAttributes<Tag> & DropdownItemProps>): JSX.Element => {
-  return (
-    // @ts-ignore
-    <Component
-      className={clsx(
-        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-        'group flex items-center px-4 py-2 text-sm',
-        className
-      )}
-      {...props}>
-      {Icon && (
-        <Icon
-          className={clsx(
-            'mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500',
-            iconClasses
-          )}
-          aria-hidden="true"
-        />
-      )}
-      {label}
-    </Component>
-  );
-};
+export const DropdownItem = forwardRef(
+  (
+    {
+      as: Component = 'div',
+      active,
+      label,
+      icon: Icon,
+      children,
+      className,
+      iconClasses,
+      ...props
+    }: PropsWithChildren<HTMLAttributes<HTMLElement> & DropdownItemProps>,
+    ref
+  ): JSX.Element => {
+    return (
+      // @ts-ignore
+      <Component
+        ref={ref}
+        className={clsx(
+          active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+          'group flex items-center px-4 py-2 text-sm',
+          className
+        )}
+        {...props}>
+        {Icon && (
+          <Icon
+            className={clsx(
+              'mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500',
+              iconClasses
+            )}
+            aria-hidden="true"
+          />
+        )}
+        {label}
+      </Component>
+    );
+  }
+);
+DropdownItem.displayName = 'DropdownItem';

@@ -4,25 +4,18 @@ import { Avatar, UserToolTip } from './Avatar';
 import moment, { MomentInput } from 'moment';
 import { Tooltip } from './Tooltip';
 import Link from 'next/link';
-import { Dropdown, DropdownAction, DropdownActions } from './Dropdown';
-import {
-  HiArchive,
-  HiArrowCircleRight,
-  HiChevronDown,
-  HiClipboard,
-  HiDotsVertical,
-  HiDuplicate,
-  HiHeart,
-  HiPencilAlt,
-  HiTrash,
-  HiUserAdd,
-} from 'react-icons/hi';
+import { Dropdown, DropdownActions } from './Dropdown';
+import { HiClipboard, HiDotsVertical, HiTrash } from 'react-icons/hi';
 import { useSession } from 'next-auth/react';
 import { Role } from 'constants/role';
 import copy from 'copy-to-clipboard';
 import { toast } from 'react-toastify';
+import { ConfirmButton, ConfirmModal, useConfirmButton } from './ConfirmButton';
 
-export const Post: FC<{ post: PostType }> = ({ post }) => {
+export const Post: FC<{ post: PostType; onDelete(postId: string): void }> = ({
+  post,
+  onDelete,
+}) => {
   const { author, group } = post;
 
   return (
@@ -54,7 +47,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
         <div className="flex-grow" />
 
         <div className="-mr-4">
-          <PostActions post={post} />
+          <PostActions post={post} onDelete={onDelete} />
         </div>
       </div>
 
@@ -63,17 +56,20 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
   );
 };
 
-const PostActions: FC<{ post: PostType }> = ({ post }) => {
-  const { data: session } = useSession();
-
-  const handleDelete = useCallback(() => {
-    toast.success('Post supprimé');
-  }, []);
+const PostActions: FC<{ post: PostType; onDelete(postId: string): void }> = ({
+  post,
+  onDelete,
+}) => {
+  const { data: session } = useSession<true>();
 
   const handleCopy = useCallback(() => {
     copy(`https://${window.location.host}/post/${post.id}`);
     toast.success('Lien copié');
   }, [post.id]);
+
+  const { dismiss, confirm, close, isOpen, open } = useConfirmButton({
+    onConfirm: () => onDelete(post.id),
+  });
 
   const actions: DropdownActions = useMemo(() => {
     const baseActions = [
@@ -100,9 +96,9 @@ const PostActions: FC<{ post: PostType }> = ({ post }) => {
             {
               as: 'button',
               className: 'w-full',
-              icon: HiTrash,
               label: 'Supprimer',
-              onClick: handleDelete,
+              icon: HiTrash,
+              onClick: open,
             },
           ],
         ];
@@ -110,15 +106,26 @@ const PostActions: FC<{ post: PostType }> = ({ post }) => {
     }
 
     return baseActions;
-  }, [handleCopy, session?.user, post.authorId, handleDelete]);
+  }, [handleCopy, session, post.authorId, open]);
 
   return (
-    <Dropdown menu={actions}>
-      <div className="bg-white rounded-full flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
-        <span className="sr-only">Open options</span>
-        <HiDotsVertical className="h-5 w-5" aria-hidden="true" />
-      </div>
-    </Dropdown>
+    <>
+      <Dropdown menu={actions}>
+        <div className="bg-white rounded-full flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+          <span className="sr-only">Open options</span>
+          <HiDotsVertical className="h-5 w-5" aria-hidden="true" />
+        </div>
+      </Dropdown>
+      <ConfirmModal
+        open={isOpen}
+        onClose={close}
+        onConfirm={confirm}
+        onDismiss={dismiss}
+        dialogTitle="Êtes-vous sûr de vouloir supprimer ce post ?"
+        dialogDesc="Cette actions est irreversible. Une fois le post supprimé, aucun retour en arrière n'est possible."
+        confirmLabel="Supprimer"
+      />
+    </>
   );
 };
 

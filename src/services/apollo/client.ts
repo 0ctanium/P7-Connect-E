@@ -20,11 +20,13 @@ function createIsomorphLink(context: ResolverContext = {}) {
   }
 }
 
+export const cache = new InMemoryCache()
+
 async function createApolloClient(context?: ResolverContext) {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: await createIsomorphLink(context),
-    cache: new InMemoryCache(),
+    cache,
   })
 }
 

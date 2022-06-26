@@ -24,7 +24,17 @@ query GetUserPosts($id: ID!, $cursor: ID) {
 
 mutation CreatePost($group: ID!, $text: String!) {
     createPost(group: $group, text: $text) {
-        id
+        ...GroupPost
+    }
+}
+
+mutation DeletePost($post: ID!) {
+    deletePost(post: $post)
+}
+
+mutation EditPost($post: ID!, $text: String!) {
+    editPost(post: $post, text: $text) {
+        ...Post
     }
 }
 

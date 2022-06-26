@@ -5,6 +5,7 @@ import {GoVerified} from "react-icons/go";
 import {CellComponent} from "types";
 import {useTableCell} from "../../../../../hooks/useTable";
 import {Field} from "../../../../fields/Field";
+import {Avatar} from "../../../../Avatar";
 
 
 
@@ -27,12 +28,7 @@ export const NameCell: CellComponent<TableData> = ({ row }) => {
     return (
         <div className="flex items-center">
             <div className="flex-shrink-0 w-10 h-10">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    className="w-10 h-10 rounded-full"
-                    src={row.image || ''}
-                    alt=""
-                />
+                <Avatar user={row} showStatus />
             </div>
             <div className="ml-4">
                 <div className="text-sm font-medium text-gray-900">
@@ -40,7 +36,7 @@ export const NameCell: CellComponent<TableData> = ({ row }) => {
                 </div>
                 <div className="flex flex-row items-center text-sm text-gray-500">
                     {row.emailVerified && (
-                        <Tooltip render={<p className="text-sm font-bold text-white"> Email confirmé</p>}>
+                        <Tooltip className="tooltip-bg-gray-900/80 text-xs font-light text-white" render="Email confirmé">
                             <GoVerified
                                 className="mr-1.5 w-4 h-4 text-gray-400"
                                 aria-hidden="true"

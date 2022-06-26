@@ -1,10 +1,10 @@
-import {FC, HTMLProps, ReactNode} from "react";
-import {IconType} from "react-icons";
-import {usePopperTooltip} from "react-popper-tooltip";
+import { FC, HTMLAttributes, HTMLProps, ReactNode } from 'react';
+import { IconType } from 'react-icons';
+import { usePopperTooltip } from 'react-popper-tooltip';
+import { OptionalBooleanFunction } from './utils';
 
-
-type TooltipParams = Parameters<typeof usePopperTooltip>
-export interface TooltipProps  {
+type TooltipParams = Parameters<typeof usePopperTooltip>;
+export interface TooltipProps {
   render: ReactNode;
   className?: string;
   showArrow?: boolean;
@@ -13,12 +13,13 @@ export interface TooltipProps  {
 }
 
 export type CellComponent<
-    D extends Record<string, any> = Record<string, unknown>,
-    Props extends Record<string, any> = Record<string, unknown>,
-    > = FC<{
-      row: D
-    } & Props>;
-
+  D extends Record<string, any> = Record<string, unknown>,
+  Props extends Record<string, any> = Record<string, unknown>
+> = FC<
+  {
+    row: D;
+  } & Props
+>;
 
 type FieldBaseProps = {
   label?: string;
@@ -31,10 +32,11 @@ type FieldBaseProps = {
     input?: string;
   } & InputProps['classes'];
 };
-export type FieldProps = InputProps & FieldBaseProps & {
-  fullWidth?: boolean
-  desc?: string
-};
+export type FieldProps = InputProps &
+  FieldBaseProps & {
+    fullWidth?: boolean;
+    desc?: string;
+  };
 
 export type InputProps = InputBaseProps & {
   trailingIcon?: IconType | ReactNode;
@@ -59,3 +61,29 @@ export type InputBaseProps = HTMLProps<HTMLInputElement> & {
   minRows?: number;
   maxRows?: number;
 };
+
+export interface ConfirmButtonProps
+  extends Omit<HTMLAttributes<HTMLElement>, 'onClick'> {
+  as?: keyof JSX.IntrinsicElements;
+  onConfirm?: OptionalBooleanFunction;
+  onDismiss?: OptionalBooleanFunction;
+  dialogTitle?: ReactNode;
+  dialogDesc?: ReactNode;
+  confirmLabel?: ReactNode;
+  dismissLabel?: ReactNode;
+  hideIcon?: boolean;
+  icon?: IconType;
+}
+
+export interface ConfirmModalProps {
+  onConfirm?: OptionalBooleanFunction;
+  onDismiss?: OptionalBooleanFunction;
+  open?: boolean;
+  onClose: (value: boolean) => void;
+  dialogTitle?: ReactNode;
+  dialogDesc?: ReactNode;
+  confirmLabel?: ReactNode;
+  dismissLabel?: ReactNode;
+  hideIcon?: boolean;
+  icon?: IconType;
+}

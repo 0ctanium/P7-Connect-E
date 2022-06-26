@@ -10,7 +10,8 @@ import { useSession } from 'next-auth/react';
 import { Role } from 'constants/role';
 import copy from 'copy-to-clipboard';
 import { toast } from 'react-toastify';
-import { ConfirmButton, ConfirmModal, useConfirmButton } from './ConfirmButton';
+import { ConfirmModal } from 'components/ConfirmButton';
+import { useConfirmButton } from '../hooks/useConfirmButton';
 
 export const Post: FC<{ post: PostType; onDelete(postId: string): void }> = ({
   post,

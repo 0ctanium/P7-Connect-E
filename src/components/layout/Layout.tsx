@@ -341,11 +341,11 @@ const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({
   return (
     <>
       <div
-        className={clsx('lg:hidden absolute w-full min-h-[4rem]')}
+        className="lg:hidden absolute w-full min-h-[4rem] pointer-events-none"
         style={{ height: scrollPoint }}>
         <div
           ref={barRef}
-          className="sticky top-0 z-30 bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8">
+          className="sticky top-0 z-30 bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8 pointer-events-auto">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

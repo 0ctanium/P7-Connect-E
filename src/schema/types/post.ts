@@ -10,6 +10,14 @@ import { getSession } from 'next-auth/react';
 import { ApolloError, AuthenticationError } from 'apollo-server-micro';
 import { Role } from '../../constants';
 
+export const ReactionCount = objectType({
+  name: 'ReactionCount',
+  definition(t) {
+    t.nonNull.string('icon');
+    t.nonNull.int('_count');
+  },
+});
+
 export const Post = objectType({
   name: 'Post',
   definition(t) {
@@ -17,6 +25,38 @@ export const Post = objectType({
 
     t.nonNull.string('text');
     // t.list.string("media")
+
+    t.nonNull.field('reactionCount', {
+      type: list(nonNull(ReactionCount)),
+      async resolve(root, args, ctx) {
+        // @ts-expect-error
+        return ctx.prisma.reaction.groupBy({
+          where: {
+            postId: root.id,
+          },
+          by: ['icon'],
+          _count: true,
+        });
+      },
+    });
+
+    t.field('viewerReaction', {
+      type: 'Reaction',
+      async resolve(root, args, ctx) {
+        const session = await getSession(ctx);
+        if (!session?.user?.id)
+          throw new AuthenticationError('You must be authenticated');
+
+        return ctx.prisma.reaction.findUnique({
+          where: {
+            postId_userId: {
+              postId: root.id,
+              userId: session.user.id,
+            },
+          },
+        });
+      },
+    });
 
     t.nonNull.id('authorId');
     t.field('author', {

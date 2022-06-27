@@ -156,7 +156,7 @@ export const getStaticProps: GetStaticProps<
   }
 
   return {
-    props: res.data,
+    props: JSON.parse(JSON.stringify(res.data)),
     revalidate: 1, // minute
   };
 };

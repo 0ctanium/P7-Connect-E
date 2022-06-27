@@ -72,7 +72,6 @@ model User {
   medias        Media[]
   posts         Post[]
   reactions     Reaction[]
-  replies       Reply[]
 }
 
 
@@ -107,26 +106,12 @@ model Post {
   group         Group       @relation(fields: [groupId], references: [id])
   groupId       String
 
+  parent        Post?       @relation("Replies", fields: [parentId], references: [id])
+  parentId      String?
+
   medias        Media[]
   reactions     Reaction[]
-  replies       Reply[]
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now())
-}
-
-model Reply {
-  id            String    @id @default(cuid())
-
-  text          String
-
-  author        User        @relation(fields: [authorId], references: [id])
-  authorId      String
-
-  post          Post       @relation(fields: [postId], references: [id])
-  postId        String
-
-  reactions     Reaction[]
+  replies       Post[]    @relation("Replies")
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
@@ -143,12 +128,10 @@ model Reaction {
   post          Post       @relation(fields: [postId], references: [id])
   postId        String
 
-  reply         Reply      @relation(fields: [replyId], references: [id])
-  replyId       String
-
-
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @default(now())
+
+  @@unique([postId, userId])
 }
 
 model Media {

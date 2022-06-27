@@ -38,6 +38,18 @@ mutation EditPost($post: ID!, $text: String!) {
     }
 }
 
+mutation SetReaction($post: ID!, $icon: String!) {
+    setPostReaction(post: $post, icon: $icon) {
+        ...Reaction
+    }
+}
+
+mutation RemoveReaction($post: ID!) {
+    removePostReaction(post: $post) {
+        ...Reaction
+    }
+}
+
 mutation Register($input: UserCreateInput!) {
     register(input: $input) {
         ...User

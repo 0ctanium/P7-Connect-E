@@ -36,7 +36,10 @@ fragment Post on Post {
     text
     authorId
     groupId
-    reactionCount
+    reactionCount {
+        icon
+        _count
+    }
     viewerReaction {
         ...Reaction
     }

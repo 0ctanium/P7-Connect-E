@@ -3,12 +3,15 @@ import { HiOutlineThumbUp } from 'react-icons/hi';
 import { usePopperTooltip } from 'react-popper-tooltip';
 import { Transition } from '@headlessui/react';
 import {
+  ReactionCount,
+  ReactionFragment,
   useRemoveReactionMutation,
   useSetReactionMutation,
 } from 'generated/graphql';
 import { toast } from 'react-toastify';
 import { Post as PostType } from 'generated/graphql';
 import { cache } from '../../services/apollo/client';
+import clsx from 'clsx';
 
 type Icons = 'like' | 'love' | 'haha' | 'wow' | 'sad' | 'angry';
 interface Icon {
@@ -57,23 +60,67 @@ const iconsMap = Object.entries(icons).map(([id, icon]) => ({
 
 export const PostReactionSelector: FC<{
   post: PostType;
-}> = ({ post }) => {
+  className?: string;
+}> = ({ post, className }) => {
+  const updateReactionCount = useCallback(
+    (reaction: ReactionFragment | null) => {
+      cache.modify({
+        id: `Post:${post.id}`,
+        fields: {
+          reactionCount(oldCache: ReactionCount[]) {
+            const newCache = [...oldCache.map((oc) => ({ ...oc }))];
+            const newIcon = reaction?.icon;
+            const oldIcon = post.viewerReaction?.icon;
+
+            const newIconIndex = oldCache.findIndex((c) => c.icon === newIcon);
+            const oldIconIndex = oldCache.findIndex((c) => c.icon === oldIcon);
+
+            if (newIcon) {
+              if (newIconIndex !== -1 && newCache[newIconIndex]) {
+                newCache[newIconIndex]['_count'] =
+                  (newCache[newIconIndex]['_count'] || 0) + 1;
+              } else {
+                newCache.push({
+                  icon: newIcon,
+                  _count: 1,
+                });
+              }
+            }
+
+            if (oldIcon) {
+              if (oldIconIndex !== -1 && newCache[oldIconIndex]) {
+                newCache[oldIconIndex]['_count'] =
+                  (newCache[oldIconIndex]['_count'] || 1) - 1;
+              } else {
+                newCache.push({
+                  icon: oldIcon,
+                  _count: 0,
+                });
+              }
+            }
+
+            return newCache;
+          },
+          viewerReaction() {
+            return reaction?.id
+              ? {
+                  __ref: `Reaction:${reaction.id}`,
+                }
+              : null;
+          },
+        },
+      });
+    },
+    [post.id, post.viewerReaction?.icon]
+  );
+
   const [setReaction] = useSetReactionMutation({
     onError(err) {
       console.error(err);
       toast.error("Erreur de l'ajout de la reaction");
     },
     onCompleted(data) {
-      cache.modify({
-        id: `Post:${post.id}`,
-        fields: {
-          viewerReaction() {
-            return {
-              __ref: `Reaction:${data.setPostReaction?.id}`,
-            };
-          },
-        },
-      });
+      if (data.setPostReaction) updateReactionCount(data.setPostReaction);
     },
   });
   const [removeReaction] = useRemoveReactionMutation({
@@ -82,14 +129,7 @@ export const PostReactionSelector: FC<{
       toast.error('Erreur du retrait de la reaction');
     },
     onCompleted() {
-      cache.modify({
-        id: `Post:${post.id}`,
-        fields: {
-          viewerReaction() {
-            return null;
-          },
-        },
-      });
+      updateReactionCount(null);
     },
   });
 
@@ -142,11 +182,14 @@ export const PostReactionSelector: FC<{
   }, [post.id, removeReaction]);
 
   return (
-    <div>
+    <>
       <button
-        data-icon={post.viewerReaction || 'like'}
+        data-icon={post.viewerReaction?.icon || 'like'}
         onClick={post.viewerReaction ? handleRemoveReact : handleReact}
-        className="cursor-pointer transition-opacity text-gray-400 flex items-center p-2"
+        className={clsx(
+          'cursor-pointer transition-opacity flex justify-center items-center p-2 w-full',
+          className
+        )}
         ref={setTriggerRef}>
         {selectedIcon ? (
           <>
@@ -180,19 +223,19 @@ export const PostReactionSelector: FC<{
         role="tooltip"
         ref={setTooltipRef}
         {...getTooltipProps()}
-        className="z-50 bg-white shadow-xl border border-gray-200 flex flex-row gap-2 rounded-full p-2">
+        className="z-50 bg-white shadow border border-gray-200 flex flex-row gap-2 rounded-full p-2">
         {iconsMap.map((icon) => (
           <button
             key={icon.id}
             onClick={handleReact}
             data-icon={icon.id}
             className="group relative">
-            <p className="transform bg-black/75 text-white text-sm rounded-full px-2 absolute -top-3 -translate-y-full left-1/2 -translate-x-1/2 transition-opacity group-hover:opacity-100 opacity-0">
+            <p className="transform bg-black/75 text-white text-sm rounded-full px-2 absolute -top-2.5 -translate-y-full left-1/2 -translate-x-1/2 transition-opacity group-hover:opacity-100 opacity-0">
               {icon.label}
             </p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              className="w-10 h-10 transition ease-in-out group-hover:transform-gpu group-hover:scale-[1.17] group-hover:origin-bottom"
+              className="w-8 h-8 transition ease-in-out group-hover:transform-gpu group-hover:scale-[1.17] group-hover:origin-bottom"
               src={icon.icon}
               draggable={false}
               alt={`Réagir avec ${icon.label}`}
@@ -200,6 +243,6 @@ export const PostReactionSelector: FC<{
           </button>
         ))}
       </Transition>
-    </div>
+    </>
   );
 };

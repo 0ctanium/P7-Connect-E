@@ -22,7 +22,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   } = usePopperTooltip(config, popperOptions);
 
   return (
-    <div>
+    <>
       <div className="cursor-pointer transition-opacity" ref={setTriggerRef}>
         {children}
       </div>
@@ -45,6 +45,6 @@ export const Tooltip: React.FC<TooltipProps> = ({
         )}
         {render}
       </Transition>
-    </div>
+    </>
   );
 };

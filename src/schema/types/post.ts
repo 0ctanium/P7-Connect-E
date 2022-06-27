@@ -10,6 +10,14 @@ import { getSession } from 'next-auth/react';
 import { ApolloError, AuthenticationError } from 'apollo-server-micro';
 import { Role } from '../../constants';
 
+export const ReactionCount = objectType({
+  name: 'ReactionCount',
+  definition(t) {
+    t.string('icon');
+    t.int('_count');
+  },
+});
+
 export const Post = objectType({
   name: 'Post',
   definition(t) {
@@ -19,20 +27,15 @@ export const Post = objectType({
     // t.list.string("media")
 
     t.nonNull.field('reactionCount', {
-      type: 'JSONObject',
+      type: list('ReactionCount'),
       async resolve(root, args, ctx) {
-        const count = await ctx.prisma.reaction.groupBy({
+        return await ctx.prisma.reaction.groupBy({
           where: {
             postId: root.id,
           },
           by: ['icon'],
-          _count: {
-            _all: true,
-            icon: true,
-          },
+          _count: true,
         });
-
-        return count?.[0]?.['_count'] || { _all: 0 };
       },
     });
 

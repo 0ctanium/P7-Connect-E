@@ -13,8 +13,8 @@ import { Role } from '../../constants';
 export const ReactionCount = objectType({
   name: 'ReactionCount',
   definition(t) {
-    t.string('icon');
-    t.int('_count');
+    t.nonNull.string('icon');
+    t.nonNull.int('_count');
   },
 });
 
@@ -27,7 +27,7 @@ export const Post = objectType({
     // t.list.string("media")
 
     t.nonNull.field('reactionCount', {
-      type: list('ReactionCount'),
+      type: list(nonNull('ReactionCount')),
       async resolve(root, args, ctx) {
         return await ctx.prisma.reaction.groupBy({
           where: {

@@ -6,6 +6,7 @@ import { PostActions } from './PostActions';
 import { PostDate } from './PostDate';
 import { PostReactionSelector } from './PostReactionSelector';
 import { Tooltip } from '../Tooltip';
+import { PostReactionCount } from './PostReactionCount';
 
 export const Post: FC<{ post: PostType }> = ({ post }) => {
   const { author, group } = post;
@@ -45,9 +46,11 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
 
       <p className="text-left pt-6 pb-4">{post.text}</p>
 
-      <div>{JSON.stringify(post.reactionCount)}</div>
+      <div className="flex justify-between items-center">
+        <PostReactionCount counts={post.reactionCount} />
+      </div>
 
-      <div className="border-t border-t-gray-300 py-1 mt-1 flex flex-row text-gray-400">
+      <div className="border-t border-t-gray-300 py-1 mt-2 flex flex-row text-gray-400">
         <PostReactionSelector
           post={post}
           className="flex-1 rounded hover:bg-black/[0.05] transition"

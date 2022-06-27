@@ -18,6 +18,42 @@ export const Post = objectType({
     t.nonNull.string('text');
     // t.list.string("media")
 
+    t.nonNull.field('reactionCount', {
+      type: 'JSONObject',
+      async resolve(root, args, ctx) {
+        const count = await ctx.prisma.reaction.groupBy({
+          where: {
+            postId: root.id,
+          },
+          by: ['icon'],
+          _count: {
+            _all: true,
+            icon: true,
+          },
+        });
+
+        return count?.[0]?.['_count'] || { _all: 0 };
+      },
+    });
+
+    t.field('viewerReaction', {
+      type: 'Reaction',
+      async resolve(root, args, ctx) {
+        const session = await getSession(ctx);
+        if (!session?.user?.id)
+          throw new AuthenticationError('You must be authenticated');
+
+        return ctx.prisma.reaction.findUnique({
+          where: {
+            postId_userId: {
+              postId: root.id,
+              userId: session.user.id,
+            },
+          },
+        });
+      },
+    });
+
     t.nonNull.id('authorId');
     t.field('author', {
       type: 'User',

@@ -7,8 +7,7 @@ import {
   objectType,
 } from 'nexus';
 import { getSession } from 'next-auth/react';
-import { ApolloError, AuthenticationError } from 'apollo-server-micro';
-import { Role } from '../../constants';
+import { AuthenticationError } from 'apollo-server-micro';
 
 export const Reaction = objectType({
   name: 'Reaction',
@@ -17,12 +16,12 @@ export const Reaction = objectType({
     t.nonNull.string('icon');
 
     t.nonNull.id('userId');
-    t.field('userId', {
+    t.field('user', {
       type: 'User',
       resolve(root, args, ctx) {
         return ctx.prisma.user.findUnique({
           where: {
-            id: root.authorId,
+            id: root.userId,
           },
         });
       },
@@ -37,7 +36,7 @@ export const ReactionMutations = extendType({
   type: 'Mutation',
   definition: (t) => {
     t.field('setPostReaction', {
-      type: 'Post',
+      type: 'Reaction',
       args: {
         post: nonNull('ID'),
         icon: nonNull('String'),
@@ -57,7 +56,7 @@ export const ReactionMutations = extendType({
           create: {
             post: {
               connect: {
-                id: args.group,
+                id: args.post,
               },
             },
             user: {
@@ -75,7 +74,7 @@ export const ReactionMutations = extendType({
     });
 
     t.field('removePostReaction', {
-      type: 'Post',
+      type: 'Reaction',
       args: {
         post: nonNull('ID'),
       },

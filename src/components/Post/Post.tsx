@@ -44,7 +44,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
 
       <p className="text-left">{post.text}</p>
 
-      <PostReactionSelector />
+      <PostReactionSelector post={post} />
     </div>
   );
 };

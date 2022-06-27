@@ -27,9 +27,10 @@ export const Post = objectType({
     // t.list.string("media")
 
     t.nonNull.field('reactionCount', {
-      type: list(nonNull('ReactionCount')),
+      type: list(nonNull(ReactionCount)),
       async resolve(root, args, ctx) {
-        return await ctx.prisma.reaction.groupBy({
+        // @ts-expect-error
+        return ctx.prisma.reaction.groupBy({
           where: {
             postId: root.id,
           },

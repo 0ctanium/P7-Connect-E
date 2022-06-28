@@ -43,6 +43,9 @@ fragment Post on Post {
     viewerReaction {
         ...Reaction
     }
+    media {
+        ...Media
+    }
 }
 
 fragment GroupPost on Post {
@@ -66,4 +69,11 @@ fragment Reaction on Reaction {
     userId
     createdAt
     updatedAt
+}
+
+fragment Media on Media {
+    id
+    mimeType
+    encoding
+    url
 }

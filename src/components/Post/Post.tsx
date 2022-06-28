@@ -8,6 +8,7 @@ import { PostReactionSelector } from './PostReactionSelector';
 import { Tooltip } from '../Tooltip';
 import { PostReactionCount } from './PostReactionCount';
 import { HiOutlineChatAlt, HiOutlineShare } from 'react-icons/hi';
+import { PostMedias } from './PostMedias';
 
 export const Post: FC<{ post: PostType }> = ({ post }) => {
   const { author, group } = post;
@@ -46,6 +47,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
       </div>
 
       <p className="text-left pt-6 pb-4">{post.text}</p>
+      <PostMedias post={post} />
 
       <div className="flex justify-between items-center">
         <PostReactionCount counts={post.reactionCount} />

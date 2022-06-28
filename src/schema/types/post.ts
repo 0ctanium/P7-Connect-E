@@ -60,6 +60,17 @@ export const Post = objectType({
       },
     });
 
+    t.field('media', {
+      type: nonNull(list(nonNull('Media'))),
+      resolve(root, args, ctx) {
+        return ctx.prisma.media.findMany({
+          where: {
+            postId: root.id,
+          },
+        });
+      },
+    });
+
     t.nonNull.id('authorId');
     t.field('author', {
       type: 'User',

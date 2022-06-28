@@ -22,6 +22,7 @@ import { Avatar } from '../Avatar';
 import { useSession } from 'next-auth/react';
 import { LoadingSpinner } from '../LoadingSpinner';
 import { HiOutlinePhotograph, HiX } from 'react-icons/hi';
+import { usePreview } from '../../hooks/usePrieview';
 
 export interface CreatePostFormProps {
   loading?: boolean;
@@ -160,11 +161,6 @@ const FileInput: FC<
   );
 };
 
-type PreviewSrc = string | ArrayBuffer | null;
-interface Preview {
-  preview: PreviewSrc;
-  index: number;
-}
 const MediaPreview: FC<{
   control: Control<CreatePostFormInputs, 'media'>;
 }> = ({ control }) => {
@@ -173,39 +169,7 @@ const MediaPreview: FC<{
     name: 'media',
   });
   const medias = field.value;
-
-  const [previews, setPreviews] = useState<Preview[]>([]);
-
-  useEffect(() => {
-    const previews: Preview[] = [],
-      fileReaders: FileReader[] = [];
-    let isCancel = false;
-
-    if (!medias || !medias.length) return setPreviews([]);
-
-    Array.from(medias).forEach((file, index) => {
-      const fileReader = new FileReader();
-      fileReaders.push(fileReader);
-      fileReader.onload = (e) => {
-        const { result } = e.target!;
-        if (result) {
-          previews.push({ preview: result, index });
-        }
-        if (previews.length === medias.length && !isCancel) {
-          setPreviews(previews);
-        }
-      };
-      fileReader.readAsDataURL(file);
-    });
-    return () => {
-      isCancel = true;
-      fileReaders.forEach((fileReader) => {
-        if (fileReader.readyState === 1) {
-          fileReader.abort();
-        }
-      });
-    };
-  }, [medias]);
+  const previews = usePreview(medias);
 
   const removeFile = useCallback(
     (index: number) => {
@@ -222,39 +186,37 @@ const MediaPreview: FC<{
   return (
     <div className="mt-2">
       <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {previews
-          .sort((a, b) => b.index - a.index)
-          .map((p, i) => {
-            const media = medias?.[p.index];
+        {previews.map((p, i) => {
+          const media = medias?.[p.index];
 
-            return (
-              <li
-                key={i}
-                className="relative group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.preview?.toString()}
-                  alt={`Prévisualisation du fichier ${media?.name}`}
-                  className="object-cover pointer-events-none"
-                />
-                <div className="hidden group-hover:block bg-black/30 absolute inset-0">
-                  <button
-                    type="button"
-                    onClick={() => removeFile(p.index)}
-                    className="icon-btn absolute top-2 right-2"
-                    title="Retirer l'image">
-                    <div>
-                      <span className="sr-only">{"Retirer l'image"}</span>
-                      <HiX />
-                    </div>
-                  </button>
-                  <p className="text-white text-[.7rem] font-thin absolute bottom-2 left-0 px-2 text-left">
-                    {media?.name}
-                  </p>
-                </div>
-              </li>
-            );
-          })}
+          return (
+            <li
+              key={i}
+              className="relative group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={p.preview?.toString()}
+                alt={`Prévisualisation du fichier ${media?.name}`}
+                className="object-cover pointer-events-none"
+              />
+              <div className="hidden group-hover:block bg-black/30 absolute inset-0">
+                <button
+                  type="button"
+                  onClick={() => removeFile(p.index)}
+                  className="icon-btn absolute top-2 right-2"
+                  title="Retirer l'image">
+                  <div>
+                    <span className="sr-only">{"Retirer l'image"}</span>
+                    <HiX />
+                  </div>
+                </button>
+                <p className="text-white text-[.7rem] font-thin absolute bottom-2 left-0 px-2 text-left">
+                  {media?.name}
+                </p>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

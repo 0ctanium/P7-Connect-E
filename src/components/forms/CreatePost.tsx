@@ -3,20 +3,17 @@ import {
   FC,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import { Field } from '../fields/Field';
 import {
   Control,
-  Controller,
   SubmitHandler,
   useController,
   UseControllerProps,
   useForm,
   UseFormProps,
   UseFormReturn,
-  useWatch,
 } from 'react-hook-form';
 import { CreatePostFormInputs } from 'types';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,7 +22,6 @@ import { Avatar } from '../Avatar';
 import { useSession } from 'next-auth/react';
 import { LoadingSpinner } from '../LoadingSpinner';
 import { HiOutlinePhotograph, HiX } from 'react-icons/hi';
-import { useDropzone } from 'react-dropzone';
 
 export interface CreatePostFormProps {
   loading?: boolean;
@@ -55,27 +51,30 @@ export const CreatePostForm: FC<CreatePostFormProps> = ({
     control,
   } = form;
 
-  const handleUploadFile = useCallback(() => {});
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white rounded shadow mb-4">
-      <div className="px-8 py-4 flex flex-row">
-        <Avatar user={data?.user} className="mr-2" />
-        <div className="flex-grow pt-px">
-          <Field
-            {...register('text')}
-            error={errors.text?.message}
-            id="text"
-            placeholder="Écrivez quelque-chose"
-            type="text"
-            required
-            fullWidth
-            multiline
-          />
+      <div className="px-8 pt-4 pb-2">
+        <div className="flex flex-row mb-2">
+          <Avatar user={data?.user} className="mr-2" />
+          <div className="flex-grow pt-px">
+            <Field
+              {...register('text')}
+              error={errors.text?.message}
+              id="text"
+              placeholder="Écrivez quelque-chose"
+              type="text"
+              required
+              fullWidth
+              multiline
+            />
+          </div>
         </div>
+
+        <MediaPreview control={control} />
       </div>
+
       <div className="px-8 py-2 border-t border-t-gray-200 flex justify-end">
         <FileInput name="media" control={control} mode="append" />
 
@@ -83,10 +82,6 @@ export const CreatePostForm: FC<CreatePostFormProps> = ({
           Envoyer{' '}
           {loading && <LoadingSpinner className="ml-3 h-4 w-4 text-gray-200" />}
         </button>
-      </div>
-
-      <div className="px-4 py-2">
-        <MediaPreview control={control} />
       </div>
     </form>
   );
@@ -114,7 +109,7 @@ const FileInput: FC<
           break;
         case 'append':
           // Append file
-          newFiles = [...(files || []), ...uploadFiles];
+          newFiles = [...uploadFiles, ...(files || [])];
 
           // Remove duplicate files
           newFiles = newFiles.reduce<File[]>((curr, acc) => {
@@ -173,10 +168,11 @@ interface Preview {
 const MediaPreview: FC<{
   control: Control<CreatePostFormInputs, 'media'>;
 }> = ({ control }) => {
-  const medias = useWatch<CreatePostFormInputs, 'media'>({
+  const { field } = useController<CreatePostFormInputs, 'media'>({
     control,
     name: 'media',
   });
+  const medias = field.value;
 
   const [previews, setPreviews] = useState<Preview[]>([]);
 
@@ -184,22 +180,23 @@ const MediaPreview: FC<{
     const previews: Preview[] = [],
       fileReaders: FileReader[] = [];
     let isCancel = false;
-    if (medias && medias.length) {
-      Array.from(medias).forEach((file, index) => {
-        const fileReader = new FileReader();
-        fileReaders.push(fileReader);
-        fileReader.onload = (e) => {
-          const { result } = e.target!;
-          if (result) {
-            previews.push({ preview: result, index });
-          }
-          if (previews.length === medias.length && !isCancel) {
-            setPreviews(previews);
-          }
-        };
-        fileReader.readAsDataURL(file);
-      });
-    }
+
+    if (!medias || !medias.length) return setPreviews([]);
+
+    Array.from(medias).forEach((file, index) => {
+      const fileReader = new FileReader();
+      fileReaders.push(fileReader);
+      fileReader.onload = (e) => {
+        const { result } = e.target!;
+        if (result) {
+          previews.push({ preview: result, index });
+        }
+        if (previews.length === medias.length && !isCancel) {
+          setPreviews(previews);
+        }
+      };
+      fileReader.readAsDataURL(file);
+    });
     return () => {
       isCancel = true;
       fileReaders.forEach((fileReader) => {
@@ -210,38 +207,55 @@ const MediaPreview: FC<{
     };
   }, [medias]);
 
-  return (
-    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      {previews.map((p, i) => {
-        const media = medias?.[p.index];
+  const removeFile = useCallback(
+    (index: number) => {
+      let newMedia = (medias || []).slice();
+      newMedia.splice(index, 1);
 
-        return (
-          <li
-            key={i}
-            className="relative group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={p.preview?.toString()}
-              alt={`Prévisualisation du fichier ${media?.name}`}
-              className="object-cover pointer-events-none"
-            />
-            <div className="hidden group-hover:block bg-black/30 absolute inset-0">
-              <button
-                type="button"
-                className="icon-btn absolute top-2 right-2"
-                title="Retirer l'image">
-                <div>
-                  <span className="sr-only">{"Retirer l'image"}</span>
-                  <HiX />
+      field.onChange(newMedia);
+    },
+    [field, medias]
+  );
+
+  if (!previews || !previews.length) return null;
+
+  return (
+    <div className="mt-2">
+      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {previews
+          .sort((a, b) => b.index - a.index)
+          .map((p, i) => {
+            const media = medias?.[p.index];
+
+            return (
+              <li
+                key={i}
+                className="relative group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.preview?.toString()}
+                  alt={`Prévisualisation du fichier ${media?.name}`}
+                  className="object-cover pointer-events-none"
+                />
+                <div className="hidden group-hover:block bg-black/30 absolute inset-0">
+                  <button
+                    type="button"
+                    onClick={() => removeFile(p.index)}
+                    className="icon-btn absolute top-2 right-2"
+                    title="Retirer l'image">
+                    <div>
+                      <span className="sr-only">{"Retirer l'image"}</span>
+                      <HiX />
+                    </div>
+                  </button>
+                  <p className="text-white text-[.7rem] font-thin absolute bottom-2 left-0 px-2 text-left">
+                    {media?.name}
+                  </p>
                 </div>
-              </button>
-              <p className="text-white text-[.7rem] font-thin absolute bottom-2 left-0 px-2 text-left">
-                {media?.name}
-              </p>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+              </li>
+            );
+          })}
+      </ul>
+    </div>
   );
 };

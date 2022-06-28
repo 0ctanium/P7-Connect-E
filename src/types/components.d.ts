@@ -7,6 +7,7 @@ type TooltipParams = Parameters<typeof usePopperTooltip>;
 export interface TooltipProps {
   render: ReactNode;
   className?: string;
+  containerClassName?: string;
   showArrow?: boolean;
   config?: TooltipParams[0];
   popperOptions?: TooltipParams[1];

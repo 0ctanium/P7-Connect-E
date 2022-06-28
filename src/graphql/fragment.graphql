@@ -34,6 +34,18 @@ fragment Post on Post {
     id
     createdAt
     text
+    authorId
+    groupId
+    reactionCount {
+        icon
+        _count
+    }
+    viewerReaction {
+        ...Reaction
+    }
+    media {
+        ...Media
+    }
 }
 
 fragment GroupPost on Post {
@@ -49,4 +61,19 @@ fragment UserPost on Post {
         id
         name
     }
+}
+
+fragment Reaction on Reaction {
+    id
+    icon
+    userId
+    createdAt
+    updatedAt
+}
+
+fragment Media on Media {
+    id
+    mimeType
+    encoding
+    url
 }

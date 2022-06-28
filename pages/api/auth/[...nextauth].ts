@@ -13,11 +13,12 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 
 import prisma from "services/prisma"
 import redis from "services/redis";
-import {providers} from "next-auth/core/routes";
+import * as crypto from "crypto";
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
 
+  // useSecureCookies: true,
   secret: process.env.AUTH_SECRET,
 
   theme: {
@@ -27,12 +28,11 @@ export default NextAuth({
   },
 
   pages: {
-    signIn: '/login'
+    signIn: '/login',
   },
 
   events: {
-    async signIn({user, account, profile}) {
-
+    async signIn({user, account, profile, isNewUser}) {
       // Automatically update facebook profile picture
       if(account.provider === "facebook") {
         if(profile?.image) {
@@ -46,11 +46,17 @@ export default NextAuth({
           })
         }
       }
-    }
+    },
+  },
+
+  session: {
+    strategy: 'jwt'
   },
 
   callbacks: {
     jwt({ token, user}) {
+      token.online = true
+
       if (user?.role) {
         token.role = user.role
       }
@@ -62,13 +68,15 @@ export default NextAuth({
 
       return token
     },
-    session({ session, user}) {
-      session.user.id = user.id
-      session.user.role = user.role
+    session({ session, user, token}) {
+      session.user.online = true
 
-      if(user?.id) {
+      session.user.id = token.sub || user.id
+      session.user.role = token.role
+
+      if(token?.sub) {
         // set session alive status
-        redis.set(`session:${user.id}`, new Date().getTime()).catch(console.error)
+        redis.set(`session:${token.sub}`, new Date().getTime()).catch(console.error)
       }
 
       return session
@@ -77,6 +85,8 @@ export default NextAuth({
 
   providers: [
     CredentialsProvider({
+      id: 'credentials',
+      type: 'credentials',
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Mot de passe',
       // The credentials is used to generate a suitable form on the sign in page.
@@ -84,29 +94,49 @@ export default NextAuth({
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: {  label: "Password", type: "password" }
+        email: { label: "Adresse email", type: "email", placeholder: "mail@exemple.fr" },
+        password: {  label: "Mot de passe", type: "password" }
       },
       async authorize(credentials, req) {
-        // You need to provide your own logic here that takes the credentials
-        // submitted and returns either a object representing a user or value
-        // that is false/null if the credentials are invalid.
-        // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
-        // You can also use the `req` object to obtain additional parameters
-        // (i.e., the request IP address)
-        const res = await fetch("/your/endpoint", {
-          method: 'POST',
-          body: JSON.stringify(credentials),
-          headers: { "Content-Type": "application/json" }
-        })
-        const user = await res.json()
-
-        // If no error and we have user data, return it
-        if (res.ok && user) {
-          return user
+        if(!credentials) {
+          throw new Error('No credentials given');
         }
-        // Return null if user data could not be retrieved
-        return null
+        const { email, password } = credentials
+
+        if(!email) {
+          throw new Error('No email given');
+        }
+        if(!password) {
+          throw new Error('No password given');
+        }
+
+        const user = await prisma.user.findUnique({
+          where: {
+            email
+          }
+        })
+
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        if(!user.hash || !user.salt) {
+          throw new Error('No password configured')
+        }
+
+        const passHash = crypto.pbkdf2Sync(password, user.salt, 1000, 64, `sha512`).toString(`hex`)
+        if(passHash !== user.hash) {
+          throw new Error('Password is incorrect')
+        }
+
+        return {
+          id: user.id,
+          name: user.id,
+          email: user.email,
+          role: user.role,
+          picture: user.image,
+          sub: user.id,
+        }
       }
     }),
 

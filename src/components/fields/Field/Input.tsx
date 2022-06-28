@@ -3,7 +3,6 @@ import { InputProps } from 'types';
 import { InputBase } from './InputBase';
 import clsx from 'clsx';
 
-// eslint-disable-next-line react/display-name
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
@@ -128,3 +127,4 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   }
 );
+Input.displayName = 'Input';

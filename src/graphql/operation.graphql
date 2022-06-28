@@ -22,13 +22,39 @@ query GetUserPosts($id: ID!, $cursor: ID) {
     }
 }
 
-mutation CreatePost($group: ID!, $text: String!) {
-    createPost(group: $group, text: $text) {
-        id
+mutation CreatePost($group: ID!, $text: String!, $media: [Upload]) {
+    createPost(group: $group, text: $text, media: $media) {
+        ...GroupPost
     }
 }
 
+mutation DeletePost($post: ID!) {
+    deletePost(post: $post)
+}
 
+mutation EditPost($post: ID!, $text: String!) {
+    editPost(post: $post, text: $text) {
+        ...Post
+    }
+}
+
+mutation SetReaction($post: ID!, $icon: String!) {
+    setPostReaction(post: $post, icon: $icon) {
+        ...Reaction
+    }
+}
+
+mutation RemoveReaction($post: ID!) {
+    removePostReaction(post: $post) {
+        ...Reaction
+    }
+}
+
+mutation Register($input: UserCreateInput!) {
+    register(input: $input) {
+        ...User
+    }
+}
 
 #######################################################
 #                        ADMIN                        #

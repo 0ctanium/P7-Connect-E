@@ -4,29 +4,27 @@ import { SwitchField } from 'components/fields/SwitchField';
 import { FormDisclosure } from 'components/FormDisclosure';
 import { SlideOver, SlideOverBody, SlideOverContainer, SlideOverContent, SlideOverFooter, SlideOverSection, SlideOverTitle } from 'components/SlideOver';
 import React, {FC} from 'react'
-import {Controller, SubmitHandler, UseFormProps, UseFormReturn} from 'react-hook-form';
-import * as yup from "yup";
+import {Controller, SubmitHandler, useForm, UseFormProps, UseFormReturn} from 'react-hook-form';
 import {LoadingSpinner} from "../LoadingSpinner";
+import {NewGroupInputs} from "types";
+import {newGroupSchema} from "validators";
 
-export interface NewGroupInputs {
-    name: string;
-    description?: string
-    restricted: boolean
-    banner?: (File & { preview: string }) | null;
+export interface NewGroupSlideOverProps {
+    loading?: boolean,
+    open: boolean,
+    onClose(state: boolean): any,
+    onSubmit: SubmitHandler<NewGroupInputs>
+    form: UseFormReturn<NewGroupInputs>
 }
 
-export const newGroupSchema = yup.object<NewGroupInputs>({
-    name: yup.string().required(),
-    description: yup.string(),
-    restricted: yup.boolean(),
-    banner: yup.mixed<NewGroupInputs["banner"]>().nullable()
-}).required();
-
-export const defaultFormProps: UseFormProps<NewGroupInputs> = {
-    resolver: yupResolver(newGroupSchema)
+export const useNewGroupForm = (props?: Partial<UseFormProps<NewGroupInputs>>) => {
+    return useForm<NewGroupInputs>({
+        ...props,
+        resolver: yupResolver(newGroupSchema),
+    })
 }
 
-export const NewGroupSlideOver: FC<{ loading?: boolean, open: boolean, onClose(state: boolean): any, onSubmit: SubmitHandler<NewGroupInputs>, form: UseFormReturn<NewGroupInputs> }> = ({ loading, open, onClose, onSubmit, form }) => {
+export const NewGroupFormSlideOver: FC<NewGroupSlideOverProps> = ({ loading, open, onClose, onSubmit, form }) => {
     const { register, handleSubmit, control, formState: { errors } } = form
 
     return (

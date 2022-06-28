@@ -12,6 +12,7 @@ import clsx from "clsx";
 import Link from 'next/link';
 import {useSession} from "next-auth/react";
 import {LoadingSpinner} from "../LoadingSpinner";
+import {Avatar} from "../Avatar";
 
 const navigation = [
   { id: 'home', name: 'Accueil', href: '/admin', icon: HomeIcon },
@@ -107,13 +108,7 @@ export const AdminLayout: FC<{ current: string, loading?: boolean }> = ({ childr
                     <a href="#" className="flex-shrink-0 group block">
                       <div className="flex items-center">
                         <div>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                              className="inline-block h-10 w-10 rounded-full"
-                              // TODO: add placeholder image
-                              src={data?.user.image || ''}
-                              alt=""
-                          />
+                          <Avatar user={data?.user} showStatus />
                         </div>
                         <div className="ml-3">
                           <p className="text-base font-medium text-white">{data?.user.name}</p>
@@ -169,12 +164,7 @@ export const AdminLayout: FC<{ current: string, loading?: boolean }> = ({ childr
                   <div className="flex items-center">
                     <div>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                          className="inline-block h-9 w-9 rounded-full"
-                          // TODO: add placeholder image
-                          src={data?.user.image || ''}
-                          alt=""
-                      />
+                      <Avatar user={data?.user} imgSize="h-9 w-9" />
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-white">{data?.user.name}</p>

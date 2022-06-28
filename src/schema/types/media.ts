@@ -14,7 +14,7 @@ export const Media = objectType({
       resolve(root, args, ctx) {
         return ctx.prisma.user.findUnique({
           where: {
-            id: root.userId,
+            id: root.addedById,
           },
         });
       },
@@ -24,6 +24,8 @@ export const Media = objectType({
     t.field('post', {
       type: 'Post',
       resolve(root, args, ctx) {
+        if (!root.postId) return null;
+
         return ctx.prisma.post.findUnique({
           where: {
             id: root.postId,

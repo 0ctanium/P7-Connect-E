@@ -22,8 +22,8 @@ query GetUserPosts($id: ID!, $cursor: ID) {
     }
 }
 
-mutation CreatePost($group: ID!, $text: String!) {
-    createPost(group: $group, text: $text) {
+mutation CreatePost($group: ID!, $text: String!, $media: [Upload]) {
+    createPost(group: $group, text: $text, media: $media) {
         ...GroupPost
     }
 }

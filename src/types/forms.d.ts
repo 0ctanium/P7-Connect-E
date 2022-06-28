@@ -26,7 +26,7 @@ export interface NewGroupInputs {
 
 export interface CreatePostFormInputs {
   text: string;
-  media?: Media[];
+  media?: Media[] | null;
 }
 
 export interface EditPostFormInputs {

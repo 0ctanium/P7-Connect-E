@@ -26,7 +26,6 @@
     "apollo-server-micro": "^3.6.3",
     "apollo-upload-client": "^17.0.0",
     "aws-sdk": "^2.1096.0",
-    "babel-plugin-superjson-next": "^0.4.3",
     "clsx": "^1.1.1",
     "copy-to-clipboard": "^3.3.1",
     "graphql": "15",

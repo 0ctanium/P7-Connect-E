@@ -98,6 +98,7 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
         variables: {
           group: groupId,
           text,
+          media,
         },
       }).finally(() => {
         form.reset();

@@ -9,6 +9,8 @@ import {
 import { getSession } from 'next-auth/react';
 import { ApolloError, AuthenticationError } from 'apollo-server-micro';
 import { Role } from '../../constants';
+import { MediaUpload, uploadMedia } from '../../lib/media';
+import { Prisma } from '@prisma/client';
 
 export const ReactionCount = objectType({
   name: 'ReactionCount',
@@ -53,6 +55,17 @@ export const Post = objectType({
               postId: root.id,
               userId: session.user.id,
             },
+          },
+        });
+      },
+    });
+
+    t.field('media', {
+      type: nonNull(list(nonNull('Media'))),
+      resolve(root, args, ctx) {
+        return ctx.prisma.media.findMany({
+          where: {
+            postId: root.id,
           },
         });
       },
@@ -168,27 +181,7 @@ export const PostMutations = extendType({
         if (!session?.user?.id)
           throw new AuthenticationError('You must be authenticated');
 
-        // let media = undefined
-        // if(args.media) {
-        //   media = await Promise.all(args.media.map(async (m) => {
-        //     const { createReadStream, filename } = await m;
-        //     const d = await new Promise<SendData>(((resolve, reject) => {
-        //       s3.upload({
-        //         Bucket: process.env.OWN_AWS_BUCKET_NAME,
-        //         Key: filename,
-        //         Body: createReadStream()
-        //       }, (err: Error, data: SendData) => {
-        //         if (err) {
-        //           reject(err)
-        //         }
-        //         resolve(data)
-        //       })
-        //     }))
-        //     return d.Location
-        //   }))
-        // }
-
-        return ctx.prisma.post.create({
+        const create: Prisma.PostCreateArgs = {
           data: {
             group: {
               connect: {
@@ -201,9 +194,27 @@ export const PostMutations = extendType({
               },
             },
             text: args.text,
-            // media
           },
-        });
+        };
+
+        if (args.media) {
+          const media = await Promise.all(
+            args.media.map((m) => uploadMedia(m, 'posts'))
+          );
+
+          create.data.medias = {
+            createMany: {
+              data: media.map((m) => ({
+                addedById: session?.user?.id,
+                encoding: m.file.encoding,
+                mimeType: m.file.mimetype,
+                url: m.bucket.Location,
+              })),
+            },
+          };
+        }
+
+        return ctx.prisma.post.create(create);
       },
     });
 
@@ -212,27 +223,24 @@ export const PostMutations = extendType({
       args: {
         post: nonNull('ID'),
         text: nonNull('String'),
-        // media: arg({
-        //   type: list('Upload'),
-        // }),
       },
       async resolve(root, args, ctx) {
         const session = await getSession(ctx);
         if (!session?.user?.id)
           throw new AuthenticationError('You must be authenticated');
 
-        const postToDelete = await ctx.prisma.post.findUnique({
+        const postToUpdate = await ctx.prisma.post.findUnique({
           where: {
             id: args.post,
           },
         });
 
-        if (!postToDelete) {
+        if (!postToUpdate) {
           throw new ApolloError('Post not found');
         }
 
         if (
-          postToDelete.authorId !== session.user.id &&
+          postToUpdate.authorId !== session.user.id &&
           session.user.role !== Role.MODERATOR &&
           session.user.role !== Role.ADMIN
         ) {
@@ -245,7 +253,6 @@ export const PostMutations = extendType({
           },
           data: {
             text: args.text,
-            // media
           },
         });
       },

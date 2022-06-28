@@ -6,3 +6,4 @@ export * from './user';
 export * from './group';
 export * from './post';
 export * from './reaction';
+export * from './media';

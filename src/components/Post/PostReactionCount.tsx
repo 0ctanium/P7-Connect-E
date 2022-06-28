@@ -12,7 +12,7 @@ export const PostReactionCount: FC<{ counts: ReactionCount[] }> = ({
   }, [counts]);
 
   const reactionInfos = (
-    <div className="flex flex-col gap-y-2m">
+    <div className="flex flex-col gap-y-1">
       {counts.map((count, i) => {
         const iconId = count.icon as Icons;
         const icon = icons[iconId];
@@ -24,7 +24,7 @@ export const PostReactionCount: FC<{ counts: ReactionCount[] }> = ({
             <ReactionIcon
               icon={iconId}
               alt={`${count._count} on réagi avec ${icon.label}`}
-              className="w-5 h-5 rounded-full ring-2 ring-white inline-block"
+              className="w-5 h-5 inline-block"
               style={{ zIndex: 3 + l - i }}
             />
             <span className="text-gray-400 text-sm ml-1">{count._count}</span>

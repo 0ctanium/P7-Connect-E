@@ -12,6 +12,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   config,
   popperOptions,
   className,
+  containerClassName,
 }) => {
   const {
     getArrowProps,
@@ -23,8 +24,10 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   return (
     <>
-      <div className="cursor-pointer transition-opacity" ref={setTriggerRef}>
-        {children}
+      <div
+        className={containerClassName || 'cursor-pointer'}
+        ref={setTriggerRef}>
+        {typeof children === 'function' ? children(setTriggerRef) : children}
       </div>
       <Transition
         as="div"

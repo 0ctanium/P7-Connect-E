@@ -7,6 +7,8 @@ import { PostDate } from './PostDate';
 import { PostReactionSelector } from './PostReactionSelector';
 import { Tooltip } from '../Tooltip';
 import { PostReactionCount } from './PostReactionCount';
+import { HiOutlineChatAlt, HiOutlineShare } from 'react-icons/hi';
+import { PostMedias } from './PostMedias';
 
 export const Post: FC<{ post: PostType }> = ({ post }) => {
   const { author, group } = post;
@@ -45,6 +47,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
       </div>
 
       <p className="text-left pt-6 pb-4">{post.text}</p>
+      <PostMedias post={post} />
 
       <div className="flex justify-between items-center">
         <PostReactionCount counts={post.reactionCount} />
@@ -55,24 +58,24 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
           post={post}
           className="flex-1 rounded hover:bg-black/[0.05] transition"
         />
-        <div className="flex-1 flex justify-center items-center ">
-          <Tooltip
-            render="Cette fonctionnalité n'est pas disponible pour le moment"
-            className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
-            <button className="rounded hover:bg-black/[0.05] transition cursor-not-allowed">
-              Commenter
-            </button>
-          </Tooltip>
-        </div>
-        <div className="flex-1 flex justify-center items-center ">
-          <Tooltip
-            render="Cette fonctionnalité n'est pas disponible pour le moment"
-            className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
-            <button className="rounded hover:bg-black/[0.05] transition cursor-not-allowed">
-              Partager
-            </button>
-          </Tooltip>
-        </div>
+        <Tooltip
+          render="Cette fonctionnalité n'est pas disponible pour le moment"
+          containerClassName="flex-1 flex justify-center items-center rounded hover:bg-black/[0.05] transition cursor-not-allowed"
+          className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
+          <button className="flex justify-center items-center rounded cursor-not-allowed">
+            <HiOutlineChatAlt className="w-5 h-5 mr-2" />
+            Commenter
+          </button>
+        </Tooltip>
+        <Tooltip
+          containerClassName="flex-1 flex justify-center items-center rounded hover:bg-black/[0.05] transition cursor-not-allowed"
+          render="Cette fonctionnalité n'est pas disponible pour le moment"
+          className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
+          <button className="flex justify-center items-center cursor-not-allowed">
+            <HiOutlineShare className="w-5 h-5 mr-2" />
+            Partager
+          </button>
+        </Tooltip>
       </div>
     </div>
   );

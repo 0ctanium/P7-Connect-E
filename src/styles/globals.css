@@ -210,4 +210,14 @@
         border-width: .5rem 0 .5rem .4em;
         left: 3px;
     }
+
+    .icon-btn {
+        @apply p-1 text-white ;
+    }
+    .icon-btn > div {
+        @apply rounded-full bg-transparent p-1;
+    }
+    .icon-btn:hover > div {
+        @apply bg-white/30;
+    }
 }

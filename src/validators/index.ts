@@ -54,13 +54,12 @@ export const newGroupSchema = yup
 export const createPostSchema = yup
   .object<CreatePostFormInputs>({
     text: yup.string().required(),
-    media: yup.array<Media>(yup.mixed<Media>().nullable()).nullable(),
+    media: yup.array<Media>(yup.mixed<Media>()).nullable(),
   })
   .required();
 
 export const editPostSchema = yup
   .object<CreatePostFormInputs>({
     text: yup.string().required(),
-    media: yup.array<Media>(yup.mixed<Media>().nullable()).nullable(),
   })
   .required();

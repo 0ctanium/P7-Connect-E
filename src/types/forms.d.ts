@@ -9,19 +9,19 @@ export interface SignInInputs {
   password: string;
 }
 
-export type Media = (File & { preview: string }) | null;
+export type Media = File & { preview: string };
 export interface UpdateGroupInputs {
   name?: string | null;
   description?: string | null;
   restricted?: boolean | null;
-  banner?: Media;
+  banner?: Media | null;
 }
 
 export interface NewGroupInputs {
   name: string;
   description?: string;
   restricted: boolean;
-  banner?: Media;
+  banner?: Media | null;
 }
 
 export interface CreatePostFormInputs {
@@ -31,5 +31,5 @@ export interface CreatePostFormInputs {
 
 export interface EditPostFormInputs {
   text: string;
-  media?: Media[] | null;
+  // media?: Media[] | null;
 }

@@ -138,7 +138,7 @@ model Media {
   id            String    @id @default(cuid())
 
   mimeType  String
-  ecoding   String
+  encoding   String
   url       String
 
   addedBy        User        @relation(fields: [addedById], references: [id])

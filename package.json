@@ -33,6 +33,7 @@
     "graphql-middleware": "6.0.9",
     "graphql-scalars": "^1.15.0",
     "graphql-shield": "^7.5.0",
+    "graphql-tag": "^2.0.0",
     "graphql-upload": "^13.0.0",
     "ioredis": "^4.28.5",
     "micro": "^9.3.4",

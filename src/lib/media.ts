@@ -4,7 +4,7 @@ import SendData = ManagedUpload.SendData;
 import { v4 as uuidv4 } from 'uuid';
 import { s3 } from '../services/s3';
 
-interface MediaUpload {
+export interface MediaUpload {
   bucket: SendData;
   file: FileUpload;
 }

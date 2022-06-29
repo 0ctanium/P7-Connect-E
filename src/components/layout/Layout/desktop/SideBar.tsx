@@ -13,6 +13,8 @@ import { Tooltip } from 'components/Tooltip';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
 import { stringToColour } from '../../../../lib/utils';
+import { useRouter } from 'next/router';
+import clsx from 'clsx';
 
 interface SideBarProps {
   current: string;
@@ -33,6 +35,7 @@ export const SideBar: FC<SideBarProps> = ({ current }) => {
 
 const HomeSideBar: FC = () => {
   const { loading, data } = useGetAllGroupsQuery();
+  const { pathname } = useRouter();
 
   if (loading) {
     return <LoadingSpinner className="w-6 h-6" />;
@@ -44,7 +47,13 @@ const HomeSideBar: FC = () => {
     <div className="py-6">
       <h2 className="px-8 text-2xl font-bold">Accueil</h2>
       <Link href={`/`}>
-        <a className="px-8 py-1 hover:bg-gray-100 flex items-center">
+        <a
+          className={clsx(
+            'px-8 py-1  flex items-center',
+            pathname === '/'
+              ? 'bg-gray-200/80 hover:bg-gray-200'
+              : 'hover:bg-gray-100'
+          )}>
           <HiNewspaper className="w-10 h-10 p-1.5 text-indigo-400 mr-4" />
           <p className="font-medium">{"Fil d'actualité"}</p>
         </a>
@@ -64,10 +73,17 @@ const HomeSideBar: FC = () => {
 
 const GroupItem: FC<{ group: GroupFragment }> = ({ group }) => {
   const backgroundColor = useMemo(() => stringToColour(group.id), [group.id]);
+  const { pathname, query } = useRouter();
+
+  const current = pathname === '/groups/[id]' && query.id === group.id;
 
   return (
     <Link href={`/groups/${group.id}`}>
-      <a className="px-8 py-1 hover:bg-gray-100 flex items-center">
+      <a
+        className={clsx(
+          'px-8 py-1  flex items-center',
+          current ? 'bg-gray-200/80 hover:bg-gray-200' : 'hover:bg-gray-100'
+        )}>
         <div
           className="block w-10 h-10 rounded-lg overflow-hidden mr-4"
           style={{ backgroundColor }}>

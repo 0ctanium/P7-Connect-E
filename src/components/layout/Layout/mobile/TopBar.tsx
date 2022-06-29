@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useScrollingUp } from 'hooks';
 import { Avatar } from 'components/Avatar';
+import { LogoIcon, LogoText } from 'components/Logo';
 
 const isElementXPercentInViewport = function (
   el: HTMLElement,
@@ -61,13 +62,9 @@ export const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({
         <div
           ref={barRef}
           className="sticky top-0 z-30 bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8 pointer-events-auto">
-          <div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="h-8 w-auto"
-              src="/icons/icon-left-font.svg"
-              alt="Workflow"
-            />
+          <div className="flex items-center h-10 w-full">
+            <LogoIcon className="fill-indigo-600 h-full mr-2" />
+            <LogoText className="fill-gray-900 h-[60%]" />
           </div>
           <div>
             <Link href="/pages/profile">

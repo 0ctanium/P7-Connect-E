@@ -20,15 +20,17 @@ import {
   GetGroupPostsQueryVariables,
   GetGroupPostsQuery,
   useDeletePostMutation,
+  GroupFragment,
 } from 'generated/graphql';
 import { NotFoundErrorPage } from 'components/layout/errors';
 import { Post } from 'components/Post';
 import { CreatePostForm, useCreatePostForm } from 'components/forms/CreatePost';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { LoadingSpinner } from 'components/LoadingSpinner';
 import { CreatePostFormInputs } from 'types';
 import { SubmitHandler } from 'react-hook-form';
+import { stringToColour } from '../../src/lib/utils';
 
 const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   group,
@@ -38,17 +40,7 @@ const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   return (
     <Layout current="feed">
       <div>
-        <div className="relative w-full h-48">
-          {group.banner && (
-            <Image
-              priority
-              src={group.banner}
-              layout="fill"
-              objectFit="cover"
-              alt={`Bannière du groupe ${group.name}`}
-            />
-          )}
-        </div>
+        <GroupBanner group={group} />
         <div className="bg-white border-b border-b-gray-200 py-2 px-6">
           <h2 className="text-xl font-medium">{group.name}</h2>
           <p className="text-base font-light">
@@ -62,6 +54,26 @@ const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
         </div>
       </div>
     </Layout>
+  );
+};
+
+const GroupBanner: FC<{ group: GroupFragment }> = ({ group }) => {
+  const backgroundColor = useMemo(() => stringToColour(group.id), [group.id]);
+
+  return (
+    <div
+      className="relative block w-full h-48 overflow-hidden"
+      style={{ backgroundColor }}>
+      {group.banner && (
+        <Image
+          priority
+          src={group.banner}
+          layout="fill"
+          objectFit="cover"
+          alt={`Bannière du groupe ${group.name}`}
+        />
+      )}
+    </div>
   );
 };
 

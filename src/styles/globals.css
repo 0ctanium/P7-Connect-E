@@ -220,4 +220,8 @@
     .icon-btn:hover > div {
         @apply bg-white/30;
     }
+
+    .tooltip-title {
+        @apply tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light
+    }
 }

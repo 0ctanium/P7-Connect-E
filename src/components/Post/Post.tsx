@@ -61,7 +61,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
         <Tooltip
           render="Cette fonctionnalité n'est pas disponible pour le moment"
           containerClassName="flex-1 flex justify-center items-center rounded hover:bg-black/[0.05] transition cursor-not-allowed"
-          className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
+          className="tooltip-title">
           <button className="flex justify-center items-center rounded cursor-not-allowed">
             <HiOutlineChatAlt className="w-5 h-5 mr-2" />
             Commenter
@@ -70,7 +70,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
         <Tooltip
           containerClassName="flex-1 flex justify-center items-center rounded hover:bg-black/[0.05] transition cursor-not-allowed"
           render="Cette fonctionnalité n'est pas disponible pour le moment"
-          className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
+          className="tooltip-title">
           <button className="flex justify-center items-center cursor-not-allowed">
             <HiOutlineShare className="w-5 h-5 mr-2" />
             Partager

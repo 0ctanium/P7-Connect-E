@@ -9,7 +9,7 @@ import {
 import { getSession } from 'next-auth/react';
 import { ApolloError, AuthenticationError } from 'apollo-server-micro';
 import { Role } from '../../constants';
-import { MediaUpload, uploadMedia } from '../../lib/media';
+import { uploadMedia } from '../../lib/media';
 import { Prisma } from '@prisma/client';
 
 export const ReactionCount = objectType({

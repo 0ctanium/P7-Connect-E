@@ -90,3 +90,11 @@ export interface ConfirmModalProps {
   icon?: IconType;
   loading?: boolean;
 }
+
+export interface Navigation {
+  id: string;
+  name: string;
+  href: string;
+  icon: IconType;
+  currentIcon: IconType;
+}

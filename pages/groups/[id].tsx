@@ -31,6 +31,7 @@ import { LoadingSpinner } from 'components/LoadingSpinner';
 import { CreatePostFormInputs } from 'types';
 import { SubmitHandler } from 'react-hook-form';
 import { stringToColour } from '../../src/lib/utils';
+import { PostList } from '../../src/components/Post/PostList';
 
 const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   group,
@@ -84,7 +85,7 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
       toast.error("Erreur lors de l'envoi du post");
     },
     onCompleted(newData) {
-      return cache.updateQuery<GetGroupPostsQuery, GetGroupPostsQueryVariables>(
+      cache.updateQuery<GetGroupPostsQuery, GetGroupPostsQueryVariables>(
         {
           query: GetGroupPostsDocument,
           variables: { id: groupId },
@@ -119,10 +120,6 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
     [createPost, form, groupId]
   );
 
-  if (loading) return <LoadingSpinner />;
-
-  if (!data) return <p>Ce groupe ne contient aucun post</p>;
-
   return (
     <div className="max-w-xl mx-auto">
       <CreatePostForm
@@ -130,11 +127,7 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
         onSubmit={handleSubmit}
         loading={createLoading}
       />
-      <div className="space-y-4">
-        {data.posts.map((post) => (
-          <Post post={post as PostType} key={post.id} />
-        ))}
-      </div>
+      <PostList posts={data?.posts as PostType[]} loading={loading} />
     </div>
   );
 };

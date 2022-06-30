@@ -14,9 +14,6 @@ query GetAllGroups {
 query GetFeed($cursor: ID) {
     posts(cursor: $cursor) {
         ...Post
-        author {
-            ...User
-        }
         group {
             ...Group
         }
@@ -25,14 +22,15 @@ query GetFeed($cursor: ID) {
 
 query GetGroupPosts($id: ID!, $cursor: ID) {
     posts(cursor: $cursor, where: { group: $id }) {
-        ...GroupPost
+        ...Post
     }
 }
-query GetUserPosts($id: ID!, $cursor: ID) {
-    posts(cursor: $cursor, where: { user: $id }) {
-        ...UserPost
-    }
-}
+
+#query GetUserPosts($id: ID!, $cursor: ID) {
+#    posts(cursor: $cursor, where: { user: $id }) {
+#        ...UserPost
+#    }
+#}
 
 mutation CreatePost($group: ID!, $text: String!, $media: [Upload]) {
     createPost(group: $group, text: $text, media: $media) {

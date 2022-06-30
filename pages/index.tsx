@@ -5,6 +5,7 @@ import { Post } from 'components/Post';
 import { Post as PostType, useGetFeedQuery } from 'generated/graphql';
 import { LoadingSpinner } from 'components/LoadingSpinner';
 import { toast } from 'react-toastify';
+import { PostList } from '../src/components/Post/PostList';
 
 const Home: NextPage = () => {
   const { data: session } = useSession<true>({ required: true });
@@ -18,16 +19,10 @@ const Home: NextPage = () => {
     return null;
   }
 
-  if (loading) return <LoadingSpinner />;
-
   return (
     <Layout current="feed">
       <div className="flex justify-center mt-8 text-center">
-        <div className="max-w-xl mx-auto space-y-4">
-          {data?.posts?.map((post) => (
-            <Post post={post as PostType} key={post.id} />
-          ))}
-        </div>
+        <PostList posts={data?.posts as PostType[]} loading={loading} />
       </div>
     </Layout>
   );

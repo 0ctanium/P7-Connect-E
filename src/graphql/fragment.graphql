@@ -32,10 +32,12 @@ fragment Group on Group {
 
 fragment Post on Post {
     id
-    createdAt
     text
     authorId
     groupId
+    author {
+        ...User
+    }
     reactionCount {
         icon
         _count
@@ -46,21 +48,9 @@ fragment Post on Post {
     media {
         ...Media
     }
-}
 
-fragment GroupPost on Post {
-    ...Post
-    author {
-        ...User
-    }
-}
-
-fragment UserPost on Post {
-    ...Post
-    group {
-        id
-        name
-    }
+    createdAt
+    updatedAt
 }
 
 fragment Reaction on Reaction {

@@ -35,7 +35,7 @@ const GroupCard: FC<{ group: GroupFragment }> = ({ group }) => {
   const backgroundColor = useMemo(() => stringToColour(group.id), [group.id]);
 
   return (
-    <li className="col-span-1 flex flex-col group text-left bg-white sm:rounded-lg overflow-hidden shadow divide-y divide-gray-200">
+    <li className="col-span-1 flex flex-col group text-left bg-white sm:rounded-lg overflow-hidden shadow">
       <Link href={`/groups/${group.id}`}>
         <a>
           <div

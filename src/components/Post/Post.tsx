@@ -1,14 +1,20 @@
 import React, { FC } from 'react';
 import { Post as PostType } from 'generated/graphql';
-import { Avatar, UserToolTip } from 'components/Avatar';
+import { Avatar } from 'components/Avatar';
+import { UserToolTip } from 'components/UserToolTip';
 import Link from 'next/link';
 import { PostActions } from './PostActions';
 import { PostDate } from './PostDate';
 import { PostReactionSelector } from './PostReactionSelector';
 import { Tooltip } from '../Tooltip';
 import { PostReactionCount } from './PostReactionCount';
-import { HiOutlineChatAlt, HiOutlineShare } from 'react-icons/hi';
+import {
+  HiChevronRight,
+  HiOutlineChatAlt,
+  HiOutlineShare,
+} from 'react-icons/hi';
 import { PostMedias } from './PostMedias';
+import { GroupToolTip } from '../GroupToolTip';
 
 export const Post: FC<{ post: PostType }> = ({ post }) => {
   const { author, group } = post;
@@ -38,6 +44,19 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
             </a>
           </Link>
         </div>
+
+        {group && (
+          <div className="flex items-center h-6">
+            <HiChevronRight className="h-full" />
+            <GroupToolTip group={group}>
+              <Link href={`/groups/${post.groupId}`}>
+                <a className="text-base font-medium leading-6 hover:underline">
+                  {group.name}
+                </a>
+              </Link>
+            </GroupToolTip>
+          </div>
+        )}
 
         <div className="flex-grow" />
 

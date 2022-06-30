@@ -87,7 +87,11 @@ const AuthWall: FC<{ config: AuthWallConfig }> = ({ children, config }) => {
 
   if (isAuthenticated) {
     if (!isAuthorized) {
-      return <>{config.unauthorizedLayout}</> || <UnauthorizedErrorPage />;
+      return config.unauthorizedLayout ? (
+        <>{config.unauthorizedLayout}</>
+      ) : (
+        <UnauthorizedErrorPage />
+      );
     }
   }
 

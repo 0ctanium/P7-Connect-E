@@ -238,15 +238,7 @@ export const AdminLayout: FC<{ current: string; loading?: boolean }> = ({
             </button>
           </div>
           <main className="flex-1 min-h-full">
-            <div className="py-6 space-y-6 min-h-full">
-              {status === 'loading' || loading ? (
-                <div className="min-h-full flex justify-center items-center">
-                  <LoadingSpinner />
-                </div>
-              ) : (
-                children
-              )}
-            </div>
+            <div className="py-6 space-y-6 min-h-full">{children}</div>
           </main>
         </div>
       </div>

@@ -94,4 +94,9 @@ export interface ConfirmModalProps {
 
 export interface LayoutProps {
   current: NavigationPage;
+  title?: string;
+  /**
+   * Display the title instead of the app logo on mobile devices
+   */
+  showTitle?: boolean;
 }

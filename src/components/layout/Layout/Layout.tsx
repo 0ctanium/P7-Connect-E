@@ -12,6 +12,8 @@ import {
 export const Layout: FC<LayoutProps> = ({
   children,
   current: currentRoute,
+  title,
+  showTitle,
 }) => {
   const content = useRef<HTMLElement>(null);
   const [current, setCurrent] = useState<NavigationPage>(currentRoute);
@@ -38,7 +40,11 @@ export const Layout: FC<LayoutProps> = ({
               aria-labelledby="primary-heading"
               className="relative  min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last">
               {/* Mobile top bar */}
-              <MobileTopBar contentRef={content} />
+              <MobileTopBar
+                contentRef={content}
+                title={title}
+                showTitle={showTitle}
+              />
 
               <h1 id="primary-heading" className="sr-only">
                 Account

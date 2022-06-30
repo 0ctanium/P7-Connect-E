@@ -1,14 +1,14 @@
-import {NextPage} from "next";
-import {Layout} from "components/layout";
+import { NextPage } from 'next';
+import { Layout } from 'components/layout';
 
 const Groups: NextPage = () => {
-    return (
-        <Layout current='groups'>
-            <h1>Groups</h1>
-        </Layout>
-    )
-}
+  return (
+    <Layout current="groups" title="Groupes" showTitle>
+      <h1>Groups</h1>
+    </Layout>
+  );
+};
 
-Groups.auth = {}
+Groups.auth = {};
 
-export default Groups
+export default Groups;

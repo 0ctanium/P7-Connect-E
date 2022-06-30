@@ -20,9 +20,11 @@ const isElementXPercentInViewport = function (
   );
 };
 
-export const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({
-  contentRef,
-}) => {
+export const MobileTopBar: FC<{
+  contentRef: RefObject<HTMLElement>;
+  title?: string;
+  showTitle?: boolean;
+}> = ({ contentRef, title }) => {
   const { data: session } = useSession<true>({ required: true });
 
   const barRef = useRef<HTMLDivElement>(null);
@@ -62,21 +64,23 @@ export const MobileTopBar: FC<{ contentRef: RefObject<HTMLElement> }> = ({
         <div
           ref={barRef}
           className="sticky top-0 z-30 bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8 pointer-events-auto">
-          <div className="flex items-center h-10 w-full">
-            <LogoIcon className="fill-indigo-600 h-full mr-2" />
-            <LogoText className="fill-gray-900 h-[60%]" />
-          </div>
-          <div>
-            <Link href="/pages/profile">
-              <a className="flex-shrink-0 w-full">
-                <Avatar user={session?.user} size="md" />
-                <div className="sr-only">
-                  <p>{session?.user.name}</p>
-                  <p>Account settings</p>
-                </div>
-              </a>
-            </Link>
-          </div>
+          {title ? (
+            <h1 className="text-2xl font-bold">{title}</h1>
+          ) : (
+            <div className="flex items-center h-8 w-full">
+              <LogoIcon className="fill-indigo-600 h-full mr-2" />
+              <LogoText className="fill-gray-900 h-[60%]" />
+            </div>
+          )}
+          <Link href="/pages/profile">
+            <a className="flex">
+              <Avatar user={session?.user} size="md" />
+              <div className="sr-only">
+                <p>{session?.user.name}</p>
+                <p>Account settings</p>
+              </div>
+            </a>
+          </Link>
         </div>
       </div>
       <div className="mb-16 lg:mb-0" />

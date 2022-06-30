@@ -31,7 +31,7 @@ export const PostDate: FC<
   return (
     <Tooltip
       render={completeDate}
-      className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light"
+      className="tooltip-title"
       config={{ delayShow: 200 }}>
       <p {...props}>{calendar}</p>
     </Tooltip>

@@ -2,6 +2,7 @@ import { FC, HTMLAttributes, HTMLProps, ReactNode } from 'react';
 import { IconType } from 'react-icons';
 import { usePopperTooltip } from 'react-popper-tooltip';
 import { OptionalBooleanFunction } from './utils';
+import { NavigationPage } from 'constants/navigation';
 
 type TooltipParams = Parameters<typeof usePopperTooltip>;
 export interface TooltipProps {
@@ -89,4 +90,13 @@ export interface ConfirmModalProps {
   hideIcon?: boolean;
   icon?: IconType;
   loading?: boolean;
+}
+
+export interface LayoutProps {
+  current: NavigationPage;
+  title?: string;
+  /**
+   * Display the title instead of the app logo on mobile devices
+   */
+  showTitle?: boolean;
 }

@@ -1,14 +1,20 @@
 import React, { FC } from 'react';
 import { Post as PostType } from 'generated/graphql';
-import { Avatar, UserToolTip } from 'components/Avatar';
+import { Avatar } from 'components/Avatar';
+import { UserToolTip } from 'components/UserToolTip';
 import Link from 'next/link';
 import { PostActions } from './PostActions';
 import { PostDate } from './PostDate';
 import { PostReactionSelector } from './PostReactionSelector';
 import { Tooltip } from '../Tooltip';
 import { PostReactionCount } from './PostReactionCount';
-import { HiOutlineChatAlt, HiOutlineShare } from 'react-icons/hi';
+import {
+  HiChevronRight,
+  HiOutlineChatAlt,
+  HiOutlineShare,
+} from 'react-icons/hi';
 import { PostMedias } from './PostMedias';
+import { GroupToolTip } from '../GroupToolTip';
 
 export const Post: FC<{ post: PostType }> = ({ post }) => {
   const { author, group } = post;
@@ -39,6 +45,19 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
           </Link>
         </div>
 
+        {group && (
+          <div className="flex items-center h-6">
+            <HiChevronRight className="h-full" />
+            <GroupToolTip group={group}>
+              <Link href={`/groups/${post.groupId}`}>
+                <a className="text-base font-medium leading-6 hover:underline">
+                  {group.name}
+                </a>
+              </Link>
+            </GroupToolTip>
+          </div>
+        )}
+
         <div className="flex-grow" />
 
         <div className="-mr-4">
@@ -61,7 +80,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
         <Tooltip
           render="Cette fonctionnalité n'est pas disponible pour le moment"
           containerClassName="flex-1 flex justify-center items-center rounded hover:bg-black/[0.05] transition cursor-not-allowed"
-          className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
+          className="tooltip-title">
           <button className="flex justify-center items-center rounded cursor-not-allowed">
             <HiOutlineChatAlt className="w-5 h-5 mr-2" />
             Commenter
@@ -70,7 +89,7 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
         <Tooltip
           containerClassName="flex-1 flex justify-center items-center rounded hover:bg-black/[0.05] transition cursor-not-allowed"
           render="Cette fonctionnalité n'est pas disponible pour le moment"
-          className="tooltip-border-transparent tooltip-bg-gray-900/80 text-white text-xs font-light">
+          className="tooltip-title">
           <button className="flex justify-center items-center cursor-not-allowed">
             <HiOutlineShare className="w-5 h-5 mr-2" />
             Partager

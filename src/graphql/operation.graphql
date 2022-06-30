@@ -11,6 +11,18 @@ query GetAllGroups {
     # groupCount
 }
 
+query GetFeed($cursor: ID) {
+    posts(cursor: $cursor) {
+        ...Post
+        author {
+            ...User
+        }
+        group {
+            ...Group
+        }
+    }
+}
+
 query GetGroupPosts($id: ID!, $cursor: ID) {
     posts(cursor: $cursor, where: { group: $id }) {
         ...GroupPost

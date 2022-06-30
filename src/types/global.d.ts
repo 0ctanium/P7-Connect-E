@@ -1,4 +1,5 @@
-import {PrismaClient} from "@prisma/client";
+import { PrismaClient } from '@prisma/client/edge';
+import Redis from 'ioredis';
 
 declare global {
   // allow global `var` declarations

@@ -34,7 +34,7 @@ query GetGroupPosts($id: ID!, $cursor: ID) {
 
 mutation CreatePost($group: ID!, $text: String!, $media: [Upload]) {
     createPost(group: $group, text: $text, media: $media) {
-        ...GroupPost
+        ...Post
     }
 }
 

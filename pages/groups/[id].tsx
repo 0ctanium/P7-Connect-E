@@ -95,6 +95,8 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
           posts: [newData.createPost, ...(data?.posts || [])],
         })
       );
+
+      form.reset();
     },
   });
 
@@ -113,11 +115,9 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
           text,
           media,
         },
-      }).finally(() => {
-        form.reset();
       });
     },
-    [createPost, form, groupId]
+    [createPost, groupId]
   );
 
   return (

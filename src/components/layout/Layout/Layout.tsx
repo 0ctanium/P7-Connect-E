@@ -2,26 +2,33 @@ import { FC, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { SideBar, SideNav } from './desktop';
 import { MobileTopBar, BottomNav } from './mobile';
+import { LayoutProps } from '../../../types';
+import {
+  NavigationPage,
+  parseCurrentNavToDesktop,
+  parseCurrentNavToMobile,
+} from '../../../constants/navigation';
 
-export const Layout: FC<{ sideBar?: JSX.Element; current: string }> = ({
+export const Layout: FC<LayoutProps> = ({
   children,
   current: currentRoute,
-  sideBar,
 }) => {
   const content = useRef<HTMLElement>(null);
-  const [current, setCurrent] = useState(currentRoute);
+  const [current, setCurrent] = useState<NavigationPage>(currentRoute);
   const { data } = useSession();
 
   if (!data) {
     return null;
   }
   const { user } = data;
+  const mobileNav = parseCurrentNavToMobile(currentRoute);
+  const desktopNav = parseCurrentNavToDesktop(current);
 
   return (
     <>
       <div className="h-full flex">
         {/* Static sidebar for desktop */}
-        <SideNav current={current} onCurrentChange={setCurrent} />
+        <SideNav current={desktopNav} onCurrentChange={setCurrent} />
 
         <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
           <main className="flex-1 flex overflow-hidden">
@@ -43,13 +50,13 @@ export const Layout: FC<{ sideBar?: JSX.Element; current: string }> = ({
             {/* Secondary column (hidden on smaller screens) */}
             <aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
               <div className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto">
-                {sideBar || <SideBar current={current} />}
+                <SideBar current={desktopNav} />
               </div>
             </aside>
           </main>
 
           {/* Mobile bottom navigation */}
-          <BottomNav current={currentRoute} />
+          <BottomNav current={mobileNav} />
         </div>
       </div>
     </>

@@ -1,51 +1,10 @@
 import React, { FC } from 'react';
 import { Tooltip } from 'components/Tooltip';
 import Link from 'next/link';
-import { Navigation } from 'types';
-import {
-  HiChat as ChatIcon,
-  HiUserGroup as UserGroupIcon,
-  HiBell as BellIcon,
-  HiOutlineChat as ChatIconOutline,
-  HiOutlineUserGroup as UserGroupIconOutline,
-  HiOutlineBell as BellIconOutline,
-  HiOutlineNewspaper,
-  HiNewspaper,
-} from 'react-icons/hi';
-
-const mobileNavigation: Navigation[] = [
-  {
-    id: 'feed',
-    name: "Fil d'actualités",
-    href: '/',
-    icon: HiOutlineNewspaper,
-    currentIcon: HiNewspaper,
-  },
-  {
-    id: 'groups',
-    name: 'Groupes',
-    href: '/groups',
-    icon: UserGroupIconOutline,
-    currentIcon: UserGroupIcon,
-  },
-  {
-    id: 'chats',
-    name: 'Discussions',
-    href: '/chats',
-    icon: ChatIconOutline,
-    currentIcon: ChatIcon,
-  },
-  {
-    id: 'notifications',
-    name: 'Notifications',
-    href: '/notifications',
-    icon: BellIconOutline,
-    currentIcon: BellIcon,
-  },
-];
+import { mobileNavigation, NavigationPage } from 'constants/navigation';
 
 interface BottomNavProps {
-  current: string;
+  current: NavigationPage;
 }
 
 export const BottomNav: FC<BottomNavProps> = ({ current }) => {

@@ -2,6 +2,7 @@ import { FC, HTMLAttributes, HTMLProps, ReactNode } from 'react';
 import { IconType } from 'react-icons';
 import { usePopperTooltip } from 'react-popper-tooltip';
 import { OptionalBooleanFunction } from './utils';
+import { NavigationPage } from 'constants/navigation';
 
 type TooltipParams = Parameters<typeof usePopperTooltip>;
 export interface TooltipProps {
@@ -91,10 +92,6 @@ export interface ConfirmModalProps {
   loading?: boolean;
 }
 
-export interface Navigation {
-  id: string;
-  name: string;
-  href: string;
-  icon: IconType;
-  currentIcon: IconType;
+export interface LayoutProps {
+  current: NavigationPage;
 }

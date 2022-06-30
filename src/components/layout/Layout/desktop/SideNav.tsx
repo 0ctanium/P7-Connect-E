@@ -1,47 +1,15 @@
 import { FC } from 'react';
-import {
-  HiHome as HomeIcon,
-  HiChat as ChatIcon,
-  HiBell as BellIcon,
-  HiOutlineHome as HomeIconOutline,
-  HiOutlineChat as ChatIconOutline,
-  HiOutlineBell as BellIconOutline,
-} from 'react-icons/hi';
 import Link from 'next/link';
 import { Avatar } from 'components/Avatar';
 
 import { Tooltip } from 'components/Tooltip';
-import { Navigation } from 'types';
 import { useSession } from 'next-auth/react';
-import { LogoIcon } from '../../../Logo';
-
-const navigation: Navigation[] = [
-  {
-    id: 'feed',
-    name: 'Accueil',
-    href: '/',
-    icon: HomeIconOutline,
-    currentIcon: HomeIcon,
-  },
-  {
-    id: 'notifications',
-    name: 'Notifications',
-    href: '/notifications',
-    icon: BellIconOutline,
-    currentIcon: BellIcon,
-  },
-  {
-    id: 'chats',
-    name: 'Discussions',
-    href: '/chats',
-    icon: ChatIconOutline,
-    currentIcon: ChatIcon,
-  },
-];
+import { LogoIcon } from 'components/Logo';
+import { navigation, Navigation, NavigationPage } from 'constants/navigation';
 
 interface SideNavProps {
-  current: string;
-  onCurrentChange: (value: string) => void;
+  current: NavigationPage;
+  onCurrentChange: (value: NavigationPage) => void;
 }
 
 export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
@@ -91,8 +59,8 @@ export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
 
 interface NavigationItemProps {
   navigation: Navigation;
-  current: string;
-  onCurrentChange: (value: string) => void;
+  current: NavigationPage;
+  onCurrentChange: (value: NavigationPage) => void;
 }
 
 export const NavigationItem: FC<NavigationItemProps> = ({

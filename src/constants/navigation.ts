@@ -12,7 +12,12 @@ import {
 } from 'react-icons/hi';
 import { IconType } from 'react-icons';
 
-export type NavigationPage = 'feed' | 'groups' | 'notifications' | 'chats';
+export type NavigationPage =
+  | 'feed'
+  | 'groups'
+  | 'notifications'
+  | 'chats'
+  | 'profile';
 export interface Navigation {
   id: NavigationPage;
   name: string;

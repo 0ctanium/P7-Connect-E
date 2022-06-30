@@ -76,14 +76,7 @@ export const GroupDashboard: NextPage<
 export const getServerSideProps: GetServerSideProps<
   PageProps,
   { id: string }
-> = async ({ req, res, params }) => {
-  const user = await getSession({ req });
-
-  if (!checkSessionRole(user, Role.ADMIN)) {
-    res.statusCode = 403;
-    throw new Error('test');
-  }
-
+> = async ({ params }) => {
   if (!params || !params.id) {
     return {
       notFound: true,

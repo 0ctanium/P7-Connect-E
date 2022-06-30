@@ -41,7 +41,7 @@ export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
             </nav>
           </div>
           <div className="flex-shrink-0 flex pb-5">
-            <Link href="/pages/profile">
+            <Link href="/profile">
               <a className="flex-shrink-0 w-full text-center">
                 <Avatar user={user} />
                 <div className="sr-only">

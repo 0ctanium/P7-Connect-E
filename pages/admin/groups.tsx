@@ -101,16 +101,7 @@ export const GroupsDashboard: NextPage<
   );
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  ctx
-) => {
-  const user = await getSession(ctx);
-
-  if (!checkSessionRole(user, Role.ADMIN)) {
-    ctx.res.statusCode = 403;
-    throw new Error('test');
-  }
-
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   const context = await createApolloContext(null);
   const apollo = await initializeApollo(null, context);
 

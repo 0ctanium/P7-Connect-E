@@ -127,7 +127,11 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
         onSubmit={handleSubmit}
         loading={createLoading}
       />
-      <PostList posts={data?.posts as PostType[]} loading={loading} />
+      <PostList
+        posts={data?.posts as PostType[]}
+        loading={loading}
+        skeletonNumber={1}
+      />
     </div>
   );
 };

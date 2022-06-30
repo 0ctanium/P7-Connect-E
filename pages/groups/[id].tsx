@@ -38,7 +38,7 @@ const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   if (!group) return <NotFoundErrorPage />;
 
   return (
-    <Layout current="feed">
+    <Layout current="groups">
       <div>
         <GroupBanner group={group} />
         <div className="bg-white border-b border-b-gray-200 py-2 px-6">

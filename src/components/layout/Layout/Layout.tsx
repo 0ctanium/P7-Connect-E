@@ -36,6 +36,7 @@ export const Layout: FC<LayoutProps> = ({
           <main className="flex-1 flex overflow-hidden">
             {/* Primary column */}
             <section
+              id="main-layout"
               ref={content}
               aria-labelledby="primary-heading"
               className="relative  min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last">

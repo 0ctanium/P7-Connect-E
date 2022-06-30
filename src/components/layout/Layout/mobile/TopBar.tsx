@@ -72,7 +72,7 @@ export const MobileTopBar: FC<{
               <LogoText className="fill-gray-900 h-[60%]" />
             </div>
           )}
-          <Link href="/pages/profile">
+          <Link href="/profile">
             <a className="flex">
               <Avatar user={session?.user} size="md" />
               <div className="sr-only">

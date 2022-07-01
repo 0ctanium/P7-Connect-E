@@ -1,48 +1,55 @@
-import {objectType, extendType, nonNull, inputObjectType, list, arg} from 'nexus'
-import {Prisma} from "@prisma/client";
-import {ApolloError} from "apollo-server-micro";
-import {userCreateSchema} from "validators";
-import * as crypto from "crypto";
+import {
+  objectType,
+  extendType,
+  nonNull,
+  inputObjectType,
+  list,
+  arg,
+} from 'nexus';
+import { Prisma } from '@prisma/client';
+import { ApolloError } from 'apollo-server-micro';
+import { userCreateSchema } from 'validators';
+import * as crypto from 'crypto';
 
 export const Account = objectType({
   name: 'Account',
   definition(t) {
-    t.nonNull.string('provider')
+    t.nonNull.string('provider');
 
-    t.nonNull.field('createdAt', { type: 'DateTime' })
+    t.nonNull.field('createdAt', { type: 'DateTime' });
   },
-})
+});
 
-const aliveTimout = 5 * 60 * 1000 // 5 minutes
+const aliveTimout = 5 * 60 * 1000; // 5 minutes
 export const User = objectType({
   name: 'User',
   definition(t) {
-    t.nonNull.id('id')
-    t.string('name')
-    t.string('image')
-    t.nonNull.field('role', { type: "Role" })
-    t.string('email')
-    t.field('emailVerified', { type: "DateTime" })
+    t.nonNull.id('id');
+    t.string('name');
+    t.string('image');
+    t.nonNull.field('role', { type: 'Role' });
+    t.string('email');
+    t.field('emailVerified', { type: 'DateTime' });
     t.field('accounts', {
       type: nonNull(list(Account)),
       resolve(root, args, ctx) {
         return ctx.prisma.account.findMany({
           where: {
-            userId: root.id
-          }
-        })
-      }
-    })
+            userId: root.id,
+          },
+        });
+      },
+    });
 
     t.nonNull.boolean('online', {
       async resolve(root, args, ctx) {
-        const now = new Date()
+        const now = new Date();
 
-        const alive = await ctx.cache.get(`session:${root.id}`)
+        const alive = await ctx.cache.get(`session:${root.id}`);
         // if the last time user alive was set is prior than the aliveTimeout, display the user as offline
-        return !!(alive && now.getTime() - aliveTimout < parseInt(alive))
-      }
-    })
+        return !!(alive && now.getTime() - aliveTimout < parseInt(alive));
+      },
+    });
 
     // Relations
     // t.field('posts', {
@@ -70,10 +77,10 @@ export const User = objectType({
     //   }
     // })
 
-    t.nonNull.field('createdAt', { type: 'DateTime' })
-    t.nonNull.field('updatedAt', { type: 'DateTime' })
+    t.nonNull.field('createdAt', { type: 'DateTime' });
+    t.nonNull.field('updatedAt', { type: 'DateTime' });
   },
-})
+});
 
 export const UserQueries = extendType({
   type: 'Query',
@@ -81,69 +88,71 @@ export const UserQueries = extendType({
     t.field('user', {
       type: User,
       args: {
-        id: 'ID'
+        id: 'ID',
       },
       resolve(root, args, ctx) {
         return ctx.prisma.user.findUnique({
           where: {
-            id: args.id || undefined
-          }
-        })
-      }
-    })
+            id: args.id || undefined,
+          },
+        });
+      },
+    });
 
     t.field('users', {
       type: nonNull(list(nonNull(User))),
       args: {
-        skip: arg({ type: "Int", default: 0 }),
-        take: arg({ type: "Int", default: 20 }),
-        cursor: "ID"
+        skip: arg({ type: 'Int', default: 0 }),
+        take: arg({ type: 'Int', default: 20 }),
+        cursor: 'ID',
       },
       resolve(root, { skip, take, cursor }, ctx) {
-        if(take && take > 100) {
-          throw new ApolloError("You cannot take more than 100 items")
+        if (take && take > 100) {
+          throw new ApolloError('You cannot take more than 100 items');
         }
 
         return ctx.prisma.user.findMany({
           skip: skip || undefined,
           take: take || undefined,
-          cursor: cursor ? {
-            id: cursor
-          } : undefined
-        })
-      }
-    })
+          cursor: cursor
+            ? {
+                id: cursor,
+              }
+            : undefined,
+        });
+      },
+    });
 
     t.field('userCount', {
-      type: "Int",
+      type: 'Int',
       resolve(root, args, ctx) {
-        return ctx.prisma.user.count()
-      }
-    })
+        return ctx.prisma.user.count();
+      },
+    });
   },
-})
+});
 
 export const UserUpdateInput = inputObjectType({
   name: 'UserUpdateInput',
   definition(t) {
-    t.field('role', { type: 'Role' })
-    t.string('name')
-  }
-})
+    t.field('role', { type: 'Role' });
+    t.string('name');
+  },
+});
 
 export const UserCreateInput = inputObjectType({
   name: 'UserCreateInput',
   definition(t) {
-        t.nonNull.field({
-          type: 'EmailAddress',
-          name: 'email'
-        }),
-        t.nonNull.string('password'),
-        t.nonNull.string('passwordConfirm'),
-    t.field('role', { type: 'Role' })
-    t.string('name')
-  }
-})
+    t.nonNull.field({
+      type: 'EmailAddress',
+      name: 'email',
+    }),
+      t.nonNull.string('password'),
+      t.nonNull.string('passwordConfirm'),
+      t.field('role', { type: 'Role' });
+    t.string('name');
+  },
+});
 
 export const UserMutations = extendType({
   type: 'Mutation',
@@ -152,68 +161,74 @@ export const UserMutations = extendType({
       type: User,
       args: {
         id: nonNull('ID'),
-        data: nonNull(UserUpdateInput)
+        data: nonNull(UserUpdateInput),
       },
       resolve(root, { id, data }, ctx) {
         return ctx.prisma.user.update({
           where: {
-            id
+            id,
           },
-          data: data as Prisma.UserUpdateInput
-        })
-      }
-    })
+          data: data as Prisma.UserUpdateInput,
+        });
+      },
+    });
 
     t.field('deleteOneUser', {
       type: 'User',
       args: {
-        id: nonNull("ID")
+        id: nonNull('ID'),
       },
       resolve(root, args, ctx) {
         return ctx.prisma.user.delete({
           where: {
-            id: args.id
-          }
-        })
-      }
-    })
+            id: args.id,
+          },
+        });
+      },
+    });
 
     t.field('deleteManyUser', {
-      type: "AffectedRowsOutput",
+      type: 'AffectedRowsOutput',
       args: {
-        id: nonNull(list(nonNull("ID")))
+        id: nonNull(list(nonNull('ID'))),
       },
       resolve(root, args, ctx) {
         return ctx.prisma.user.deleteMany({
           where: {
             id: {
-              in: args.id || undefined
-            }
-          }
-        })
-      }
-    })
+              in: args.id || undefined,
+            },
+          },
+        });
+      },
+    });
 
     t.field('register', {
-      type: "User",
+      type: 'User',
       args: {
         input: nonNull(UserCreateInput),
       },
       async resolve(root, { input }, ctx) {
-        const { email, password, passwordConfirm } = userCreateSchema.validateSync(input)
+        const { email, password, passwordConfirm } =
+          userCreateSchema.validateSync(input);
 
         // Generated hash
         const salt = crypto.randomBytes(16).toString('hex');
-        const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, `sha512`).toString(`hex`);
+        const hash = crypto
+          .pbkdf2Sync(password, salt, 1000, 64, `sha512`)
+          .toString(`hex`);
+
+        const [name] = email.split('@');
 
         return ctx.prisma.user.create({
           data: {
             email,
             hash,
             salt,
+            name,
           },
-        })
-      }
-    })
+        });
+      },
+    });
   },
-})
+});

@@ -81,6 +81,7 @@ export const PostActions: FC<{
     },
   });
 
+  // @ts-expect-error
   const actions: DropdownActions = useMemo(() => {
     const baseActions = [
       [

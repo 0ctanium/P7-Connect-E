@@ -12,7 +12,7 @@ import {
 import { Tooltip } from 'components/Tooltip';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
-import { stringToColour } from '../../../../lib/utils';
+import { stringToColour } from 'lib/utils';
 import { useRouter } from 'next/router';
 import clsx from 'clsx';
 

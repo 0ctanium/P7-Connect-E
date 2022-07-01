@@ -7,7 +7,7 @@ import {
   NavigationPage,
   parseCurrentNavToDesktop,
   parseCurrentNavToMobile,
-} from '../../../constants/navigation';
+} from 'constants/navigation';
 
 export const Layout: FC<LayoutProps> = ({
   children,
@@ -28,7 +28,7 @@ export const Layout: FC<LayoutProps> = ({
 
   return (
     <>
-      <div className="h-full flex">
+      <div className="h-full flex bg-gray-50">
         {/* Static sidebar for desktop */}
         <SideNav current={desktopNav} onCurrentChange={setCurrent} />
 
@@ -39,7 +39,7 @@ export const Layout: FC<LayoutProps> = ({
               id="main-layout"
               ref={content}
               aria-labelledby="primary-heading"
-              className="relative  min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last">
+              className="relative min-w-0 flex-1 h-full flex flex-col overflow-y-auto lg:order-last">
               {/* Mobile top bar */}
               <MobileTopBar
                 contentRef={content}

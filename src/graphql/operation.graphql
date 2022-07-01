@@ -13,16 +13,22 @@ query GetAllGroups {
 
 query GetFeed($cursor: ID) {
     posts(cursor: $cursor) {
-        ...Post
-        group {
-            ...Group
+        data {
+            ...Post
+            group {
+                ...Group
+            }
         }
+        nextCursor
     }
 }
 
 query GetGroupPosts($id: ID!, $cursor: ID) {
     posts(cursor: $cursor, where: { group: $id }) {
-        ...Post
+        data {
+            ...Post
+        }
+        nextCursor
     }
 }
 

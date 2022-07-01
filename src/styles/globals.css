@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --tooltip-background: rgb(255 255 255 / var(--tw-bg-opacity));
-    --tooltip-border: transparent;
-}
-
 @layer base {
     html, body, #__next {
         @apply h-full
@@ -121,6 +116,10 @@
 
     /* From node_modules/react-popper-tooltip/dist/styles.css */
     .tooltip {
+        --tw-bg-opacity: 1;
+        --tooltip-background: rgb(255 255 255 / var(--tw-bg-opacity));
+        --tooltip-border: transparent;
+
         @apply shadow-md rounded flex flex-col z-50 border border-solid;
         background-color: var(--tooltip-background);
         border-color: var(--tooltip-border);

@@ -29,7 +29,6 @@ fragment Group on Group {
     restricted
 }
 
-
 fragment Post on Post {
     id
     text

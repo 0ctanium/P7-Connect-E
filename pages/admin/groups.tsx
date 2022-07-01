@@ -8,7 +8,7 @@ import {
   InferGetServerSidePropsType,
   NextPage,
 } from 'next';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Role } from 'constants/role';
 import { GroupTable } from 'components/table/preset/groups/GroupsTable';
@@ -39,13 +39,16 @@ export const GroupsDashboard: NextPage<
   const [createLoading, setCreateLoading] = useState(false);
   const [createGroup] = useCreateGroupMutation();
   const form = useNewGroupForm();
-  const { reset } = form;
+  const {
+    reset,
+    formState: { isSubmitSuccessful, submitCount },
+  } = form;
 
   const [open, setOpen] = useState(false);
   const handleSubmit: SubmitHandler<NewGroupInputs> = useCallback(
     (data) => {
       setCreateLoading(true);
-      createGroup({
+      return createGroup({
         variables: { data },
       })
         .then(() => {
@@ -53,7 +56,6 @@ export const GroupsDashboard: NextPage<
           return refetch();
         })
         .then(() => {
-          reset();
           setOpen(false);
         })
         .catch((err) => {
@@ -64,8 +66,14 @@ export const GroupsDashboard: NextPage<
           setCreateLoading(false);
         });
     },
-    [createGroup, refetch, reset]
+    [createGroup, refetch]
   );
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [submitCount, isSubmitSuccessful, reset]);
 
   return (
     <AdminLayout current="groups">

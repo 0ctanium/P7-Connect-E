@@ -5,7 +5,7 @@ import {
   NextPage,
 } from 'next';
 import { Layout } from 'components/layout';
-import prisma from 'services/prisma';
+import { prisma } from 'services/prisma';
 import { cache, initializeApollo } from 'services/apollo/client';
 import { createApolloContext } from 'schema/context';
 import Image from 'next/image';
@@ -19,15 +19,12 @@ import {
   GetGroupPostsDocument,
   GetGroupPostsQueryVariables,
   GetGroupPostsQuery,
-  useDeletePostMutation,
   GroupFragment,
 } from 'generated/graphql';
 import { NotFoundErrorPage } from 'components/layout/errors';
-import { Post } from 'components/Post';
 import { CreatePostForm, useCreatePostForm } from 'components/forms/CreatePost';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { LoadingSpinner } from 'components/LoadingSpinner';
 import { CreatePostFormInputs } from 'types';
 import { SubmitHandler } from 'react-hook-form';
 import { stringToColour } from '../../src/lib/utils';
@@ -80,6 +77,10 @@ const GroupBanner: FC<{ group: GroupFragment }> = ({ group }) => {
 
 const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
   const form = useCreatePostForm();
+  const {
+    reset,
+    formState: { isSubmitSuccessful, submitCount },
+  } = form;
   const [createPost, { loading: createLoading }] = useCreatePostMutation({
     onError() {
       toast.error("Erreur lors de l'envoi du post");
@@ -95,12 +96,18 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
           posts: [newData.createPost, ...(data?.posts || [])],
         })
       );
-
-      form.reset();
+      return true;
     },
+    notifyOnNetworkStatusChange: true,
   });
 
-  const { data, loading } = useGetGroupPostsQuery({
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [submitCount, isSubmitSuccessful, reset]);
+
+  const { data, loading, fetchMore } = useGetGroupPostsQuery({
     variables: { id: groupId },
     onError() {
       toast.error('Erreur lors du chargement des posts');
@@ -120,6 +127,31 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
     [createPost, groupId]
   );
 
+  const [loadMoreLoading, setLoadingMore] = useState(false);
+  const handleLoadMore = useCallback(() => {
+    if (data?.posts?.nextCursor) {
+      setLoadingMore(true);
+      fetchMore({
+        variables: {
+          cursor: data.posts.nextCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return Object.assign({}, prev, {
+            posts: {
+              nextCursor: (fetchMoreResult as GetGroupPostsQuery).posts
+                .nextCursor,
+              data: [
+                ...(prev as GetGroupPostsQuery).posts.data,
+                ...(fetchMoreResult as GetGroupPostsQuery).posts.data,
+              ],
+            },
+          });
+        },
+      }).finally(() => setLoadingMore(false));
+    }
+  }, [data, fetchMore]);
+
   return (
     <div className="max-w-xl mx-auto">
       <CreatePostForm
@@ -128,9 +160,11 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
         loading={createLoading}
       />
       <PostList
-        posts={data?.posts as PostType[]}
-        loading={loading}
+        posts={data?.posts.data as PostType[]}
+        loading={loading || loadMoreLoading}
+        onLoadMore={handleLoadMore}
         skeletonNumber={1}
+        hasNext={!!data?.posts.nextCursor}
       />
     </div>
   );

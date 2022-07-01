@@ -9,8 +9,13 @@ import {
   HiOutlineUserGroup as UserGroupIconOutline,
   HiOutlineNewspaper,
   HiNewspaper,
+  HiOutlineLogout,
+  HiOutlineUserCircle,
 } from 'react-icons/hi';
 import { IconType } from 'react-icons';
+import { DropdownActions } from '../components/Dropdown';
+import { signOut } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 export type NavigationPage =
   | 'feed'
@@ -25,6 +30,29 @@ export interface Navigation {
   icon: IconType;
   currentIcon: IconType;
 }
+
+export const userDropDown: DropdownActions = [
+  {
+    as: 'button',
+    className: 'w-full',
+    label: 'Modifier le profil',
+    icon: HiOutlineUserCircle,
+    onClick: () => {
+      toast.info(
+        'Veuillez contacter un administrateur pour modifier vos informations.'
+      );
+    },
+  },
+  {
+    as: 'button',
+    className: 'w-full',
+    label: 'Déconnexion',
+    icon: HiOutlineLogout,
+    onClick: () => {
+      signOut();
+    },
+  },
+];
 
 export const navigation: Navigation[] = [
   {

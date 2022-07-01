@@ -5,7 +5,13 @@ import { Avatar } from 'components/Avatar';
 import { Tooltip } from 'components/Tooltip';
 import { useSession } from 'next-auth/react';
 import { LogoIcon } from 'components/Logo';
-import { navigation, Navigation, NavigationPage } from 'constants/navigation';
+import {
+  navigation,
+  Navigation,
+  NavigationPage,
+  userDropDown,
+} from 'constants/navigation';
+import { Dropdown } from '../../../Dropdown';
 
 interface SideNavProps {
   current: NavigationPage;
@@ -22,7 +28,7 @@ export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
   return (
     <div className="hidden lg:flex lg:flex-shrink-0">
       <div className="flex flex-col w-20">
-        <div className="flex-1 flex flex-col min-h-0 overflow-y-auto bg-indigo-600">
+        <div className="flex-1 flex flex-col min-h-0 bg-indigo-600">
           <div className="flex-1">
             <div className="py-4 flex items-center justify-center">
               <LogoIcon className="fill-white h-10 w-auto" />
@@ -40,16 +46,16 @@ export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
               ))}
             </nav>
           </div>
-          <div className="flex-shrink-0 flex pb-5">
-            <Link href="/profile">
-              <a className="flex-shrink-0 w-full text-center">
-                <Avatar user={user} />
-                <div className="sr-only">
-                  <p>{user.name}</p>
-                  <p>Account settings</p>
-                </div>
-              </a>
-            </Link>
+          <div className="flex-shrink-0 flex justify-center items-center pb-5">
+            {/*<Link href="/profile">*/}
+            <Dropdown menu={userDropDown} placement="left">
+              <Avatar user={user} />
+              <div className="sr-only">
+                <p>{user.name}</p>
+                <p>Account settings</p>
+              </div>
+            </Dropdown>
+            {/*</Link>*/}
           </div>
         </div>
       </div>

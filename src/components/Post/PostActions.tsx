@@ -15,7 +15,7 @@ import { useConfirmButton } from 'hooks/useConfirmButton';
 import { EditPostForm, useEditPostForm } from '../forms/EditPost';
 import { EditPostFormInputs } from '../../types';
 import { SubmitHandler } from 'react-hook-form';
-import { cache } from '../../services/apollo/client';
+import { cache } from 'services/apollo/client';
 
 export const PostActions: FC<{
   post: PostType;
@@ -81,6 +81,7 @@ export const PostActions: FC<{
     },
   });
 
+  // @ts-expect-error
   const actions: DropdownActions = useMemo(() => {
     const baseActions = [
       [

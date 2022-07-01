@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useScrollingUp } from 'hooks';
 import { Avatar } from 'components/Avatar';
 import { LogoIcon, LogoText } from 'components/Logo';
+import { Dropdown } from 'components/Dropdown';
+import { userDropDown } from '../../../../constants/navigation';
 
 const isElementXPercentInViewport = function (
   el: HTMLElement,
@@ -20,6 +22,7 @@ const isElementXPercentInViewport = function (
   );
 };
 
+const barHeight = 56;
 export const MobileTopBar: FC<{
   contentRef: RefObject<HTMLElement>;
   title?: string;
@@ -50,7 +53,7 @@ export const MobileTopBar: FC<{
         }
       } else {
         if (view) {
-          setScrollPoint(scrollTop + 48);
+          setScrollPoint(scrollTop + barHeight);
         }
       }
     }
@@ -59,8 +62,8 @@ export const MobileTopBar: FC<{
   return (
     <>
       <div
-        className="lg:hidden absolute w-full min-h-[4rem] pointer-events-none"
-        style={{ height: scrollPoint }}>
+        className="lg:hidden absolute w-full pointer-events-none"
+        style={{ height: scrollPoint, minHeight: barHeight }}>
         <div
           ref={barRef}
           className="sticky top-0 z-30 bg-white py-2 px-4 flex items-center justify-between sm:px-6 lg:px-8 pointer-events-auto">
@@ -72,18 +75,21 @@ export const MobileTopBar: FC<{
               <LogoText className="fill-gray-900 h-[60%]" />
             </div>
           )}
-          <Link href="/profile">
-            <a className="flex">
-              <Avatar user={session?.user} size="md" />
-              <div className="sr-only">
-                <p>{session?.user.name}</p>
-                <p>Account settings</p>
-              </div>
-            </a>
-          </Link>
+          {/*<Link href="/profile">*/}
+          <Dropdown
+            menu={userDropDown}
+            placement="bottom-right"
+            className="flex">
+            <Avatar user={session?.user} />
+            <div className="sr-only">
+              <p>{session?.user.name}</p>
+              <p>Account settings</p>
+            </div>
+          </Dropdown>
+          {/*</Link>*/}
         </div>
       </div>
-      <div className="mb-16 lg:mb-0" />
+      <div style={{ marginBottom: barHeight }} className="lg:!mb-0" />
     </>
   );
 };

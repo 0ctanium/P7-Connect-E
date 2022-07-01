@@ -51,7 +51,7 @@ export const AdminLayout: FC<{ current: string; loading?: boolean }> = ({
 
   if (status === 'loading') {
     return (
-      <div className="min-h-full flex justify-center items-center">
+      <div className="min-h-full flex justify-center items-center bg-gray-100">
         <LoadingSpinner className="h16 w-16" />
       </div>
     );
@@ -59,7 +59,7 @@ export const AdminLayout: FC<{ current: string; loading?: boolean }> = ({
 
   return (
     <>
-      <div className="min-h-full">
+      <div className="min-h-full bg-gray-50">
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as="div"

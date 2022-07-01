@@ -12,6 +12,9 @@
 /.next/
 /out/
 
+/deliverables/
+/deliverables.zip
+
 # production
 /build
 
@@ -87,7 +90,7 @@ cmake-build-*/
 *.iws
 
 # IntelliJ
-out/
+deliverables/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

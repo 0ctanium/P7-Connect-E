@@ -92,8 +92,11 @@ const GroupContent: FC<{ groupId: string }> = ({ groupId }) => {
           variables: { id: groupId },
         },
         (data) => ({
-          // @ts-expect-error
-          posts: [newData.createPost, ...(data?.posts || [])],
+          posts: {
+            ...(data?.posts || {}),
+            // @ts-expect-error
+            data: [newData.createPost, ...(data?.posts.data || [])],
+          },
         })
       );
       return true;

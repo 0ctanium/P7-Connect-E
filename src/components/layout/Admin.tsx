@@ -111,8 +111,8 @@ export const AdminLayout: FC<{ current: string; loading?: boolean }> = ({
                       <a
                         className="flex items-center h-10 w-full"
                         title="Retourner à l'application">
-                        <LogoIcon className="fill-indigo-600 h-full mr-2" />
-                        <LogoText className="fill-white h-[60%]" />
+                        <LogoIcon className="fill-cosmos-500 h-full mr-2" />
+                        <LogoText className="fill-scarlet-500 h-[60%]" />
                       </a>
                     </Link>
                   </div>
@@ -176,8 +176,8 @@ export const AdminLayout: FC<{ current: string; loading?: boolean }> = ({
                   <a
                     className="flex items-center h-10 w-full"
                     title="Retourner à l'application">
-                    <LogoIcon className="fill-indigo-600 h-full mr-2" />
-                    <LogoText className="fill-white h-[60%]" />
+                    <LogoIcon className="fill-cosmos-500 h-full mr-2" />
+                    <LogoText className="fill-scarlet-500 h-[60%]" />
                   </a>
                 </Link>
               </div>
@@ -231,7 +231,7 @@ export const AdminLayout: FC<{ current: string; loading?: boolean }> = ({
           <div className="sticky top-0 z-10 md:hidden px-1 py-0.5 sm:px-3 sm:py-1.5 bg-gray-100">
             <button
               type="button"
-              className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-fiord-500"
               onClick={() => setSidebarOpen(true)}>
               <span className="sr-only">Ouvrir la barre latérale</span>
               <MenuIcon className="h-6 w-6" aria-hidden="true" />

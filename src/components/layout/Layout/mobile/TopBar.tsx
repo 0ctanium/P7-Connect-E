@@ -72,8 +72,8 @@ export const MobileTopBar: FC<{
             <h1 className="text-2xl font-bold">{title}</h1>
           ) : (
             <div className="flex items-center h-8 w-full">
-              <LogoIcon className="fill-indigo-600 h-full mr-2" />
-              <LogoText className="fill-gray-900 h-[60%]" />
+              <LogoIcon className="fill-cosmos-500 h-full mr-2" />
+              <LogoText className="fill-scarlet-500 h-[60%]" />
             </div>
           )}
           {/*<Link href="/profile">*/}

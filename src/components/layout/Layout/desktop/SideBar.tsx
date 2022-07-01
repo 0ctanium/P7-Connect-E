@@ -47,10 +47,10 @@ const HomeSideBar: FC = () => {
           className={clsx(
             'px-8 py-1  flex items-center',
             pathname === '/'
-              ? 'bg-gray-200/80 hover:bg-gray-200'
-              : 'hover:bg-gray-100'
+              ? 'bg-cosmos-500/80 hover:bg-cosmos-500'
+              : 'hover:bg-cosmos-400'
           )}>
-          <HiNewspaper className="w-10 h-10 p-1.5 text-indigo-400 mr-4" />
+          <HiNewspaper className="w-10 h-10 p-1.5 text-scarlet-400 mr-4" />
           <p className="font-medium">{"Fil d'actualité"}</p>
         </a>
       </Link>
@@ -93,7 +93,9 @@ const GroupItem: FC<{ group: GroupFragment }> = ({ group }) => {
       <a
         className={clsx(
           'px-8 py-1  flex items-center',
-          current ? 'bg-gray-200/80 hover:bg-gray-200' : 'hover:bg-gray-100'
+          current
+            ? 'bg-cosmos-500/80 hover:bg-cosmos-500'
+            : 'hover:bg-cosmos-400'
         )}>
         <div
           className="block w-10 h-10 rounded-lg overflow-hidden mr-4"
@@ -131,8 +133,8 @@ const NotificationsSideBar: FC = () => {
       </div>
       <div className="flex-1 px-8 pb-6 flex">
         <div className="m-auto flex flex-col items-center">
-          <div className="bg-gray-200 rounded-full p-4 block mb-4">
-            <HiBell className="text-indigo-400 w-12 h-12" />
+          <div className="bg-cosmos-500 rounded-full p-4 block mb-4">
+            <HiBell className="text-scarlet-400 w-12 h-12" />
           </div>
           <p className="font-medium">{"Vous n'avez aucune notification..."}</p>
         </div>
@@ -165,8 +167,8 @@ const ChatsSideBar: FC = () => {
       </div>
       <div className="flex-1 px-8 pb-6 flex">
         <div className="m-auto flex flex-col items-center">
-          <div className="bg-gray-200 rounded-full p-4 block mb-4">
-            <HiChat className="text-indigo-400 w-12 h-12" />
+          <div className="bg-cosmos-500 rounded-full p-4 block mb-4">
+            <HiChat className="text-scarlet-400 w-12 h-12" />
           </div>
           <p className="font-medium">{"Vous n'avez aucune discussion..."}</p>
         </div>

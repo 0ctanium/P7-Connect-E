@@ -3,12 +3,16 @@ const plugin = require('tailwindcss/plugin');
 module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    fontFamily: {
+      lato: ["'Lato'", 'sans-serif'],
+    },
     extend: {
       spacing: {
         18: '4.5rem',
       },
       colors: {
         fiord: {
+          // Accent
           50: '#f6f6f7',
           100: '#edeef0',
           200: '#d3d4d9',
@@ -21,6 +25,7 @@ module.exports = {
           900: '#262832',
         },
         cosmos: {
+          // Secondary
           50: '#fffdfd',
           100: '#fffbfb',
           200: '#fff5f5',
@@ -33,6 +38,7 @@ module.exports = {
           900: '#7d6969',
         },
         scarlet: {
+          // Primary
           50: '#fff5f2',
           100: '#ffeae6',
           200: '#ffcbc0',

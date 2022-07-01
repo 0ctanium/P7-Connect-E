@@ -124,7 +124,7 @@ const LoginPage: NextPage<
         title="Connexion - Groupomania"
         description="Connectez vous à votre compte groupomania"
       />
-      <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50">
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -138,7 +138,7 @@ const LoginPage: NextPage<
           <p className="mt-2 text-center text-sm text-gray-600">
             Ou{' '}
             <Link href={`/register${window.location.search}`}>
-              <a className="font-medium text-indigo-600 hover:text-indigo-500">
+              <a className="font-medium text-scarlet-600 hover:text-scarlet-500">
                 inscrivez-vous
               </a>
             </Link>
@@ -147,28 +147,36 @@ const LoginPage: NextPage<
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <div className="flex flex-col gap-3">
-              {providersMap.map((provider) => (
-                <button
-                  key={provider.id}
-                  className="btn btn-white justify-center"
-                  onClick={() =>
-                    signIn(provider.id, { callbackUrl, redirect: true })
-                  }>
-                  <SocialIcon className="w-6 h-6 mr-2" provider={provider.id} />
-                  Connexion avec {provider.name}
-                </button>
-              ))}
-            </div>
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Ou</span>
-                </div>
+            {!!providersMap.length && (
+              <div className="flex flex-col gap-3">
+                {providersMap.map((provider) => (
+                  <button
+                    key={provider.id}
+                    className="btn btn-white justify-center"
+                    onClick={() =>
+                      signIn(provider.id, { callbackUrl, redirect: true })
+                    }>
+                    <SocialIcon
+                      className="w-6 h-6 mr-2"
+                      provider={provider.id}
+                    />
+                    Connexion avec {provider.name}
+                  </button>
+                ))}
               </div>
+            )}
+
+            <div className={!!providersMap.length ? 'mt-6' : ''}>
+              {!!providersMap.length && (
+                <div className="relative mb-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">Ou</span>
+                  </div>
+                </div>
+              )}
 
               <SignInForm
                 form={loginForm}

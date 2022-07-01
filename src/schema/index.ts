@@ -1,8 +1,10 @@
-import {makeSchema} from "nexus";
-import path from "path";
+import { makeSchema } from 'nexus';
+import path from 'path';
 
 // Types defs
 import * as types from './types';
+import { applyMiddleware } from 'graphql-middleware';
+import { permissions } from './permissions';
 
 // Scalars
 
@@ -24,7 +26,7 @@ const baseSchema = makeSchema({
       },
     ],
   },
-})
+});
 
-// export const schema = applyMiddleware(baseSchema, permissions)
-export const schema = baseSchema
+export const schema = applyMiddleware(baseSchema, permissions);
+// export const schema = baseSchema

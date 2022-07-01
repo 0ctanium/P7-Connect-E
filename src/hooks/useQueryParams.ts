@@ -11,10 +11,10 @@ export const getQueryStringVal = (key: string): string | null => {
   return getQuery().get(key);
 };
 
-export const useQueryParam =(
+export const useQueryParam = <T extends string = string>(
   key: string,
   defaultVal?: string
-): [string | undefined, (val: string) => void] => {
+): [T | undefined, (val: T) => void] => {
   const [query, setQuery] = useState(getQueryStringVal(key) || defaultVal);
 
   const updateUrl = (newVal: string) => {
@@ -36,5 +36,5 @@ export const useQueryParam =(
     }
   };
 
-  return [query, updateUrl];
+  return [query as T, updateUrl];
 };

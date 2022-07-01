@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { SubmitHandler } from 'react-hook-form';
 import { SignInInputs } from '../src/types';
 import { NextSeo } from 'next-seo';
+import { SignInErrorTypes } from 'next-auth/core/pages/signin';
 
 type Providers = Record<LiteralUnion<BuiltInProviderType>, ClientSafeProvider>;
 
@@ -34,7 +35,7 @@ const LoginPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ providers, csrfToken }) => {
   const [callbackUrl] = useQueryParam('callbackUrl', '/');
-  const [error, setError] = useQueryParam('error');
+  const [error, setError] = useQueryParam<SignInErrorTypes | ''>('error');
   const providersMap = useMemo(
     () =>
       providers
@@ -56,8 +57,44 @@ const LoginPage: NextPage<
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
       setError('');
+      switch (error) {
+        case 'Signin':
+          toast.error('Connexion refusée');
+          break;
+        case 'OAuthSignin':
+          toast.error('Connexion refusée par le fournisseur');
+          break;
+        case 'OAuthCallback':
+          toast.error('Erreur lors de la liason avec le fournisseur');
+          break;
+        case 'OAuthCreateAccount':
+          toast.error('Erreur lors de la creation du compte fournisseur');
+          break;
+        case 'EmailCreateAccount':
+          toast.error("Erreur lors de la creation de l'email");
+          break;
+        case 'Callback':
+          toast.error('Connexion annulée');
+          break;
+        case 'OAuthAccountNotLinked':
+          toast.error(
+            'Cettre addresse email est déjà lié à un autre fournisseur'
+          );
+          break;
+        case 'EmailSignin':
+          toast.error('Email incorrect');
+          break;
+        case 'CredentialsSignin':
+          toast.error('Mot de passe incorrect');
+          break;
+        case 'SessionRequired':
+          toast.error('Vous devez être connecté.');
+          break;
+        case 'default':
+          toast.error('Erreur interne');
+          break;
+      }
     }
   }, [error, setError]);
 

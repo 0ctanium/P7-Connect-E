@@ -124,7 +124,7 @@ const LoginPage: NextPage<
         title="Connexion - Groupomania"
         description="Connectez vous à votre compte groupomania"
       />
-      <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="min-h-full flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gray-50">
         <div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -138,7 +138,7 @@ const LoginPage: NextPage<
           <p className="mt-2 text-center text-sm text-gray-600">
             Ou{' '}
             <Link href={`/register${window.location.search}`}>
-              <a className="font-medium text-indigo-600 hover:text-indigo-500">
+              <a className="font-medium text-scarlet-600 hover:text-scarlet-500">
                 inscrivez-vous
               </a>
             </Link>

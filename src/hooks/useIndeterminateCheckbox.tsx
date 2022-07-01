@@ -60,7 +60,7 @@ export const IndeterminateCheckbox = React.forwardRef<
     <>
       <input
         type="checkbox"
-        className="form-checkbox absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
+        className="form-checkbox absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-fiord-600 focus:ring-fiord-500 sm:left-6"
         // @ts-ignore
         ref={resolvedRef}
         {...rest}

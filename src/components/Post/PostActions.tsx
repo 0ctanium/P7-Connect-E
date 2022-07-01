@@ -134,7 +134,7 @@ export const PostActions: FC<{
   return (
     <>
       <Dropdown menu={actions}>
-        <div className="bg-white rounded-full flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+        <div className="bg-white rounded-full flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-fiord-500">
           <span className="sr-only">Open options</span>
           <HiDotsVertical className="h-5 w-5" aria-hidden="true" />
         </div>

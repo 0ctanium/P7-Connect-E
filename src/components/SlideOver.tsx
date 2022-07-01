@@ -16,7 +16,7 @@ export const SlideOverTitle: FC<{
   desc?: string;
 }> = ({ onClose, title, desc }) => {
   return (
-    <div className="bg-indigo-700 py-6 px-4 sm:px-6">
+    <div className="bg-scarlet-700 py-6 px-4 sm:px-6">
       <div className="flex items-center justify-between">
         <Dialog.Title className="text-lg font-medium text-white">
           {' '}
@@ -25,7 +25,7 @@ export const SlideOverTitle: FC<{
         <div className="ml-3 flex h-7 items-center">
           <button
             type="button"
-            className="rounded-md bg-indigo-700 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+            className="rounded-md bg-scarlet-700 text-scarlet-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
             onClick={() => onClose(false)}>
             <span className="sr-only">Fermer le panneau</span>
             <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -33,7 +33,7 @@ export const SlideOverTitle: FC<{
         </div>
       </div>
       <div className="mt-1">
-        <p className="text-sm text-indigo-300">{desc}</p>
+        <p className="text-sm text-scarlet-300">{desc}</p>
       </div>
     </div>
   );

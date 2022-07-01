@@ -97,7 +97,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  className="inline-flex justify-center py-2 px-4 mt-3 sm:mt-0 sm:ml-3 w-full sm:w-auto text-base sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm focus:outline-none"
+                  className="inline-flex justify-center py-2 px-4 mt-3 sm:mt-0 sm:ml-3 w-full sm:w-auto text-base sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-md border border-gray-300 focus:ring-2 focus:ring-fiord-500 focus:ring-offset-2 shadow-sm focus:outline-none"
                   onClick={onDismiss}
                   ref={cancelButtonRef}>
                   {dismissLabel}

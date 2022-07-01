@@ -66,7 +66,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           leading({
             className:
               classes?.leading ||
-              'z-10 rounded-r-none  btn btn-white focus:border-indigo-500 focus:ring-1 focus:ring-offset-0',
+              'z-10 rounded-r-none  btn btn-white focus:border-fiord-500 focus:ring-1 focus:ring-offset-0',
           })}
         <div
           className={
@@ -121,7 +121,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           trailing({
             className:
               classes?.trailing ||
-              'z-10 rounded-l-none  btn btn-white focus:border-indigo-500 focus:ring-1 focus:ring-offset-0',
+              'z-10 rounded-l-none  btn btn-white focus:border-fiord-500 focus:ring-1 focus:ring-offset-0',
           })}
       </div>
     );

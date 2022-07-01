@@ -11,7 +11,7 @@ export const InputBase = React.forwardRef<
     <TextareaAutosize
       {...props}
       className={clsx(
-        'block w-full sm:text-sm rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 form-input',
+        'block w-full sm:text-sm rounded-md border-gray-300 focus:border-fiord-500 focus:ring-fiord-500 form-input',
         className
       )}
       minRows={minRows}
@@ -23,7 +23,7 @@ export const InputBase = React.forwardRef<
     <input
       {...props}
       className={clsx(
-        'block w-full sm:text-sm rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 form-input',
+        'block w-full sm:text-sm rounded-md border-gray-300 focus:border-fiord-500 focus:ring-fiord-500 form-input',
         className
       )}
       // @ts-ignore

@@ -3,6 +3,9 @@ const plugin = require('tailwindcss/plugin');
 module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
+    fontFamily: {
+      lato: ["'Lato'", 'sans-serif'],
+    },
     extend: {
       spacing: {
         18: '4.5rem',

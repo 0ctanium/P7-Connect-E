@@ -7,11 +7,8 @@ import {
   objectType,
 } from 'nexus';
 import { Prisma } from '@prisma/client';
-import { s3 } from 'services/s3';
-import { ManagedUpload } from 'aws-sdk/lib/s3/managed_upload';
-import SendData = ManagedUpload.SendData;
 import { ApolloError } from 'apollo-server-micro';
-import { uploadMedia } from '../../lib/media';
+import { uploadMedia } from 'lib/media';
 
 export const Group = objectType({
   name: 'Group',

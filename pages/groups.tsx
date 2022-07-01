@@ -64,7 +64,7 @@ const GroupCard: FC<{ group: GroupFragment }> = ({ group }) => {
 };
 
 export const getStaticProps: GetStaticProps<GetAllGroupsQuery> = async () => {
-  const context = await createApolloContext(null);
+  const context = await createApolloContext({ superUser: true });
   const apollo = await initializeApollo(null, context);
 
   const res = await apollo.query<GetAllGroupsQuery, GetAllGroupsQueryVariables>(

@@ -181,7 +181,7 @@ export const getStaticProps: GetStaticProps<
   }
 
   const { id } = params;
-  const context = await createApolloContext(null);
+  const context = await createApolloContext({ superUser: true });
   const apollo = await initializeApollo(null, context);
 
   const res = await apollo.query<GetGroupInfoQuery, GetGroupInfoQueryVariables>(

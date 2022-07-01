@@ -194,8 +194,6 @@ export const PostMutations = extendType({
       },
       async resolve(root, args, ctx) {
         const session = await getSession(ctx);
-        if (!session?.user?.id)
-          throw new AuthenticationError('You must be authenticated');
 
         const create: Prisma.PostCreateArgs = {
           data: {
@@ -206,7 +204,7 @@ export const PostMutations = extendType({
             },
             author: {
               connect: {
-                id: session.user.id,
+                id: session!.user.id,
               },
             },
             text: args.text,
@@ -221,7 +219,7 @@ export const PostMutations = extendType({
           create.data.medias = {
             createMany: {
               data: media.map((m) => ({
-                addedById: session?.user?.id,
+                addedById: session!.user.id,
                 encoding: m.file.encoding,
                 mimeType: m.file.mimetype,
                 url: m.bucket.Location,
@@ -242,8 +240,6 @@ export const PostMutations = extendType({
       },
       async resolve(root, args, ctx) {
         const session = await getSession(ctx);
-        if (!session?.user?.id)
-          throw new AuthenticationError('You must be authenticated');
 
         const postToUpdate = await ctx.prisma.post.findUnique({
           where: {
@@ -255,11 +251,7 @@ export const PostMutations = extendType({
           throw new ApolloError('Post not found');
         }
 
-        if (
-          postToUpdate.authorId !== session.user.id &&
-          session.user.role !== Role.MODERATOR &&
-          session.user.role !== Role.ADMIN
-        ) {
+        if (postToUpdate.authorId !== session!.user.id && !ctx.superUser) {
           throw new ApolloError("You don't have the permission to do this");
         }
 
@@ -281,8 +273,7 @@ export const PostMutations = extendType({
       },
       async resolve(root, args, ctx) {
         const session = await getSession(ctx);
-        if (!session?.user)
-          throw new AuthenticationError('You must be authenticated');
+        const user = session!.user;
 
         const postToDelete = await ctx.prisma.post.findUnique({
           where: {
@@ -295,9 +286,10 @@ export const PostMutations = extendType({
         }
 
         if (
-          postToDelete.authorId !== session.user.id &&
-          session.user.role !== Role.MODERATOR &&
-          session.user.role !== Role.ADMIN
+          postToDelete.authorId !== user.id &&
+          user.role !== Role.MODERATOR &&
+          user.role !== Role.ADMIN &&
+          !ctx.superUser
         ) {
           throw new ApolloError("You don't have the permission to do this");
         }

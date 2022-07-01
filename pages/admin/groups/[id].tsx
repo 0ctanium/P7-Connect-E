@@ -83,7 +83,7 @@ export const getServerSideProps: GetServerSideProps<
     };
   }
 
-  const context = await createApolloContext(null);
+  const context = await createApolloContext({ superUser: true });
   const apollo = await initializeApollo(null, context);
 
   const { data } = await apollo.query<

@@ -1,13 +1,5 @@
-import {
-  arg,
-  extendType,
-  inputObjectType,
-  list,
-  nonNull,
-  objectType,
-} from 'nexus';
+import { extendType, nonNull, objectType } from 'nexus';
 import { getSession } from 'next-auth/react';
-import { AuthenticationError } from 'apollo-server-micro';
 
 export const Reaction = objectType({
   name: 'Reaction',
@@ -43,14 +35,12 @@ export const ReactionMutations = extendType({
       },
       async resolve(root, args, ctx) {
         const session = await getSession(ctx);
-        if (!session?.user?.id)
-          throw new AuthenticationError('You must be authenticated');
 
         return ctx.prisma.reaction.upsert({
           where: {
             postId_userId: {
               postId: args.post,
-              userId: session.user.id,
+              userId: session!.user.id,
             },
           },
           create: {
@@ -61,7 +51,7 @@ export const ReactionMutations = extendType({
             },
             user: {
               connect: {
-                id: session.user.id,
+                id: session!.user.id,
               },
             },
             icon: args.icon,
@@ -80,14 +70,12 @@ export const ReactionMutations = extendType({
       },
       async resolve(root, args, ctx) {
         const session = await getSession(ctx);
-        if (!session?.user?.id)
-          throw new AuthenticationError('You must be authenticated');
 
         return ctx.prisma.reaction.delete({
           where: {
             postId_userId: {
               postId: args.post,
-              userId: session.user.id,
+              userId: session!.user.id,
             },
           },
         });

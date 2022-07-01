@@ -55,7 +55,6 @@ export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
                 <p>Account settings</p>
               </div>
             </Dropdown>
-
             {/*</Link>*/}
           </div>
         </div>

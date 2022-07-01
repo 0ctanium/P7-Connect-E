@@ -83,10 +83,11 @@ export const Dropdown: FC<DropdownProps> = ({
   children,
   placement = 'bottom-right',
   menu,
+  ...props
 }) => {
   return (
     <Menu as="div" className="z-10 relative inline-block text-left">
-      <Menu.Button>{children}</Menu.Button>
+      <Menu.Button {...props}>{children}</Menu.Button>
 
       <Transition
         as={Fragment}

@@ -1,11 +1,10 @@
 import { FC, RefObject, useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { useScrollingUp } from 'hooks';
 import { Avatar } from 'components/Avatar';
 import { LogoIcon, LogoText } from 'components/Logo';
 import { Dropdown } from 'components/Dropdown';
-import { userDropDown } from '../../../../constants/navigation';
+import { useUserDropDown } from 'constants/navigation';
 
 const isElementXPercentInViewport = function (
   el: HTMLElement,
@@ -59,6 +58,8 @@ export const MobileTopBar: FC<{
     }
   }, [contentRef, isScrollingUp]);
 
+  const userDropDown = useUserDropDown();
+
   return (
     <>
       <div
@@ -79,7 +80,8 @@ export const MobileTopBar: FC<{
           <Dropdown
             menu={userDropDown}
             placement="bottom-right"
-            className="flex">
+            className="flex"
+            width="w-64">
             <Avatar user={session?.user} />
             <div className="sr-only">
               <p>{session?.user.name}</p>

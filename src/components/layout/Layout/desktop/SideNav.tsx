@@ -9,9 +9,9 @@ import {
   navigation,
   Navigation,
   NavigationPage,
-  userDropDown,
+  useUserDropDown,
 } from 'constants/navigation';
-import { Dropdown } from '../../../Dropdown';
+import { Dropdown } from 'components/Dropdown';
 
 interface SideNavProps {
   current: NavigationPage;
@@ -20,6 +20,8 @@ interface SideNavProps {
 
 export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
   const { data } = useSession<true>({ required: true });
+  const userDropDown = useUserDropDown();
+
   if (!data) {
     return null;
   }
@@ -48,7 +50,7 @@ export const SideNav: FC<SideNavProps> = ({ current, onCurrentChange }) => {
           </div>
           <div className="flex-shrink-0 flex justify-center items-center pb-5">
             {/*<Link href="/profile">*/}
-            <Dropdown menu={userDropDown} placement="left">
+            <Dropdown menu={userDropDown} placement="left" width="w-64">
               <Avatar user={user} />
               <div className="sr-only">
                 <p>{user.name}</p>

@@ -71,11 +71,12 @@ const placements = {
   'bottom-left': 'origin-left left-0 mt-2',
   'top-right': 'origin-right top-0 mb-2',
   'top-left': 'origin-left -top-2 transform -translate-y-full',
-  left: 'origin-left transform -right-2 top-1/2 -translate-y-1/2 translate-x-full',
+  left: 'origin-left transform -right-2 bottom-0 translate-x-full',
 };
 
 type DropdownProps = {
   menu: DropdownActions;
+  width?: string;
   placement?: keyof typeof placements;
 } & HTMLAttributes<HTMLButtonElement>;
 
@@ -83,11 +84,15 @@ export const Dropdown: FC<DropdownProps> = ({
   children,
   placement = 'bottom-right',
   menu,
+  width = 'w-56',
+  className = 'flex',
   ...props
 }) => {
   return (
     <Menu as="div" className="z-10 relative inline-block text-left">
-      <Menu.Button {...props}>{children}</Menu.Button>
+      <Menu.Button {...props} className={className}>
+        {children}
+      </Menu.Button>
 
       <Transition
         as={Fragment}
@@ -100,7 +105,8 @@ export const Dropdown: FC<DropdownProps> = ({
         <Menu.Items
           className={clsx(
             placements[placement],
-            'absolute w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none overflow-hidden'
+            width,
+            'absolute rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none overflow-hidden'
           )}>
           <DropdownGroup actions={menu} />
         </Menu.Items>

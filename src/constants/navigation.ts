@@ -11,11 +11,15 @@ import {
   HiNewspaper,
   HiOutlineLogout,
   HiOutlineUserCircle,
+  HiOutlineCog,
 } from 'react-icons/hi';
 import { IconType } from 'react-icons';
 import { DropdownActions } from '../components/Dropdown';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
+import { Role } from './role';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 
 export type NavigationPage =
   | 'feed'
@@ -31,28 +35,53 @@ export interface Navigation {
   currentIcon: IconType;
 }
 
-export const userDropDown: DropdownActions = [
-  {
-    as: 'button',
-    className: 'w-full',
-    label: 'Modifier le profil',
-    icon: HiOutlineUserCircle,
-    onClick: () => {
-      toast.info(
-        'Veuillez contacter un administrateur pour modifier vos informations.'
-      );
-    },
-  },
-  {
-    as: 'button',
-    className: 'w-full',
-    label: 'Déconnexion',
-    icon: HiOutlineLogout,
-    onClick: () => {
-      signOut();
-    },
-  },
-];
+export const useUserDropDown = (): DropdownActions => {
+  const { data: session } = useSession<true>({ required: true });
+  const { push } = useRouter();
+
+  // @ts-expect-error
+  return useMemo<DropdownActions>(() => {
+    const actions: DropdownActions = [
+      {
+        as: 'button',
+        className: 'w-full',
+        label: 'Modifier le profil',
+        icon: HiOutlineUserCircle,
+        onClick: () => {
+          toast.info(
+            'Veuillez contacter un administrateur pour modifier vos informations.'
+          );
+        },
+      },
+      {
+        as: 'button',
+        className: 'w-full',
+        label: 'Déconnexion',
+        icon: HiOutlineLogout,
+        onClick: () => {
+          signOut();
+        },
+      },
+    ];
+
+    if (
+      session?.user.role === Role.ADMIN ||
+      session?.user.role === Role.MODERATOR
+    ) {
+      actions.unshift({
+        as: 'button',
+        className: 'w-full',
+        label: 'Dashboard administrateur',
+        icon: HiOutlineCog,
+        onClick: () => {
+          push('/admin');
+        },
+      });
+
+      return actions;
+    }
+  }, [push, session?.user.role]);
+};
 
 export const navigation: Navigation[] = [
   {

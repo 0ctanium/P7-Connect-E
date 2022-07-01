@@ -37,10 +37,6 @@ const HomeSideBar: FC = () => {
   const { loading, data } = useGetAllGroupsQuery();
   const { pathname } = useRouter();
 
-  if (loading) {
-    return <LoadingSpinner className="w-6 h-6" />;
-  }
-
   const groups = data?.groups || [];
 
   return (
@@ -61,11 +57,26 @@ const HomeSideBar: FC = () => {
 
       <h3 className="px-8 text-xl font-medium mt-6">Groupes</h3>
       <ul className="my-2">
-        {groups.map((group) => (
-          <li key={group.id}>
-            <GroupItem group={group} />
-          </li>
-        ))}
+        {loading ? (
+          <>
+            {Array.from(Array(3).keys()).map((i) => (
+              <div
+                key={i}
+                className={clsx('animate-pulse px-8 py-1 flex items-center')}>
+                <div className="block w-10 h-10 rounded-lg overflow-hidden mr-4 bg-slate-400"></div>
+                <div className="h-2 bg-slate-400 rounded w-1/3" />
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            {groups.map((group) => (
+              <li key={group.id}>
+                <GroupItem group={group} />
+              </li>
+            ))}
+          </>
+        )}
       </ul>
     </div>
   );

@@ -8,7 +8,6 @@ import { UnauthorizedErrorPage } from 'components/layout/errors';
 import { FC, useEffect, useMemo } from 'react';
 import { AuthWallConfig } from 'types';
 import moment from 'moment';
-import { defaultBodyClass, defaultHtmlClass } from 'constants/style';
 import { fr } from 'yup-locales';
 import * as yup from 'yup';
 import Router from 'next/router';
@@ -30,17 +29,6 @@ NProgress.configure({ showSpinner: false });
 
 export default function App({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState);
-
-  useEffect(() => {
-    document.documentElement.className =
-      pageProps?.htmlClass !== undefined
-        ? pageProps.htmlClass
-        : defaultHtmlClass;
-    document.body.className =
-      pageProps?.bodyClass !== undefined
-        ? pageProps.bodyClass
-        : defaultBodyClass;
-  });
 
   return (
     <SessionProvider session={pageProps.session}>
@@ -64,10 +52,13 @@ export default function App({ Component, pageProps }: AppProps) {
 
 const AuthWall: FC<{ config: AuthWallConfig }> = ({ children, config }) => {
   const router = useRouter();
-  const { data: session, status } = useSession({ required: true });
+  const { data: session, status } = useSession<true>({ required: true });
   const isAuthenticated = !!session?.user;
   const isAuthorized = useMemo(() => {
-    return !(config.roles && !config.roles.includes(session?.user.role));
+    return (
+      session?.user.role &&
+      !(config.roles && !config.roles.includes(session?.user.role))
+    );
   }, [config, session?.user.role]);
 
   useEffect(() => {

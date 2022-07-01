@@ -1,19 +1,17 @@
-import NextAuth from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import FacebookProvider from "next-auth/providers/facebook"
-import GithubProvider from "next-auth/providers/github"
-import TwitterProvider from "next-auth/providers/twitter"
-import AppleProvider from "next-auth/providers/apple"
-import LinkedInProvider from "next-auth/providers/linkedin"
-import SlackProvider from "next-auth/providers/slack"
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import FacebookProvider from 'next-auth/providers/facebook';
+import TwitterProvider from 'next-auth/providers/twitter';
+import LinkedInProvider from 'next-auth/providers/linkedin';
+import SlackProvider from 'next-auth/providers/slack';
 
-import CredentialsProvider from "next-auth/providers/credentials"
+import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
-import prisma from "services/prisma"
-import redis from "services/redis";
-import * as crypto from "crypto";
+import { prisma } from 'services/prisma';
+import { redis } from 'services/redis';
+import * as crypto from 'crypto';
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -22,9 +20,9 @@ export default NextAuth({
   secret: process.env.AUTH_SECRET,
 
   theme: {
-    brandColor: "#fe2d01",
-    logo: "/icons/icon.svg",
-    colorScheme: "light"
+    brandColor: '#fe2d01',
+    logo: '/icons/icon.svg',
+    colorScheme: 'light',
   },
 
   pages: {
@@ -32,55 +30,59 @@ export default NextAuth({
   },
 
   events: {
-    async signIn({user, account, profile, isNewUser}) {
+    async signIn({ user, account, profile, isNewUser }) {
       // Automatically update facebook profile picture
-      if(account.provider === "facebook") {
-        if(profile?.image) {
+      if (account.provider === 'facebook') {
+        if (profile?.image) {
           await prisma.user.update({
             where: {
-              id: user.id
+              id: user.id,
             },
             data: {
-              image: profile.image
-            }
-          })
+              image: profile.image,
+            },
+          });
         }
       }
     },
   },
 
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
   },
 
   callbacks: {
-    jwt({ token, user}) {
-      token.online = true
+    jwt({ token, user }) {
+      token.online = true;
 
       if (user?.role) {
-        token.role = user.role
+        token.role = user.role;
       }
 
-      if(user?.id) {
+      if (user?.id) {
         // set session alive status
-        redis.set(`session:${user.id}`, new Date().getTime()).catch(console.error)
+        redis
+          .set(`session:${user.id}`, new Date().getTime())
+          .catch(console.error);
       }
 
-      return token
+      return token;
     },
-    session({ session, user, token}) {
-      session.user.online = true
+    session({ session, user, token }) {
+      session.user.online = true;
 
-      session.user.id = token.sub || user.id
-      session.user.role = token.role
+      session.user.id = token.sub || user.id;
+      session.user.role = token.role;
 
-      if(token?.sub) {
+      if (token?.sub) {
         // set session alive status
-        redis.set(`session:${token.sub}`, new Date().getTime()).catch(console.error)
+        redis
+          .set(`session:${token.sub}`, new Date().getTime())
+          .catch(console.error);
       }
 
-      return session
-    }
+      return session;
+    },
   },
 
   providers: [
@@ -94,39 +96,45 @@ export default NextAuth({
       // e.g. domain, username, password, 2FA token, etc.
       // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
-        email: { label: "Adresse email", type: "email", placeholder: "mail@exemple.fr" },
-        password: {  label: "Mot de passe", type: "password" }
+        email: {
+          label: 'Adresse email',
+          type: 'email',
+          placeholder: 'mail@exemple.fr',
+        },
+        password: { label: 'Mot de passe', type: 'password' },
       },
       async authorize(credentials, req) {
-        if(!credentials) {
+        if (!credentials) {
           throw new Error('No credentials given');
         }
-        const { email, password } = credentials
+        const { email, password } = credentials;
 
-        if(!email) {
+        if (!email) {
           throw new Error('No email given');
         }
-        if(!password) {
+        if (!password) {
           throw new Error('No password given');
         }
 
         const user = await prisma.user.findUnique({
           where: {
-            email
-          }
-        })
+            email,
+          },
+        });
 
         if (!user) {
           throw new Error('User not found');
         }
 
-        if(!user.hash || !user.salt) {
-          throw new Error('No password configured')
+        if (!user.hash || !user.salt) {
+          throw new Error('No password configured');
         }
 
-        const passHash = crypto.pbkdf2Sync(password, user.salt, 1000, 64, `sha512`).toString(`hex`)
-        if(passHash !== user.hash) {
-          throw new Error('Password is incorrect')
+        const passHash = crypto
+          .pbkdf2Sync(password, user.salt, 1000, 64, `sha512`)
+          .toString(`hex`);
+        if (passHash !== user.hash) {
+          throw new Error('Password is incorrect');
         }
 
         return {
@@ -136,8 +144,8 @@ export default NextAuth({
           role: user.role,
           picture: user.image,
           sub: user.id,
-        }
-      }
+        };
+      },
     }),
 
     // AppleProvider({
@@ -159,7 +167,7 @@ export default NextAuth({
     TwitterProvider({
       clientId: process.env.TWITTER_ID,
       clientSecret: process.env.TWITTER_SECRET,
-      version: "2.0"
+      version: '2.0',
     }),
     LinkedInProvider({
       clientId: process.env.LINKEDIN_ID,
@@ -170,4 +178,4 @@ export default NextAuth({
       clientSecret: process.env.SLACK_SECRET,
     }),
   ],
-})
+});

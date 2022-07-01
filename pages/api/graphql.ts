@@ -8,9 +8,6 @@ import { NextApiHandler } from 'next';
 import cors from 'micro-cors';
 import { RequestHandler } from 'micro';
 
-const { schema } = require('schema');
-const { createApolloContext } = require('schema/context');
-
 export const config = {
   api: {
     bodyParser: false,
@@ -22,6 +19,9 @@ let apolloServerHandler: NextApiHandler;
 
 async function getApolloServerHandler() {
   if (!apolloServerHandler) {
+    const { schema } = require('schema');
+    const { createApolloContext } = require('schema/context');
+
     const plugins: PluginDefinition[] = [];
     if (process.env.NODE_ENV !== 'production') {
       plugins.push(ApolloServerPluginLandingPageGraphQLPlayground());
@@ -43,6 +43,11 @@ async function getApolloServerHandler() {
 }
 
 const handler: NextApiHandler = async (req, res) => {
+  if (req.method === 'OPTIONS') {
+    res.end();
+    return;
+  }
+
   const contentType = req.headers['content-type'];
   if (contentType && contentType.startsWith('multipart/form-data')) {
     // @ts-ignore
@@ -50,12 +55,6 @@ const handler: NextApiHandler = async (req, res) => {
   }
 
   const apolloServerHandler = await getApolloServerHandler();
-
-  if (req.method === 'OPTIONS') {
-    res.end();
-    return;
-  }
-
   return apolloServerHandler(req, res);
 };
 

@@ -8,7 +8,7 @@ import {
 } from 'nexus';
 import { getSession } from 'next-auth/react';
 import { ApolloError, AuthenticationError } from 'apollo-server-micro';
-import { Role } from '../../constants';
+import { Role } from 'constants/role';
 import { uploadMedia } from '../../lib/media';
 import { Prisma } from '@prisma/client';
 
@@ -100,6 +100,16 @@ export const Post = objectType({
   },
 });
 
+export const PostList = objectType({
+  name: 'PostList',
+  definition(t) {
+    t.id('nextCursor');
+    t.field('data', {
+      type: nonNull(list(nonNull('Post'))),
+    });
+  },
+});
+
 export const PostWhereInput = inputObjectType({
   name: 'PostWhereInput',
   definition(t) {
@@ -126,16 +136,16 @@ export const PostQueries = extendType({
     });
 
     t.field('posts', {
-      type: nonNull(list(nonNull('Post'))),
+      type: nonNull('PostList'),
       args: {
         where: PostWhereInput,
-        take: arg({ type: 'Int', default: 20 }),
+        take: arg({ type: 'Int', default: 10 }),
         cursor: 'ID',
+        cursorDirection: arg({ type: 'CursorDirection', default: 'after' }),
       },
-      resolve(root, { where, take, cursor }, ctx) {
-        return ctx.prisma.post.findMany({
-          skip: cursor ? 1 : undefined,
-          take: take || undefined,
+      async resolve(root, { where, take, cursor, cursorDirection }, ctx) {
+        const posts = await ctx.prisma.post.findMany({
+          take: take! + 1,
           cursor: cursor
             ? {
                 id: cursor,
@@ -146,9 +156,15 @@ export const PostQueries = extendType({
             authorId: where?.user || undefined,
           },
           orderBy: {
-            createdAt: 'desc',
+            createdAt: cursorDirection === 'after' ? 'desc' : 'asc',
           },
         });
+
+        const [lastPost] = posts.splice(take!, 1);
+        return {
+          nextCursor: lastPost?.id ? lastPost.id : null,
+          data: posts,
+        };
       },
     });
 

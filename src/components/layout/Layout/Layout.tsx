@@ -7,7 +7,7 @@ import {
   NavigationPage,
   parseCurrentNavToDesktop,
   parseCurrentNavToMobile,
-} from '../../../constants/navigation';
+} from 'constants/navigation';
 
 export const Layout: FC<LayoutProps> = ({
   children,
@@ -28,7 +28,7 @@ export const Layout: FC<LayoutProps> = ({
 
   return (
     <>
-      <div className="h-full flex">
+      <div className="h-full flex bg-gray-50">
         {/* Static sidebar for desktop */}
         <SideNav current={desktopNav} onCurrentChange={setCurrent} />
 

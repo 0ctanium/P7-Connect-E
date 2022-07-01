@@ -77,7 +77,11 @@ export const GroupQueries = extendType({
     t.field('groups', {
       type: nonNull(list(nonNull('Group'))),
       resolve(root, _args, ctx) {
-        return ctx.prisma.group.findMany();
+        return ctx.prisma.group.findMany({
+          orderBy: {
+            createdAt: 'asc',
+          },
+        });
       },
     });
 

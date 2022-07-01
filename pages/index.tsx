@@ -11,6 +11,7 @@ import { LoadingSpinner } from 'components/LoadingSpinner';
 import { toast } from 'react-toastify';
 import { PostList } from '../src/components/Post/PostList';
 import { useCallback, useState } from 'react';
+import { NextSeo } from 'next-seo';
 
 const Home: NextPage = () => {
   const { data: session } = useSession<true>({ required: true });
@@ -50,6 +51,10 @@ const Home: NextPage = () => {
 
   return (
     <Layout current="feed">
+      <NextSeo
+        title="Fil d'actualité - Groupomania"
+        description="Consultez tous les derniers posts"
+      />
       <div className="flex justify-center mt-8 text-center">
         <PostList
           posts={data?.posts.data as PostType[]}

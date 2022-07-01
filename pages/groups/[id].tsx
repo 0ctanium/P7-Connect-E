@@ -29,6 +29,7 @@ import { CreatePostFormInputs } from 'types';
 import { SubmitHandler } from 'react-hook-form';
 import { stringToColour } from '../../src/lib/utils';
 import { PostList } from '../../src/components/Post/PostList';
+import { NextSeo } from 'next-seo';
 
 const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   group,
@@ -37,6 +38,10 @@ const GroupPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   return (
     <Layout current="groups">
+      <NextSeo
+        title={`${group.name} - Groupomania`}
+        description={group.description ? group.description : undefined}
+      />
       <div>
         <GroupBanner group={group} />
         <div className="bg-white border-b border-b-gray-200 py-2 px-6">

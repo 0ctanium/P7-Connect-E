@@ -15,13 +15,12 @@ import {
   GroupFragment,
   useUpdateGroupMutation,
 } from 'generated/graphql';
-import { getSession } from 'next-auth/react';
-import { checkSessionRole } from 'lib/session';
 import { useRefetch } from 'hooks';
 import { createApolloContext } from 'schema/context';
 import { initializeApollo } from 'services/apollo/client';
 import { UpdateGroupForm } from 'components/forms/UpdateGroup';
 import { UpdateGroupInputs } from 'types';
+import { NextSeo } from 'next-seo';
 
 interface PageProps {
   group: GroupFragment;
@@ -56,6 +55,10 @@ export const GroupDashboard: NextPage<
 
   return (
     <AdminLayout current="groups">
+      <NextSeo
+        title={`Modification ${group.name} (dashboard) - Groupomania`}
+        description={`Modifiez les information du groupe de discussion ${group.name}`}
+      />
       <AdminLayoutHeader
         title="Modification du groupe"
         desc="Modifiez les paramètres du groupe."

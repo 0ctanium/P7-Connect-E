@@ -29,6 +29,7 @@ import { initializeApollo } from 'services/apollo/client';
 import { useRefetch } from 'hooks';
 import { createApolloContext } from 'schema/context';
 import { NewGroupInputs } from 'types';
+import { NextSeo } from 'next-seo';
 
 type PageProps = GetAllGroupsQuery;
 
@@ -77,6 +78,10 @@ export const GroupsDashboard: NextPage<
 
   return (
     <AdminLayout current="groups">
+      <NextSeo
+        title={`Groupes (dashboard) - Groupomania`}
+        description="Gerez les groupes de discussion Groupomania"
+      />
       <AdminLayoutHeader
         title="Groupes"
         desc="Ajoutez ou supprimer des groupes"

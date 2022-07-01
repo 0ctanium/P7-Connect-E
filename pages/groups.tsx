@@ -12,12 +12,17 @@ import { initializeApollo } from '../src/services/apollo/client';
 import { FC, useMemo } from 'react';
 import { stringToColour } from '../src/lib/utils';
 import Link from 'next/link';
+import { NextSeo } from 'next-seo';
 
 const Groups: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   groups,
 }) => {
   return (
     <Layout current="groups" title="Groupes" showTitle>
+      <NextSeo
+        title="Groupes - Groupomania"
+        description="Consultez la liste des groupes"
+      />
       <div className="container mx-auto pt-16 lg:max-w-md xl:max-w-screen-md 2xl:max-w-screen-lg">
         <ul
           role="list"

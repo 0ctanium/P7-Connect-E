@@ -35,12 +35,11 @@ export interface Navigation {
   currentIcon: IconType;
 }
 
-export const useUserDropDown = (): DropdownActions => {
+export const useUserDropDown = () => {
   const { data: session } = useSession<true>({ required: true });
   const { push } = useRouter();
 
-  // @ts-expect-error
-  return useMemo<DropdownActions>(() => {
+  return useMemo(() => {
     const actions: DropdownActions = [
       {
         as: 'button',
@@ -77,9 +76,9 @@ export const useUserDropDown = (): DropdownActions => {
           push('/admin');
         },
       });
-
-      return actions;
     }
+
+    return actions;
   }, [push, session?.user.role]);
 };
 

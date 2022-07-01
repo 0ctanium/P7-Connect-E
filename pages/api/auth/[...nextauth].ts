@@ -1,9 +1,9 @@
 import NextAuth from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import FacebookProvider from 'next-auth/providers/facebook';
-import TwitterProvider from 'next-auth/providers/twitter';
-import LinkedInProvider from 'next-auth/providers/linkedin';
-import SlackProvider from 'next-auth/providers/slack';
+// import GoogleProvider from 'next-auth/providers/google';
+// import FacebookProvider from 'next-auth/providers/facebook';
+// import TwitterProvider from 'next-auth/providers/twitter';
+// import LinkedInProvider from 'next-auth/providers/linkedin';
+// import SlackProvider from 'next-auth/providers/slack';
 
 import CredentialsProvider from 'next-auth/providers/credentials';
 
@@ -148,34 +148,34 @@ export default NextAuth({
       },
     }),
 
-    // AppleProvider({
-    //   clientId: process.env.APPLE_ID,
-    //   clientSecret: process.env.APPLE_SECRET,
+    // // AppleProvider({
+    // //   clientId: process.env.APPLE_ID,
+    // //   clientSecret: process.env.APPLE_SECRET,
+    // // }),
+    // FacebookProvider({
+    //   clientId: process.env.FACEBOOK_ID,
+    //   clientSecret: process.env.FACEBOOK_SECRET,
     // }),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_ID,
-      clientSecret: process.env.FACEBOOK_SECRET,
-    }),
-    // GithubProvider({
-    //   clientId: process.env.GITHUB_ID,
-    //   clientSecret: process.env.GITHUB_SECRET,
+    // // GithubProvider({
+    // //   clientId: process.env.GITHUB_ID,
+    // //   clientSecret: process.env.GITHUB_SECRET,
+    // // }),
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_ID,
+    //   clientSecret: process.env.GOOGLE_SECRET,
     // }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-    }),
-    TwitterProvider({
-      clientId: process.env.TWITTER_ID,
-      clientSecret: process.env.TWITTER_SECRET,
-      version: '2.0',
-    }),
-    LinkedInProvider({
-      clientId: process.env.LINKEDIN_ID,
-      clientSecret: process.env.LINKEDIN_SECRET,
-    }),
-    SlackProvider({
-      clientId: process.env.SLACK_ID,
-      clientSecret: process.env.SLACK_SECRET,
-    }),
+    // TwitterProvider({
+    //   clientId: process.env.TWITTER_ID,
+    //   clientSecret: process.env.TWITTER_SECRET,
+    //   version: '2.0',
+    // }),
+    // LinkedInProvider({
+    //   clientId: process.env.LINKEDIN_ID,
+    //   clientSecret: process.env.LINKEDIN_SECRET,
+    // }),
+    // SlackProvider({
+    //   clientId: process.env.SLACK_ID,
+    //   clientSecret: process.env.SLACK_SECRET,
+    // }),
   ],
 });

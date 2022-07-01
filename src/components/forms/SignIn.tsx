@@ -36,7 +36,7 @@ export const SignInForm: FC<SignInFormProps> = ({
   } = form;
 
   return (
-    <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
       <Field
         {...register('email')}
         error={errors.email?.message}

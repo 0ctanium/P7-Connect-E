@@ -22,18 +22,18 @@ export const Post: FC<{ post: PostType }> = ({ post }) => {
   return (
     <div className="bg-white rounded shadow px-6 pt-4 pb-2 flex flex-col">
       <div className="flex flex-row text-left h-10">
-        <Link href={`/profile/${author?.id}`}>
-          <a>
-            <Avatar user={author} showTooltip />
-          </a>
-        </Link>
+        {/*<Link href={`/profile/${author?.id}`}>*/}
+        <a>
+          <Avatar user={author} showTooltip />
+        </a>
+        {/*</Link>*/}
         <div className="ml-4 flex flex-col items-start">
           <UserToolTip user={author}>
-            <Link href={`/profile/${post.authorId}`}>
-              <a className="text-base font-medium leading-6 hover:underline">
-                {author?.name || 'Utilisateur inconnu'}
-              </a>
-            </Link>
+            {/*<Link href={`/profile/${post.authorId}`}>*/}
+            <a className="text-base font-medium leading-6 hover:underline">
+              {author?.name || 'Utilisateur inconnu'}
+            </a>
+            {/*</Link>*/}
           </UserToolTip>
           <Link href={`/post/${post.id}`}>
             <a>

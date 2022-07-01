@@ -72,15 +72,15 @@ export const MobileTopBar: FC<{
               <LogoText className="fill-gray-900 h-[60%]" />
             </div>
           )}
-          <Link href="/profile">
-            <a className="flex">
-              <Avatar user={session?.user} size="md" />
-              <div className="sr-only">
-                <p>{session?.user.name}</p>
-                <p>Account settings</p>
-              </div>
-            </a>
-          </Link>
+          {/*<Link href="/profile">*/}
+          <a className="flex">
+            <Avatar user={session?.user} size="md" />
+            <div className="sr-only">
+              <p>{session?.user.name}</p>
+              <p>Account settings</p>
+            </div>
+          </a>
+          {/*</Link>*/}
         </div>
       </div>
       <div className="mb-16 lg:mb-0" />
